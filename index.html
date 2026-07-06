@@ -1,1 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Crescent Beauty Hub</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    .product-card { transition: transform 0.2s; cursor: pointer; }
+    .product-card:hover { transform: translateY(-5px); }
+    .filter-btn.active { background-color: #1a1a1a; color: white; border-color: #1a1a1a; }
+  </style>
+</head>
+<body class="bg-gray-50 font-sans">
 
+  <!-- Top Announcement -->
+  <div id="announcement-bar" class="bg-pink-600 text-white text-center text-sm py-2 px-4">
+    ✨ Free delivery on selected orders · Premium beauty essentials ✨
+  </div>
+
+  <!-- Navbar -->
+  <nav class="bg-white shadow-md sticky top-0 z-50">
+    <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+      <a href="index.html" class="text-2xl font-bold text-pink-700">Cresent Beauty Hub</a>
+      <div class="flex items-center space-x-4">
+        <a href="admin.html" class="text-gray-600 hover:text-pink-600 text-sm">Admin</a>
+        <a href="cart.html" class="relative">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+          </svg>
+          <span id="cart-badge" class="absolute -top-2 -right-2 bg-pink-600 text-white text-xs rounded-full px-2 py-0.5">0</span>
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="bg-gradient-to-r from-pink-50 to-rose-50 py-12 px-4 text-center">
+    <p class="text-pink-600 font-semibold uppercase tracking-wide">Luxury Beauty Essentials</p>
+    <h1 class="text-4xl md:text-5xl font-bold text-gray-800 mt-2">Discover Beauty That Lasts</h1>
+    <p class="text-gray-600 max-w-2xl mx-auto mt-3">Premium perfumes, body sprays, face creams, body creams and hair care — carefully selected to help you look radiant every day.</p>
+    <button onclick="document.getElementById('products-section').scrollIntoView({behavior:'smooth'})" class="mt-4 bg-pink-600 text-white px-8 py-3 rounded-full hover:bg-pink-700 transition shadow-lg">Shop Now</button>
+  </section>
+
+  <!-- Category Filters -->
+  <div id="products-section" class="container mx-auto px-4 py-6">
+    <div class="flex flex-wrap justify-center gap-3 mb-8">
+      <button class="filter-btn active px-6 py-2 border border-gray-300 rounded-full text-sm hover:bg-gray-100 transition" data-filter="all">All</button>
+      <button class="filter-btn px-6 py-2 border border-gray-300 rounded-full text-sm hover:bg-gray-100 transition" data-filter="Perfumes">Perfumes</button>
+      <button class="filter-btn px-6 py-2 border border-gray-300 rounded-full text-sm hover:bg-gray-100 transition" data-filter="Body Sprays">Body Sprays</button>
+      <button class="filter-btn px-6 py-2 border border-gray-300 rounded-full text-sm hover:bg-gray-100 transition" data-filter="Body Creams">Body Creams</button>
+      <button class="filter-btn px-6 py-2 border border-gray-300 rounded-full text-sm hover:bg-gray-100 transition" data-filter="Face Creams">Face Creams</button>
+      <button class="filter-btn px-6 py-2 border border-gray-300 rounded-full text-sm hover:bg-gray-100 transition" data-filter="Hair Creams">Hair Creams</button>
+    </div>
+
+    <!-- Product Grid -->
+    <div id="product-grid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+      <!-- Products loaded dynamically -->
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="bg-gray-900 text-gray-300 mt-12 py-10 px-4">
+    <div class="container mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
+      <div>
+        <h3 class="text-white text-xl font-bold">Cresent Beauty Hub</h3>
+        <p class="mt-2 text-sm">Your trusted destination for premium perfumes, skincare, body care, and hair care products.</p>
+      </div>
+      <div>
+        <h4 class="text-white font-semibold">Quick Links</h4>
+        <ul class="mt-2 text-sm space-y-1">
+          <li><a href="index.html" class="hover:text-pink-400">Home</a></li>
+          <li><a href="about.html" class="hover:text-pink-400">About</a></li>
+          <li><a href="contact.html" class="hover:text-pink-400">Contact</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 class="text-white font-semibold">Contact</h4>
+        <p class="text-sm mt-2">Email: mercyola971@gmail.com</p>
+        <p class="text-sm">Phone: +234 7038721342</p>
+        <p class="text-sm">Ogbomoso, Nigeria</p>
+      </div>
+    </div>
+    <div class="container mx-auto text-center text-sm border-t border-gray-700 mt-8 pt-4">
+      © 2026 Cresent Beauty Hub. All Rights Reserved.
+    </div>
+  </footer>
+
+  <!-- ==================== JAVASCRIPT ==================== -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+  <script>
+    // 1. CONFIG (REPLACE WITH YOUR OWN)
+    const firebaseConfig = {
+      apiKey: "YOUR_API_KEY",
+      authDomain: "YOUR_PROJECT.firebaseapp.com",
+      databaseURL: "https://YOUR_PROJECT-default-rtdb.firebaseio.com",
+      projectId: "YOUR_PROJECT",
+      storageBucket: "YOUR_PROJECT.appspot.com",
+      messagingSenderId: "YOUR_SENDER_ID",
+      appId: "YOUR_APP_ID"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+
+    // 2. GLOBALS
+    let allProducts = [];
+    let currentFilter = 'all';
+
+    // 3. CART BADGE UPDATE
+    function updateBadge() {
+      const cart = JSON.parse(localStorage.getItem('cart')) || [];
+      const count = cart.reduce((sum, item) => sum + item.qty, 0);
+      document.getElementById('cart-badge').textContent = count;
+    }
+    updateBadge();
+
+    // 4. ADD TO CART
+    window.addToCart = function(productId) {
+      const product = allProducts.find(p => p.id === productId);
+      if (!product) return;
+      let cart = JSON.parse(localStorage.getItem('cart')) || [];
+      const existing = cart.find(item => item.id === productId);
+      if (existing) {
+        existing.qty += 1;
+      } else {
+        cart.push({ id: product.id, name: product.name, price: product.price, image: product.thumbnail || product.images?.[0] || '', qty: 1 });
+      }
+      localStorage.setItem('cart', JSON.stringify(cart));
+      updateBadge();
+      alert(`${product.name} added to cart!`);
+    };
+
+    // 5. LOAD PRODUCTS (REAL-TIME)
+    function loadProducts() {
+      const productsRef = db.ref('products');
+      productsRef.on('value', (snapshot) => {
+        const data = snapshot.val();
+        const grid = document.getElementById('product-grid');
+        grid.innerHTML = '';
+        allProducts = [];
+
+        if (!data) {
+          grid.innerHTML = '<p class="col-span-full text-center text-gray-500">No products available.</p>';
+          return;
+        }
+
+        for (let id in data) {
+          const p = data[id];
+          p.id = id;
+          allProducts.push(p);
+        }
+
+        renderProducts(currentFilter);
+      });
+    }
+
+    function renderProducts(filter) {
+      const grid = document.getElementById('product-grid');
+      let filtered = allProducts;
+      if (filter !== 'all') {
+        filtered = allProducts.filter(p => p.category === filter);
+      }
+
+      if (filtered.length === 0) {
+        grid.innerHTML = '<p class="col-span-full text-center text-gray-500">No products in this category.</p>';
+        return;
+      }
+
+      grid.innerHTML = filtered.map(p => `
+        <div class="product-card bg-white rounded-lg shadow-md overflow-hidden">
+          <img src="${p.thumbnail || p.images?.[0] || 'https://via.placeholder.com/300'}" alt="${p.name}" class="w-full h-48 object-cover">
+          <div class="p-4">
+            <h3 class="font-semibold text-gray-800 truncate">${p.name}</h3>
+            <p class="text-pink-600 font-bold mt-1">₦${p.price.toLocaleString()}</p>
+            <button onclick="addToCart('${p.id}')" class="mt-3 w-full bg-pink-600 hover:bg-pink-700 text-white text-sm py-2 rounded transition">Add to Cart</button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // 6. FILTER BUTTONS
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+      btn.addEventListener('click', function() {
+        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+        this.classList.add('active');
+        currentFilter = this.dataset.filter;
+        renderProducts(currentFilter);
+      });
+    });
+
+    // 7. INIT
+    loadProducts();
+  </script>
+</body>
+</html>
