@@ -1,77 +1,333 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Crescent Beauty Hub</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
-    .product-card { transition: transform 0.2s; cursor: pointer; }
-    .product-card:hover { transform: translateY(-5px); }
-    .filter-btn.active { background-color: #1a1a1a; color: white; border-color: #1a1a1a; }
+    /* ---- CUSTOM ANIMATIONS & STYLES ---- */
+    .hero-bg {
+      background-image: url('https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?w=1400&q=80');
+      background-size: cover;
+      background-position: center;
+    }
+
+    /* Fade-in animation for product cards */
+    .product-card {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 0.6s ease, transform 0.6s ease, box-shadow 0.3s ease;
+      cursor: pointer;
+    }
+    .product-card.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .product-card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 20px 30px -10px rgba(0, 0, 0, 0.15);
+    }
+
+    .filter-btn {
+      transition: all 0.2s ease;
+    }
+    .filter-btn.active {
+      background-color: #be185d; /* pink-700 */
+      color: white;
+      border-color: #be185d;
+    }
+    .filter-btn:hover:not(.active) {
+      background-color: #fce7f3; /* pink-100 */
+    }
+
+    /* Hero text animation */
+    .hero-text {
+      animation: fadeUp 1s ease forwards;
+    }
+    @keyframes fadeUp {
+      0% { opacity: 0; transform: translateY(30px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+    .hero-text-delay {
+      animation-delay: 0.3s;
+      opacity: 0;
+    }
+    .hero-text-delay-2 {
+      animation-delay: 0.6s;
+      opacity: 0;
+    }
+
+    /* Category card hover */
+    .category-card {
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .category-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 15px 25px -8px rgba(0, 0, 0, 0.1);
+    }
   </style>
 </head>
-<body class="bg-gray-50 font-sans">
+<body class="bg-gray-50 font-sans antialiased">
 
-  <!-- Top Announcement -->
-  <div id="announcement-bar" class="bg-pink-600 text-white text-center text-sm py-2 px-4">
-    ✨ Free delivery on selected orders · Premium beauty essentials ✨
+  <!-- ==================== TOP ANNOUNCEMENT ==================== -->
+  <div id="announcement-bar" class="bg-pink-600 text-white text-center text-sm py-2.5 px-4">
+    ✨ Free delivery on selected orders · Premium beauty essentials · Secure checkout ✨
   </div>
 
-  <!-- Navbar -->
-  <nav class="bg-white shadow-md sticky top-0 z-50">
+  <!-- ==================== NAVBAR ==================== -->
+  <nav class="bg-white/90 backdrop-blur-md shadow-sm sticky top-0 z-50 border-b border-gray-100">
     <div class="container mx-auto px-4 py-3 flex justify-between items-center">
-      <a href="index.html" class="text-2xl font-bold text-pink-700">Cresent Beauty Hub</a>
-      <div class="flex items-center space-x-4">
-        <a href="admin.html" class="text-gray-600 hover:text-pink-600 text-sm">Admin</a>
+      <a href="index.html" class="text-2xl font-extrabold text-pink-700 tracking-tight">Cresent Beauty Hub</a>
+      
+      <div class="flex items-center space-x-5">
+        <a href="admin.html" class="text-gray-500 hover:text-pink-600 text-sm font-medium hidden sm:inline">Admin</a>
         <a href="cart.html" class="relative">
           <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
           </svg>
-          <span id="cart-badge" class="absolute -top-2 -right-2 bg-pink-600 text-white text-xs rounded-full px-2 py-0.5">0</span>
+          <span id="cart-badge" class="absolute -top-2 -right-2 bg-pink-600 text-white text-[10px] font-bold rounded-full px-2 py-0.5 min-w-[20px] text-center">0</span>
         </a>
       </div>
     </div>
   </nav>
 
-  <!-- Hero Section -->
-  <section class="bg-gradient-to-r from-pink-50 to-rose-50 py-12 px-4 text-center">
-    <p class="text-pink-600 font-semibold uppercase tracking-wide">Luxury Beauty Essentials</p>
-    <h1 class="text-4xl md:text-5xl font-bold text-gray-800 mt-2">Discover Beauty That Lasts</h1>
-    <p class="text-gray-600 max-w-2xl mx-auto mt-3">Premium perfumes, body sprays, face creams, body creams and hair care — carefully selected to help you look radiant every day.</p>
-    <button onclick="document.getElementById('products-section').scrollIntoView({behavior:'smooth'})" class="mt-4 bg-pink-600 text-white px-8 py-3 rounded-full hover:bg-pink-700 transition shadow-lg">Shop Now</button>
+  <!-- ==================== HERO SECTION (with Background Image) ==================== -->
+  <section class="hero-bg relative min-h-[75vh] flex items-center">
+    <!-- Dark Overlay -->
+    <div class="absolute inset-0 bg-black/40 backdrop-brightness-75"></div>
+    
+    <div class="container mx-auto px-4 relative z-10 text-white">
+      <p class="text-pink-200 font-semibold uppercase tracking-[0.2em] hero-text hero-text-delay">Luxury Beauty Essentials</p>
+      <h1 class="text-4xl md:text-6xl lg:text-7xl font-extrabold leading-tight mt-2 hero-text hero-text-delay">
+        Discover Beauty <br class="hidden sm:block" />That Lasts
+      </h1>
+      <p class="text-lg md:text-xl text-gray-100 max-w-2xl mt-4 hero-text hero-text-delay-2">
+        Premium perfumes, body sprays, face creams, body creams and hair care — 
+        carefully selected to help you look radiant, feel confident, and smell amazing every day.
+      </p>
+      <div class="mt-8 flex flex-wrap gap-4 hero-text hero-text-delay-2">
+        <button onclick="document.getElementById('products-section').scrollIntoView({behavior:'smooth'})" 
+                class="bg-pink-600 hover:bg-pink-700 text-white px-8 py-3.5 rounded-full font-semibold shadow-lg hover:shadow-pink-500/30 transition-all duration-300">
+          Shop Now
+        </button>
+        <a href="#contact-section" class="bg-white/20 backdrop-blur-sm hover:bg-white/30 text-white px-8 py-3.5 rounded-full font-semibold border border-white/30 transition-all duration-300">
+          Contact Us
+        </a>
+      </div>
+    </div>
   </section>
 
-  <!-- Category Filters -->
-  <div id="products-section" class="container mx-auto px-4 py-6">
-    <div class="flex flex-wrap justify-center gap-3 mb-8">
-      <button class="filter-btn active px-6 py-2 border border-gray-300 rounded-full text-sm hover:bg-gray-100 transition" data-filter="all">All</button>
-      <button class="filter-btn px-6 py-2 border border-gray-300 rounded-full text-sm hover:bg-gray-100 transition" data-filter="Perfumes">Perfumes</button>
-      <button class="filter-btn px-6 py-2 border border-gray-300 rounded-full text-sm hover:bg-gray-100 transition" data-filter="Body Sprays">Body Sprays</button>
-      <button class="filter-btn px-6 py-2 border border-gray-300 rounded-full text-sm hover:bg-gray-100 transition" data-filter="Body Creams">Body Creams</button>
-      <button class="filter-btn px-6 py-2 border border-gray-300 rounded-full text-sm hover:bg-gray-100 transition" data-filter="Face Creams">Face Creams</button>
-      <button class="filter-btn px-6 py-2 border border-gray-300 rounded-full text-sm hover:bg-gray-100 transition" data-filter="Hair Creams">Hair Creams</button>
+  <!-- ==================== FEATURED CATEGORIES ==================== -->
+  <section class="container mx-auto px-4 py-16">
+    <div class="text-center mb-12">
+      <p class="text-pink-600 font-semibold uppercase tracking-wider text-sm">Explore</p>
+      <h2 class="text-3xl md:text-4xl font-bold text-gray-800">Shop by Category</h2>
+    </div>
+    
+    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 md:gap-6">
+      <!-- Category 1 -->
+      <div class="category-card bg-white rounded-2xl shadow p-5 text-center border border-gray-100">
+        <div class="text-4xl mb-2">🌸</div>
+        <h3 class="font-bold text-gray-800">Perfumes</h3>
+        <p class="text-xs text-gray-500 mt-1">Captivating fragrances</p>
+        <a href="#products-section" class="inline-block mt-3 text-pink-600 text-sm font-medium hover:underline">Shop →</a>
+      </div>
+      <!-- Category 2 -->
+      <div class="category-card bg-white rounded-2xl shadow p-5 text-center border border-gray-100">
+        <div class="text-4xl mb-2">💨</div>
+        <h3 class="font-bold text-gray-800">Body Sprays</h3>
+        <p class="text-xs text-gray-500 mt-1">Fresh everyday scents</p>
+        <a href="#products-section" class="inline-block mt-3 text-pink-600 text-sm font-medium hover:underline">Shop →</a>
+      </div>
+      <!-- Category 3 -->
+      <div class="category-card bg-white rounded-2xl shadow p-5 text-center border border-gray-100">
+        <div class="text-4xl mb-2">🧴</div>
+        <h3 class="font-bold text-gray-800">Body Creams</h3>
+        <p class="text-xs text-gray-500 mt-1">Deeply nourishing</p>
+        <a href="#products-section" class="inline-block mt-3 text-pink-600 text-sm font-medium hover:underline">Shop →</a>
+      </div>
+      <!-- Category 4 -->
+      <div class="category-card bg-white rounded-2xl shadow p-5 text-center border border-gray-100">
+        <div class="text-4xl mb-2">✨</div>
+        <h3 class="font-bold text-gray-800">Face Creams</h3>
+        <p class="text-xs text-gray-500 mt-1">Hydrate & brighten</p>
+        <a href="#products-section" class="inline-block mt-3 text-pink-600 text-sm font-medium hover:underline">Shop →</a>
+      </div>
+      <!-- Category 5 -->
+      <div class="category-card bg-white rounded-2xl shadow p-5 text-center border border-gray-100 col-span-2 md:col-span-1">
+        <div class="text-4xl mb-2">💆</div>
+        <h3 class="font-bold text-gray-800">Hair Creams</h3>
+        <p class="text-xs text-gray-500 mt-1">Nourish & protect</p>
+        <a href="#products-section" class="inline-block mt-3 text-pink-600 text-sm font-medium hover:underline">Shop →</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== BEST SELLERS (Static Preview) ==================== -->
+  <section class="bg-pink-50/50 py-16">
+    <div class="container mx-auto px-4">
+      <div class="text-center mb-10">
+        <p class="text-pink-600 font-semibold uppercase tracking-wider text-sm">Customer Favorites</p>
+        <h2 class="text-3xl md:text-4xl font-bold text-gray-800">Best Sellers</h2>
+      </div>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div class="bg-white p-5 rounded-xl shadow text-center border border-pink-100">
+          <div class="text-3xl mb-2">🌹</div>
+          <h4 class="font-bold">Luxury Signature Perfume</h4>
+          <p class="text-sm text-gray-500">Long-lasting impression</p>
+        </div>
+        <div class="bg-white p-5 rounded-xl shadow text-center border border-pink-100">
+          <div class="text-3xl mb-2">💧</div>
+          <h4 class="font-bold">Hydrating Face Cream</h4>
+          <p class="text-sm text-gray-500">Glowing skin</p>
+        </div>
+        <div class="bg-white p-5 rounded-xl shadow text-center border border-pink-100">
+          <div class="text-3xl mb-2">🥥</div>
+          <h4 class="font-bold">Nourishing Body Cream</h4>
+          <p class="text-sm text-gray-500">Soft all day</p>
+        </div>
+        <div class="bg-white p-5 rounded-xl shadow text-center border border-pink-100">
+          <div class="text-3xl mb-2">🌿</div>
+          <h4 class="font-bold">Premium Hair Care</h4>
+          <p class="text-sm text-gray-500">Strength & shine</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== PRODUCT GRID (Shop) ==================== -->
+  <section id="products-section" class="container mx-auto px-4 py-16">
+    <div class="text-center mb-10">
+      <h2 class="text-3xl md:text-4xl font-bold text-gray-800">All Products</h2>
+    </div>
+
+    <!-- Filter Buttons -->
+    <div class="flex flex-wrap justify-center gap-3 mb-10">
+      <button class="filter-btn active px-6 py-2 border border-gray-300 rounded-full text-sm font-medium bg-pink-700 text-white border-pink-700" data-filter="all">All</button>
+      <button class="filter-btn px-6 py-2 border border-gray-300 rounded-full text-sm font-medium" data-filter="Perfumes">Perfumes</button>
+      <button class="filter-btn px-6 py-2 border border-gray-300 rounded-full text-sm font-medium" data-filter="Body Sprays">Body Sprays</button>
+      <button class="filter-btn px-6 py-2 border border-gray-300 rounded-full text-sm font-medium" data-filter="Body Creams">Body Creams</button>
+      <button class="filter-btn px-6 py-2 border border-gray-300 rounded-full text-sm font-medium" data-filter="Face Creams">Face Creams</button>
+      <button class="filter-btn px-6 py-2 border border-gray-300 rounded-full text-sm font-medium" data-filter="Hair Creams">Hair Creams</button>
     </div>
 
     <!-- Product Grid -->
-    <div id="product-grid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+    <div id="product-grid" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
       <!-- Products loaded dynamically -->
     </div>
-  </div>
+  </section>
 
-  <!-- Footer -->
-  <footer class="bg-gray-900 text-gray-300 mt-12 py-10 px-4">
-    <div class="container mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
+  <!-- ==================== WHY CHOOSE US ==================== -->
+  <section class="bg-white py-16 border-t border-gray-100">
+    <div class="container mx-auto px-4">
+      <div class="text-center mb-12">
+        <p class="text-pink-600 font-semibold uppercase tracking-wider text-sm">The Cresent Promise</p>
+        <h2 class="text-3xl md:text-4xl font-bold text-gray-800">Why Choose Us</h2>
+      </div>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 text-center">
+        <div>
+          <div class="text-4xl mb-3">✅</div>
+          <h4 class="font-bold text-gray-800">Premium Quality</h4>
+          <p class="text-sm text-gray-500">Carefully selected from trusted brands.</p>
+        </div>
+        <div>
+          <div class="text-4xl mb-3">💰</div>
+          <h4 class="font-bold text-gray-800">Affordable Luxury</h4>
+          <p class="text-sm text-gray-500">Premium products at competitive prices.</p>
+        </div>
+        <div>
+          <div class="text-4xl mb-3">🚚</div>
+          <h4 class="font-bold text-gray-800">Fast Delivery</h4>
+          <p class="text-sm text-gray-500">Quick & safe nationwide shipping.</p>
+        </div>
+        <div>
+          <div class="text-4xl mb-3">🔒</div>
+          <h4 class="font-bold text-gray-800">Secure Shopping</h4>
+          <p class="text-sm text-gray-500">Safe payments & dedicated support.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== TESTIMONIALS ==================== -->
+  <section class="bg-gray-50 py-16">
+    <div class="container mx-auto px-4">
+      <div class="text-center mb-10">
+        <p class="text-pink-600 font-semibold uppercase tracking-wider text-sm">Loved by Thousands</p>
+        <h2 class="text-3xl md:text-4xl font-bold text-gray-800">Customer Reviews</h2>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+          <p class="text-gray-600 italic">"I absolutely love the perfume I purchased. The fragrance lasts all day!"</p>
+          <p class="font-bold text-gray-800 mt-3">— Sophia A.</p>
+        </div>
+        <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+          <p class="text-gray-600 italic">"The face cream transformed my skin. Smoother and more hydrated."</p>
+          <p class="font-bold text-gray-800 mt-3">— Esther M.</p>
+        </div>
+        <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+          <p class="text-gray-600 italic">"Fast delivery and excellent customer service. Highly recommend!"</p>
+          <p class="font-bold text-gray-800 mt-3">— Jennifer O.</p>
+        </div>
+        <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+          <p class="text-gray-600 italic">"The body cream leaves my skin incredibly soft. I'll be ordering again."</p>
+          <p class="font-bold text-gray-800 mt-3">— Grace T.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== CONTACT SECTION (Can't find what you need?) ==================== -->
+  <section id="contact-section" class="container mx-auto px-4 py-16">
+    <div class="max-w-3xl mx-auto bg-white rounded-2xl shadow-xl p-6 md:p-10 border border-gray-100">
+      <div class="text-center mb-8">
+        <p class="text-pink-600 font-semibold uppercase tracking-wider text-sm">Get in Touch</p>
+        <h2 class="text-3xl font-bold text-gray-800">Can't find what you need?</h2>
+        <p class="text-gray-500 mt-2">Contact us and we'll help you find the perfect product.</p>
+      </div>
+
+      <form id="contact-form" class="space-y-4">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <input type="text" id="contact-name" placeholder="Your Full Name" required 
+                 class="w-full border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-pink-500 focus:border-pink-500 outline-none transition" />
+          <input type="email" id="contact-email" placeholder="Your Email Address" required 
+                 class="w-full border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-pink-500 focus:border-pink-500 outline-none transition" />
+        </div>
+        <textarea id="contact-message" rows="4" placeholder="Tell us what you're looking for..." required 
+                  class="w-full border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-pink-500 focus:border-pink-500 outline-none transition"></textarea>
+        <button type="submit" 
+                class="w-full bg-pink-600 hover:bg-pink-700 text-white font-semibold py-3 rounded-lg transition duration-200 shadow-md hover:shadow-pink-500/30">
+          Send Message
+        </button>
+      </form>
+      <div id="contact-success" class="hidden mt-4 text-center text-green-600 font-semibold p-3 bg-green-50 rounded-lg">
+        ✅ Your message was sent! We'll get back to you shortly.
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== FOOTER ==================== -->
+  <footer class="bg-gray-900 text-gray-300 mt-8 py-12 px-4">
+    <div class="container mx-auto grid grid-cols-1 md:grid-cols-4 gap-8">
       <div>
-        <h3 class="text-white text-xl font-bold">Cresent Beauty Hub</h3>
-        <p class="mt-2 text-sm">Your trusted destination for premium perfumes, skincare, body care, and hair care products.</p>
+        <h3 class="text-white text-2xl font-bold">Cresent Beauty Hub</h3>
+        <p class="mt-2 text-sm leading-relaxed">Your trusted destination for premium perfumes, skincare, body care, and hair care.</p>
       </div>
       <div>
         <h4 class="text-white font-semibold">Quick Links</h4>
-        <ul class="mt-2 text-sm space-y-1">
-          <li><a href="index.html" class="hover:text-pink-400">Home</a></li>
-          <li><a href="about.html" class="hover:text-pink-400">About</a></li>
-          <li><a href="contact.html" class="hover:text-pink-400">Contact</a></li>
+        <ul class="mt-2 text-sm space-y-1.5">
+          <li><a href="index.html" class="hover:text-pink-400 transition">Home</a></li>
+          <li><a href="#products-section" class="hover:text-pink-400 transition">Shop</a></li>
+          <li><a href="admin.html" class="hover:text-pink-400 transition">Admin</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 class="text-white font-semibold">Support</h4>
+        <ul class="mt-2 text-sm space-y-1.5">
+          <li><a href="#" class="hover:text-pink-400 transition">Shipping Policy</a></li>
+          <li><a href="#" class="hover:text-pink-400 transition">Return Policy</a></li>
+          <li><a href="#" class="hover:text-pink-400 transition">Privacy Policy</a></li>
         </ul>
       </div>
       <div>
@@ -81,33 +337,44 @@
         <p class="text-sm">Ogbomoso, Nigeria</p>
       </div>
     </div>
-    <div class="container mx-auto text-center text-sm border-t border-gray-700 mt-8 pt-4">
+    <div class="container mx-auto text-center text-sm border-t border-gray-800 mt-10 pt-6">
       © 2026 Cresent Beauty Hub. All Rights Reserved.
     </div>
   </footer>
 
-  <!-- ==================== JAVASCRIPT ==================== -->
+  <!-- ========================================================== -->
+  <!-- ==================== JAVASCRIPT (Full Logic) ==================== -->
+  <!-- ========================================================== -->
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+  
   <script>
-    // 1. CONFIG (REPLACE WITH YOUR OWN)
+    // ===========================================================
+    // 1. FIREBASE CONFIG (Your provided credentials)
+    // ===========================================================
     const firebaseConfig = {
-      apiKey: "YOUR_API_KEY",
-      authDomain: "YOUR_PROJECT.firebaseapp.com",
-      databaseURL: "https://YOUR_PROJECT-default-rtdb.firebaseio.com",
-      projectId: "YOUR_PROJECT",
-      storageBucket: "YOUR_PROJECT.appspot.com",
-      messagingSenderId: "YOUR_SENDER_ID",
-      appId: "YOUR_APP_ID"
+      apiKey: "AIzaSyB2jxywTYbizISk9_mJcreBx5eS5u0C4es",
+      authDomain: "crescent-2662a.firebaseapp.com",
+      databaseURL: "https://crescent-2662a-default-rtdb.firebaseio.com", // <-- VERIFY THIS URL in your Firebase Console
+      projectId: "crescent-2662a",
+      storageBucket: "crescent-2662a.firebasestorage.app",
+      messagingSenderId: "947228503695",
+      appId: "1:947228503695:web:f74d1c4da04508268ccafa",
+      measurementId: "G-8BR6NDVKQC"
     };
+
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
-    // 2. GLOBALS
+    // ===========================================================
+    // 2. GLOBAL VARIABLES
+    // ===========================================================
     let allProducts = [];
     let currentFilter = 'all';
 
+    // ===========================================================
     // 3. CART BADGE UPDATE
+    // ===========================================================
     function updateBadge() {
       const cart = JSON.parse(localStorage.getItem('cart')) || [];
       const count = cart.reduce((sum, item) => sum + item.qty, 0);
@@ -115,33 +382,59 @@
     }
     updateBadge();
 
-    // 4. ADD TO CART
+    // ===========================================================
+    // 4. ADD TO CART (exposed globally)
+    // ===========================================================
     window.addToCart = function(productId) {
       const product = allProducts.find(p => p.id === productId);
       if (!product) return;
+      
       let cart = JSON.parse(localStorage.getItem('cart')) || [];
       const existing = cart.find(item => item.id === productId);
+      
       if (existing) {
         existing.qty += 1;
       } else {
-        cart.push({ id: product.id, name: product.name, price: product.price, image: product.thumbnail || product.images?.[0] || '', qty: 1 });
+        cart.push({
+          id: product.id,
+          name: product.name,
+          price: product.price,
+          image: product.thumbnail || (product.images ? product.images[0] : ''),
+          qty: 1
+        });
       }
+      
       localStorage.setItem('cart', JSON.stringify(cart));
       updateBadge();
-      alert(`${product.name} added to cart!`);
+      
+      // Simple feedback
+      const btn = event && event.target ? event.target : document.querySelector(`[onclick*="${productId}"]`);
+      if (btn) {
+        const originalText = btn.innerText;
+        btn.innerText = '✅ Added!';
+        setTimeout(() => { btn.innerText = originalText; }, 1500);
+      } else {
+        alert(`${product.name} added to cart!`);
+      }
     };
 
-    // 5. LOAD PRODUCTS (REAL-TIME)
+    // ===========================================================
+    // 5. LOAD PRODUCTS (Real-time from Firebase)
+    // ===========================================================
     function loadProducts() {
       const productsRef = db.ref('products');
       productsRef.on('value', (snapshot) => {
         const data = snapshot.val();
         const grid = document.getElementById('product-grid');
-        grid.innerHTML = '';
         allProducts = [];
 
         if (!data) {
-          grid.innerHTML = '<p class="col-span-full text-center text-gray-500">No products available.</p>';
+          grid.innerHTML = `
+            <div class="col-span-full text-center py-12">
+              <p class="text-gray-400 text-lg">No products available yet.</p>
+              <p class="text-sm text-gray-400">Check back soon!</p>
+            </div>
+          `;
           return;
         }
 
@@ -152,44 +445,133 @@
         }
 
         renderProducts(currentFilter);
+        observeProductCards(); // Re-run animation observer after render
       });
     }
 
+    // ===========================================================
+    // 6. RENDER PRODUCTS (with filter)
+    // ===========================================================
     function renderProducts(filter) {
       const grid = document.getElementById('product-grid');
       let filtered = allProducts;
+      
       if (filter !== 'all') {
         filtered = allProducts.filter(p => p.category === filter);
       }
 
       if (filtered.length === 0) {
-        grid.innerHTML = '<p class="col-span-full text-center text-gray-500">No products in this category.</p>';
+        grid.innerHTML = `
+          <div class="col-span-full text-center py-12">
+            <p class="text-gray-400">No products in this category.</p>
+          </div>
+        `;
         return;
       }
 
-      grid.innerHTML = filtered.map(p => `
-        <div class="product-card bg-white rounded-lg shadow-md overflow-hidden">
-          <img src="${p.thumbnail || p.images?.[0] || 'https://via.placeholder.com/300'}" alt="${p.name}" class="w-full h-48 object-cover">
-          <div class="p-4">
-            <h3 class="font-semibold text-gray-800 truncate">${p.name}</h3>
-            <p class="text-pink-600 font-bold mt-1">₦${p.price.toLocaleString()}</p>
-            <button onclick="addToCart('${p.id}')" class="mt-3 w-full bg-pink-600 hover:bg-pink-700 text-white text-sm py-2 rounded transition">Add to Cart</button>
+      grid.innerHTML = filtered.map(p => {
+        const imgSrc = p.thumbnail || (p.images ? p.images[0] : 'https://via.placeholder.com/300x300/FFD1DC/FF69B4?text=Beauty');
+        return `
+          <div class="product-card bg-white rounded-xl shadow-md overflow-hidden border border-gray-100">
+            <img src="${imgSrc}" alt="${p.name}" class="w-full h-48 object-cover" loading="lazy" />
+            <div class="p-4">
+              <h3 class="font-semibold text-gray-800 truncate">${p.name}</h3>
+              <p class="text-pink-600 font-bold text-lg mt-1">₦${p.price.toLocaleString()}</p>
+              <button onclick="addToCart('${p.id}')" 
+                      class="mt-3 w-full bg-pink-600 hover:bg-pink-700 text-white text-sm font-medium py-2.5 rounded-lg transition duration-200 shadow-sm hover:shadow">
+                Add to Cart
+              </button>
+            </div>
           </div>
-        </div>
-      `).join('');
+        `;
+      }).join('');
+
+      // Observe new cards
+      observeProductCards();
     }
 
-    // 6. FILTER BUTTONS
+    // ===========================================================
+    // 7. SCROLL ANIMATION (Intersection Observer)
+    // ===========================================================
+    function observeProductCards() {
+      const cards = document.querySelectorAll('.product-card');
+      
+      if (cards.length === 0) return;
+
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach((entry, index) => {
+          if (entry.isIntersecting) {
+            // Add a slight delay for a staggered effect
+            setTimeout(() => {
+              entry.target.classList.add('visible');
+            }, index * 80);
+            observer.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
+
+      cards.forEach(card => observer.observe(card));
+    }
+
+    // ===========================================================
+    // 8. FILTER BUTTONS
+    // ===========================================================
     document.querySelectorAll('.filter-btn').forEach(btn => {
       btn.addEventListener('click', function() {
-        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-        this.classList.add('active');
+        document.querySelectorAll('.filter-btn').forEach(b => {
+          b.classList.remove('active', 'bg-pink-700', 'text-white', 'border-pink-700');
+          b.classList.add('border-gray-300', 'bg-transparent', 'text-gray-700');
+        });
+        this.classList.add('active', 'bg-pink-700', 'text-white', 'border-pink-700');
+        this.classList.remove('border-gray-300', 'bg-transparent', 'text-gray-700');
+        
         currentFilter = this.dataset.filter;
         renderProducts(currentFilter);
       });
     });
 
-    // 7. INIT
+    // ===========================================================
+    // 9. CONTACT FORM - SAVE TO FIREBASE
+    // ===========================================================
+    document.getElementById('contact-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const name = document.getElementById('contact-name').value.trim();
+      const email = document.getElementById('contact-email').value.trim();
+      const message = document.getElementById('contact-message').value.trim();
+
+      if (!name || !email || !message) {
+        alert('Please fill in all fields.');
+        return;
+      }
+
+      try {
+        const newContactRef = db.ref('contacts').push();
+        await newContactRef.set({
+          name: name,
+          email: email,
+          message: message,
+          timestamp: firebase.database.ServerValue.TIMESTAMP
+        });
+
+        // Show success
+        document.getElementById('contact-success').classList.remove('hidden');
+        document.getElementById('contact-form').reset();
+        
+        // Auto-hide success after 5 seconds
+        setTimeout(() => {
+          document.getElementById('contact-success').classList.add('hidden');
+        }, 6000);
+        
+      } catch (error) {
+        alert('Error sending message. Please try again: ' + error.message);
+        console.error(error);
+      }
+    });
+
+    // ===========================================================
+    // 10. INIT
+    // ===========================================================
     loadProducts();
   </script>
 </body>
