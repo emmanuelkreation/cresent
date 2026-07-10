@@ -1,112 +1,295 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Your Cart - Crescent Beauty Hub</title>
+  
+  <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
-</head>
-<body class="bg-gray-50 font-sans">
+  
+  <!-- FontAwesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
 
-  <!-- Navbar (Minimal) -->
-  <nav class="bg-white shadow-md sticky top-0 z-50">
+  <style>
+    /* Cart item animation */
+    .cart-item {
+      opacity: 0;
+      transform: translateX(-20px);
+      animation: slideIn 0.4s ease forwards;
+    }
+    .cart-item:nth-child(2) { animation-delay: 0.05s; }
+    .cart-item:nth-child(3) { animation-delay: 0.1s; }
+    .cart-item:nth-child(4) { animation-delay: 0.15s; }
+    .cart-item:nth-child(5) { animation-delay: 0.2s; }
+    .cart-item:nth-child(6) { animation-delay: 0.25s; }
+
+    @keyframes slideIn {
+      to { opacity: 1; transform: translateX(0); }
+    }
+
+    .quantity-btn {
+      transition: all 0.15s ease;
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      background: #f3f4f6;
+      color: #374151;
+      border: none;
+      cursor: pointer;
+    }
+    .quantity-btn:hover {
+      background: #be185d;
+      color: white;
+      transform: scale(1.05);
+    }
+    .remove-btn {
+      transition: all 0.2s ease;
+    }
+    .remove-btn:hover {
+      color: #dc2626;
+      transform: scale(1.1);
+    }
+
+    .glass-card {
+      background: rgba(255, 255, 255, 0.7);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.5);
+    }
+  </style>
+</head>
+<body class="bg-gray-50 font-sans antialiased">
+
+  <!-- ==================== TOP ANNOUNCEMENT ==================== -->
+  <div class="bg-pink-600 text-white text-center text-sm py-2.5 px-4 tracking-wide">
+    <i class="fas fa-gift mr-2"></i> Free delivery on selected orders · Premium beauty essentials · Secure checkout
+  </div>
+
+  <!-- ==================== NAVBAR ==================== -->
+  <nav class="bg-white/90 backdrop-blur-md shadow-sm sticky top-0 z-50 border-b border-gray-100/80">
     <div class="container mx-auto px-4 py-3 flex justify-between items-center">
-      <a href="index.html" class="text-2xl font-bold text-pink-700">Cresent Beauty Hub</a>
-      <a href="index.html" class="text-gray-600 hover:text-pink-600 text-sm">← Continue Shopping</a>
+      <a href="index.html" class="text-2xl font-extrabold text-pink-700 tracking-tight flex items-center gap-2">
+        <i class="fas fa-spa text-pink-500 text-2xl"></i> Cresent Beauty Hub
+      </a>
+      
+      <div class="flex items-center space-x-5">
+        <a href="admin.html" class="text-gray-500 hover:text-pink-600 text-sm font-medium hidden sm:inline transition">
+          <i class="fas fa-user-cog mr-1"></i> Admin
+        </a>
+        <a href="cart.html" class="relative group">
+          <i class="fas fa-shopping-bag text-2xl text-pink-600 group-hover:text-pink-700 transition"></i>
+          <span id="cart-badge" class="absolute -top-2 -right-2 bg-pink-600 text-white text-[10px] font-bold rounded-full px-2 py-0.5 min-w-[20px] text-center shadow-lg">0</span>
+        </a>
+      </div>
     </div>
   </nav>
 
-  <!-- Cart Section -->
-  <div class="container mx-auto px-4 py-8 max-w-4xl">
-    <h1 class="text-3xl font-bold text-gray-800 mb-6">Your Shopping Cart</h1>
-    <div id="cart-container">
-      <!-- Cart items rendered here -->
+  <!-- ==================== CART SECTION ==================== -->
+  <section class="container mx-auto px-4 py-10 max-w-5xl">
+    <div class="flex items-center justify-between mb-6">
+      <h1 class="text-3xl md:text-4xl font-bold text-gray-800 flex items-center gap-3">
+        <i class="fas fa-shopping-cart text-pink-500"></i> Your Cart
+      </h1>
+      <a href="index.html" class="text-pink-600 hover:text-pink-700 text-sm font-medium transition flex items-center gap-1">
+        <i class="fas fa-arrow-left"></i> Continue Shopping
+      </a>
     </div>
-    <div id="cart-summary" class="mt-8 bg-white p-6 rounded-lg shadow-md hidden">
-      <div class="flex justify-between text-xl font-bold">
-        <span>Total:</span>
-        <span id="cart-total" class="text-pink-600">₦0</span>
-      </div>
-      <a href="checkout.html" class="mt-4 block w-full bg-pink-600 hover:bg-pink-700 text-white text-center py-3 rounded-lg transition">Proceed to Checkout</a>
-    </div>
-    <div id="empty-cart" class="text-center py-12 hidden">
-      <p class="text-gray-500 text-lg">Your cart is empty.</p>
-      <a href="index.html" class="mt-4 inline-block bg-pink-600 text-white px-6 py-2 rounded">Shop Now</a>
-    </div>
-  </div>
 
+    <!-- Cart Items Container -->
+    <div id="cart-container" class="space-y-4">
+      <!-- Dynamic items will be injected here -->
+    </div>
+
+    <!-- Empty State (hidden by default) -->
+    <div id="empty-cart" class="hidden text-center py-16">
+      <div class="text-6xl text-gray-300 mb-4"><i class="fas fa-shopping-bag"></i></div>
+      <h3 class="text-2xl font-semibold text-gray-600">Your cart is empty</h3>
+      <p class="text-gray-400 mt-2">Looks like you haven't added any products yet.</p>
+      <a href="index.html" class="mt-6 inline-block bg-pink-600 hover:bg-pink-700 text-white px-8 py-3 rounded-full shadow-md transition">
+        <i class="fas fa-store mr-2"></i> Start Shopping
+      </a>
+    </div>
+
+    <!-- Cart Summary (hidden when empty) -->
+    <div id="cart-summary" class="hidden mt-8">
+      <div class="glass-card rounded-2xl shadow-xl p-6 md:p-8">
+        <h3 class="text-xl font-bold text-gray-800 mb-4">Order Summary</h3>
+        <div class="space-y-2 text-sm">
+          <div class="flex justify-between"><span class="text-gray-600">Subtotal</span><span id="subtotal" class="font-medium">₦0</span></div>
+          <div class="flex justify-between"><span class="text-gray-600">Shipping</span><span id="shipping-estimate" class="font-medium">Calculated at checkout</span></div>
+          <div class="border-t border-gray-200 my-3 pt-3 flex justify-between text-lg font-bold">
+            <span>Total</span>
+            <span id="cart-total" class="text-pink-600">₦0</span>
+          </div>
+        </div>
+        <a href="checkout.html" class="mt-6 block w-full bg-pink-600 hover:bg-pink-700 text-white text-center py-3.5 rounded-xl font-semibold shadow-md hover:shadow-pink-500/30 transition flex items-center justify-center gap-2">
+          <i class="fas fa-lock"></i> Proceed to Checkout
+        </a>
+        <button id="clear-cart-btn" class="mt-3 block w-full text-red-500 hover:text-red-700 text-sm font-medium transition flex items-center justify-center gap-1">
+          <i class="fas fa-trash-alt"></i> Clear Cart
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== FOOTER ==================== -->
+  <footer class="bg-gray-900 text-gray-300 mt-12 py-12 px-4 border-t border-gray-800">
+    <div class="container mx-auto grid grid-cols-1 md:grid-cols-4 gap-8">
+      <div>
+        <h3 class="text-white text-2xl font-bold flex items-center gap-2">
+          <i class="fas fa-spa text-pink-500"></i> Cresent Beauty Hub
+        </h3>
+        <p class="mt-2 text-sm leading-relaxed">Your trusted destination for premium perfumes, skincare, body care, and hair care.</p>
+      </div>
+      <div>
+        <h4 class="text-white font-semibold">Quick Links</h4>
+        <ul class="mt-2 text-sm space-y-1.5">
+          <li><a href="index.html" class="hover:text-pink-400 transition"><i class="fas fa-chevron-right text-[10px] mr-1"></i> Home</a></li>
+          <li><a href="#products-section" class="hover:text-pink-400 transition"><i class="fas fa-chevron-right text-[10px] mr-1"></i> Shop</a></li>
+          <li><a href="admin.html" class="hover:text-pink-400 transition"><i class="fas fa-chevron-right text-[10px] mr-1"></i> Admin</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 class="text-white font-semibold">Support</h4>
+        <ul class="mt-2 text-sm space-y-1.5">
+          <li><a href="#" class="hover:text-pink-400 transition"><i class="fas fa-chevron-right text-[10px] mr-1"></i> Shipping Policy</a></li>
+          <li><a href="#" class="hover:text-pink-400 transition"><i class="fas fa-chevron-right text-[10px] mr-1"></i> Return Policy</a></li>
+          <li><a href="#" class="hover:text-pink-400 transition"><i class="fas fa-chevron-right text-[10px] mr-1"></i> Privacy Policy</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 class="text-white font-semibold"><i class="fas fa-address-card mr-2"></i> Contact</h4>
+        <p class="text-sm mt-2"><i class="fas fa-envelope mr-2 text-pink-400"></i> mercyola971@gmail.com</p>
+        <p class="text-sm"><i class="fas fa-phone mr-2 text-pink-400"></i> +234 7038721342</p>
+        <p class="text-sm"><i class="fas fa-map-marker-alt mr-2 text-pink-400"></i> Ogbomoso, Nigeria</p>
+      </div>
+    </div>
+    <div class="container mx-auto text-center text-sm border-t border-gray-800 mt-10 pt-6">
+      <i class="far fa-copyright mr-1"></i> 2026 Cresent Beauty Hub. All Rights Reserved.
+    </div>
+  </footer>
+
+  <!-- ========================================================== -->
+  <!-- ==================== JAVASCRIPT =========================== -->
+  <!-- ========================================================== -->
   <script>
-    // 1. RENDER CART
+    // ===========================================================
+    // 1. CART FUNCTIONS
+    // ===========================================================
+
+    // Get cart from localStorage
+    function getCart() {
+      return JSON.parse(localStorage.getItem('cart')) || [];
+    }
+
+    // Save cart to localStorage
+    function saveCart(cart) {
+      localStorage.setItem('cart', JSON.stringify(cart));
+    }
+
+    // Update badge (global function for navbar)
+    function updateBadge() {
+      const cart = getCart();
+      const count = cart.reduce((sum, item) => sum + item.qty, 0);
+      const badge = document.getElementById('cart-badge');
+      if (badge) badge.textContent = count;
+    }
+
+    // Render cart
     function renderCart() {
-      const cart = JSON.parse(localStorage.getItem('cart')) || [];
+      const cart = getCart();
       const container = document.getElementById('cart-container');
       const summary = document.getElementById('cart-summary');
       const empty = document.getElementById('empty-cart');
-      const totalSpan = document.getElementById('cart-total');
+      const subtotalEl = document.getElementById('subtotal');
+      const totalEl = document.getElementById('cart-total');
 
+      // If empty
       if (cart.length === 0) {
         container.innerHTML = '';
         summary.classList.add('hidden');
         empty.classList.remove('hidden');
+        updateBadge();
         return;
       }
+
       empty.classList.add('hidden');
       summary.classList.remove('hidden');
 
-      let total = 0;
-      container.innerHTML = cart.map((item, index) => {
-        const subtotal = item.price * item.qty;
-        total += subtotal;
-        return `
-          <div class="flex flex-col md:flex-row items-center gap-4 bg-white p-4 rounded-lg shadow mb-4">
-            <img src="${item.image || 'https://via.placeholder.com/80'}" alt="${item.name}" class="w-20 h-20 object-cover rounded">
-            <div class="flex-1">
-              <h3 class="font-semibold text-gray-800">${item.name}</h3>
+      let subtotal = 0;
+      let html = '';
+
+      cart.forEach((item, index) => {
+        const itemTotal = item.price * item.qty;
+        subtotal += itemTotal;
+        const imgSrc = item.image || 'https://images.unsplash.com/photo-1596462502278-6c7b6b6b0f7c?w=100&h=100&fit=crop&q=80';
+
+        html += `
+          <div class="cart-item glass-card rounded-xl shadow-md p-4 flex flex-col sm:flex-row items-center gap-4 transition-all">
+            <img src="${imgSrc}" alt="${item.name}" class="w-24 h-24 object-cover rounded-lg border-2 border-pink-100 flex-shrink-0" />
+            <div class="flex-1 text-center sm:text-left">
+              <h4 class="font-semibold text-gray-800">${item.name}</h4>
               <p class="text-pink-600 font-bold">₦${item.price.toLocaleString()}</p>
             </div>
-            <div class="flex items-center gap-2">
-              <button onclick="updateQty(${index}, -1)" class="bg-gray-200 px-3 py-1 rounded hover:bg-gray-300">-</button>
-              <span class="w-8 text-center font-semibold">${item.qty}</span>
-              <button onclick="updateQty(${index}, 1)" class="bg-gray-200 px-3 py-1 rounded hover:bg-gray-300">+</button>
+            <div class="flex items-center gap-3">
+              <button onclick="changeQuantity(${index}, -1)" class="quantity-btn"><i class="fas fa-minus text-sm"></i></button>
+              <span class="w-8 text-center font-semibold text-gray-700">${item.qty}</span>
+              <button onclick="changeQuantity(${index}, 1)" class="quantity-btn"><i class="fas fa-plus text-sm"></i></button>
             </div>
-            <button onclick="removeItem(${index})" class="text-red-500 hover:text-red-700 text-sm">Remove</button>
+            <div class="flex items-center gap-4">
+              <span class="font-bold text-gray-800">₦${itemTotal.toLocaleString()}</span>
+              <button onclick="removeItem(${index})" class="remove-btn text-gray-400 hover:text-red-600 transition">
+                <i class="fas fa-times-circle text-xl"></i>
+              </button>
+            </div>
           </div>
         `;
-      }).join('');
+      });
 
-      totalSpan.textContent = `₦${total.toLocaleString()}`;
+      container.innerHTML = html;
+
+      // Update summary
+      subtotalEl.textContent = `₦${subtotal.toLocaleString()}`;
+      totalEl.textContent = `₦${subtotal.toLocaleString()}`;
+
+      // Update badge
+      updateBadge();
     }
 
-    // 2. UPDATE QUANTITY
-    window.updateQty = function(index, delta) {
-      let cart = JSON.parse(localStorage.getItem('cart')) || [];
+    // Change quantity
+    window.changeQuantity = function(index, delta) {
+      let cart = getCart();
       if (!cart[index]) return;
       cart[index].qty += delta;
       if (cart[index].qty <= 0) {
         cart.splice(index, 1);
       }
-      localStorage.setItem('cart', JSON.stringify(cart));
+      saveCart(cart);
       renderCart();
-      updateBadge(); // if we import badge function, but for simplicity we just reload badge via helper.
-      // We'll just render and update badge separately.
-      if (typeof window.updateBadge === 'function') window.updateBadge();
     };
 
+    // Remove item
     window.removeItem = function(index) {
-      let cart = JSON.parse(localStorage.getItem('cart')) || [];
+      let cart = getCart();
       cart.splice(index, 1);
-      localStorage.setItem('cart', JSON.stringify(cart));
+      saveCart(cart);
       renderCart();
-      if (typeof window.updateBadge === 'function') window.updateBadge();
     };
 
-    // Simple badge update (reuse same logic as index)
-    function updateBadge() {
-      const cart = JSON.parse(localStorage.getItem('cart')) || [];
-      const count = cart.reduce((sum, item) => sum + item.qty, 0);
-      // We don't have badge on this page, but we can add one if needed. Skip.
-    }
+    // Clear cart
+    document.getElementById('clear-cart-btn').addEventListener('click', function() {
+      if (confirm('Are you sure you want to remove all items from your cart?')) {
+        saveCart([]);
+        renderCart();
+      }
+    });
 
+    // ===========================================================
+    // 2. INIT
+    // ===========================================================
     renderCart();
   </script>
 </body>
