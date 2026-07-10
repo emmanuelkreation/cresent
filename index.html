@@ -4,20 +4,26 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Crescent Beauty Hub</title>
+  
+  <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- FontAwesome Icons (For realistic icons) -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+
   <style>
     /* ---- CUSTOM ANIMATIONS & STYLES ---- */
     .hero-bg {
-      background-image: url('https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?w=1400&q=80');
+      background-image: url('https://images.unsplash.com/photo-1617897903246-719242758050?w=1600&q=80');
       background-size: cover;
-      background-position: center;
+      background-position: center 30%;
     }
 
     /* Fade-in animation for product cards */
     .product-card {
       opacity: 0;
       transform: translateY(30px);
-      transition: opacity 0.6s ease, transform 0.6s ease, box-shadow 0.3s ease;
+      transition: opacity 0.7s ease, transform 0.7s ease, box-shadow 0.3s ease;
       cursor: pointer;
     }
     .product-card.visible {
@@ -25,20 +31,21 @@
       transform: translateY(0);
     }
     .product-card:hover {
-      transform: translateY(-8px);
-      box-shadow: 0 20px 30px -10px rgba(0, 0, 0, 0.15);
+      transform: translateY(-8px) scale(1.01);
+      box-shadow: 0 25px 40px -12px rgba(190, 24, 93, 0.2);
     }
 
     .filter-btn {
       transition: all 0.2s ease;
     }
     .filter-btn.active {
-      background-color: #be185d; /* pink-700 */
+      background-color: #be185d;
       color: white;
       border-color: #be185d;
+      box-shadow: 0 4px 10px rgba(190, 24, 93, 0.3);
     }
     .filter-btn:hover:not(.active) {
-      background-color: #fce7f3; /* pink-100 */
+      background-color: #fce7f3;
     }
 
     /* Hero text animation */
@@ -49,114 +56,125 @@
       0% { opacity: 0; transform: translateY(30px); }
       100% { opacity: 1; transform: translateY(0); }
     }
-    .hero-text-delay {
-      animation-delay: 0.3s;
-      opacity: 0;
+    .hero-text-delay { animation-delay: 0.2s; opacity: 0; }
+    .hero-text-delay-2 { animation-delay: 0.5s; opacity: 0; }
+
+    /* Category & Best Seller Image Hover */
+    .category-img {
+      transition: transform 0.4s ease, box-shadow 0.4s ease;
     }
-    .hero-text-delay-2 {
-      animation-delay: 0.6s;
-      opacity: 0;
+    .category-card:hover .category-img {
+      transform: scale(1.05) rotate(-2deg);
+      box-shadow: 0 10px 25px -8px rgba(0,0,0,0.15);
     }
 
-    /* Category card hover */
-    .category-card {
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    .testimonial-card {
+      transition: transform 0.3s ease;
     }
-    .category-card:hover {
-      transform: translateY(-6px);
-      box-shadow: 0 15px 25px -8px rgba(0, 0, 0, 0.1);
+    .testimonial-card:hover {
+      transform: translateY(-4px);
     }
   </style>
 </head>
 <body class="bg-gray-50 font-sans antialiased">
 
   <!-- ==================== TOP ANNOUNCEMENT ==================== -->
-  <div id="announcement-bar" class="bg-pink-600 text-white text-center text-sm py-2.5 px-4">
-    ✨ Free delivery on selected orders · Premium beauty essentials · Secure checkout ✨
+  <div id="announcement-bar" class="bg-pink-600 text-white text-center text-sm py-2.5 px-4 tracking-wide">
+    <i class="fas fa-gift mr-2"></i> Free delivery on selected orders · Premium beauty essentials · Secure checkout
   </div>
 
   <!-- ==================== NAVBAR ==================== -->
-  <nav class="bg-white/90 backdrop-blur-md shadow-sm sticky top-0 z-50 border-b border-gray-100">
+  <nav class="bg-white/90 backdrop-blur-md shadow-sm sticky top-0 z-50 border-b border-gray-100/80">
     <div class="container mx-auto px-4 py-3 flex justify-between items-center">
-      <a href="index.html" class="text-2xl font-extrabold text-pink-700 tracking-tight">Cresent Beauty Hub</a>
+      <a href="index.html" class="text-2xl font-extrabold text-pink-700 tracking-tight flex items-center gap-2">
+        <i class="fas fa-spa text-pink-500 text-2xl"></i> Cresent Beauty Hub
+      </a>
       
       <div class="flex items-center space-x-5">
-        <a href="admin.html" class="text-gray-500 hover:text-pink-600 text-sm font-medium hidden sm:inline">Admin</a>
-        <a href="cart.html" class="relative">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
-          </svg>
-          <span id="cart-badge" class="absolute -top-2 -right-2 bg-pink-600 text-white text-[10px] font-bold rounded-full px-2 py-0.5 min-w-[20px] text-center">0</span>
+        <a href="admin.html" class="text-gray-500 hover:text-pink-600 text-sm font-medium hidden sm:inline transition">
+          <i class="fas fa-user-cog mr-1"></i> Admin
+        </a>
+        <a href="cart.html" class="relative group">
+          <i class="fas fa-shopping-bag text-2xl text-gray-700 group-hover:text-pink-600 transition"></i>
+          <span id="cart-badge" class="absolute -top-2 -right-2 bg-pink-600 text-white text-[10px] font-bold rounded-full px-2 py-0.5 min-w-[20px] text-center shadow-lg">0</span>
         </a>
       </div>
     </div>
   </nav>
 
-  <!-- ==================== HERO SECTION (with Background Image) ==================== -->
-  <section class="hero-bg relative min-h-[75vh] flex items-center">
-    <!-- Dark Overlay -->
-    <div class="absolute inset-0 bg-black/40 backdrop-brightness-75"></div>
+  <!-- ==================== HERO SECTION (Real Image) ==================== -->
+  <section class="hero-bg relative min-h-[80vh] flex items-center">
+    <div class="absolute inset-0 bg-gradient-to-r from-black/50 via-black/30 to-transparent"></div>
     
     <div class="container mx-auto px-4 relative z-10 text-white">
-      <p class="text-pink-200 font-semibold uppercase tracking-[0.2em] hero-text hero-text-delay">Luxury Beauty Essentials</p>
-      <h1 class="text-4xl md:text-6xl lg:text-7xl font-extrabold leading-tight mt-2 hero-text hero-text-delay">
+      <p class="text-pink-200 font-semibold uppercase tracking-[0.3em] hero-text hero-text-delay text-sm">
+        <i class="fas fa-star mr-2"></i> Luxury Beauty Essentials
+      </p>
+      <h1 class="text-5xl md:text-7xl lg:text-8xl font-extrabold leading-[1.1] mt-2 hero-text hero-text-delay">
         Discover Beauty <br class="hidden sm:block" />That Lasts
       </h1>
-      <p class="text-lg md:text-xl text-gray-100 max-w-2xl mt-4 hero-text hero-text-delay-2">
+      <p class="text-lg md:text-xl text-gray-100 max-w-2xl mt-4 hero-text hero-text-delay-2 leading-relaxed">
         Premium perfumes, body sprays, face creams, body creams and hair care — 
         carefully selected to help you look radiant, feel confident, and smell amazing every day.
       </p>
       <div class="mt-8 flex flex-wrap gap-4 hero-text hero-text-delay-2">
         <button onclick="document.getElementById('products-section').scrollIntoView({behavior:'smooth'})" 
-                class="bg-pink-600 hover:bg-pink-700 text-white px-8 py-3.5 rounded-full font-semibold shadow-lg hover:shadow-pink-500/30 transition-all duration-300">
-          Shop Now
+                class="bg-pink-600 hover:bg-pink-700 text-white px-10 py-4 rounded-full font-semibold shadow-lg hover:shadow-pink-500/40 transition-all duration-300 flex items-center gap-2">
+          <i class="fas fa-store"></i> Shop Now
         </button>
-        <a href="#contact-section" class="bg-white/20 backdrop-blur-sm hover:bg-white/30 text-white px-8 py-3.5 rounded-full font-semibold border border-white/30 transition-all duration-300">
-          Contact Us
+        <a href="#contact-section" class="bg-white/10 backdrop-blur-sm hover:bg-white/20 text-white px-10 py-4 rounded-full font-semibold border border-white/30 transition-all duration-300 flex items-center gap-2">
+          <i class="fas fa-envelope"></i> Contact Us
         </a>
       </div>
     </div>
   </section>
 
-  <!-- ==================== FEATURED CATEGORIES ==================== -->
+  <!-- ==================== FEATURED CATEGORIES (Real Images) ==================== -->
   <section class="container mx-auto px-4 py-16">
     <div class="text-center mb-12">
-      <p class="text-pink-600 font-semibold uppercase tracking-wider text-sm">Explore</p>
+      <p class="text-pink-600 font-semibold uppercase tracking-wider text-sm flex items-center justify-center gap-2">
+        <i class="fas fa-th-large"></i> Explore
+      </p>
       <h2 class="text-3xl md:text-4xl font-bold text-gray-800">Shop by Category</h2>
     </div>
     
     <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 md:gap-6">
-      <!-- Category 1 -->
-      <div class="category-card bg-white rounded-2xl shadow p-5 text-center border border-gray-100">
-        <div class="text-4xl mb-2">🌸</div>
+      <!-- 1. Perfumes -->
+      <div class="category-card bg-white rounded-2xl shadow-lg p-5 text-center border border-gray-100 hover:shadow-xl transition-all">
+        <img src="https://images.unsplash.com/photo-1541643600914-78b084683601?w=200&h=200&fit=crop&crop=center&q=80" 
+             alt="Perfumes" class="category-img w-20 h-20 rounded-full object-cover mx-auto mb-3 border-2 border-pink-100" />
         <h3 class="font-bold text-gray-800">Perfumes</h3>
         <p class="text-xs text-gray-500 mt-1">Captivating fragrances</p>
         <a href="#products-section" class="inline-block mt-3 text-pink-600 text-sm font-medium hover:underline">Shop →</a>
       </div>
-      <!-- Category 2 -->
-      <div class="category-card bg-white rounded-2xl shadow p-5 text-center border border-gray-100">
-        <div class="text-4xl mb-2">💨</div>
+      <!-- 2. Body Sprays -->
+      <div class="category-card bg-white rounded-2xl shadow-lg p-5 text-center border border-gray-100 hover:shadow-xl transition-all">
+        <img src="https://images.unsplash.com/photo-1585386959984-a4155224a1ad?w=200&h=200&fit=crop&crop=center&q=80" 
+             alt="Body Sprays" class="category-img w-20 h-20 rounded-full object-cover mx-auto mb-3 border-2 border-pink-100" />
         <h3 class="font-bold text-gray-800">Body Sprays</h3>
         <p class="text-xs text-gray-500 mt-1">Fresh everyday scents</p>
         <a href="#products-section" class="inline-block mt-3 text-pink-600 text-sm font-medium hover:underline">Shop →</a>
       </div>
-      <!-- Category 3 -->
-      <div class="category-card bg-white rounded-2xl shadow p-5 text-center border border-gray-100">
-        <div class="text-4xl mb-2">🧴</div>
+      <!-- 3. Body Creams -->
+      <div class="category-card bg-white rounded-2xl shadow-lg p-5 text-center border border-gray-100 hover:shadow-xl transition-all">
+        <img src="https://images.unsplash.com/photo-1556228720-195a672e8a03?w=200&h=200&fit=crop&crop=center&q=80" 
+             alt="Body Creams" class="category-img w-20 h-20 rounded-full object-cover mx-auto mb-3 border-2 border-pink-100" />
         <h3 class="font-bold text-gray-800">Body Creams</h3>
         <p class="text-xs text-gray-500 mt-1">Deeply nourishing</p>
         <a href="#products-section" class="inline-block mt-3 text-pink-600 text-sm font-medium hover:underline">Shop →</a>
       </div>
-      <!-- Category 4 -->
-      <div class="category-card bg-white rounded-2xl shadow p-5 text-center border border-gray-100">
-        <div class="text-4xl mb-2">✨</div>
+      <!-- 4. Face Creams -->
+      <div class="category-card bg-white rounded-2xl shadow-lg p-5 text-center border border-gray-100 hover:shadow-xl transition-all">
+        <img src="https://images.unsplash.com/photo-1556228453-efd6c1ff04f6?w=200&h=200&fit=crop&crop=center&q=80" 
+             alt="Face Creams" class="category-img w-20 h-20 rounded-full object-cover mx-auto mb-3 border-2 border-pink-100" />
         <h3 class="font-bold text-gray-800">Face Creams</h3>
         <p class="text-xs text-gray-500 mt-1">Hydrate & brighten</p>
         <a href="#products-section" class="inline-block mt-3 text-pink-600 text-sm font-medium hover:underline">Shop →</a>
       </div>
-      <!-- Category 5 -->
-      <div class="category-card bg-white rounded-2xl shadow p-5 text-center border border-gray-100 col-span-2 md:col-span-1">
-        <div class="text-4xl mb-2">💆</div>
+      <!-- 5. Hair Creams -->
+      <div class="category-card bg-white rounded-2xl shadow-lg p-5 text-center border border-gray-100 hover:shadow-xl transition-all col-span-2 md:col-span-1">
+        <img src="https://images.unsplash.com/photo-1590179068383-b9c69a6a4de8?w=200&h=200&fit=crop&crop=center&q=80" 
+             alt="Hair Creams" class="category-img w-20 h-20 rounded-full object-cover mx-auto mb-3 border-2 border-pink-100" />
         <h3 class="font-bold text-gray-800">Hair Creams</h3>
         <p class="text-xs text-gray-500 mt-1">Nourish & protect</p>
         <a href="#products-section" class="inline-block mt-3 text-pink-600 text-sm font-medium hover:underline">Shop →</a>
@@ -164,33 +182,47 @@
     </div>
   </section>
 
-  <!-- ==================== BEST SELLERS (Static Preview) ==================== -->
-  <section class="bg-pink-50/50 py-16">
+  <!-- ==================== BEST SELLERS (Real Product Images) ==================== -->
+  <section class="bg-gradient-to-b from-pink-50/50 to-white py-16">
     <div class="container mx-auto px-4">
       <div class="text-center mb-10">
-        <p class="text-pink-600 font-semibold uppercase tracking-wider text-sm">Customer Favorites</p>
+        <p class="text-pink-600 font-semibold uppercase tracking-wider text-sm flex items-center justify-center gap-2">
+          <i class="fas fa-crown"></i> Customer Favorites
+        </p>
         <h2 class="text-3xl md:text-4xl font-bold text-gray-800">Best Sellers</h2>
       </div>
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-        <div class="bg-white p-5 rounded-xl shadow text-center border border-pink-100">
-          <div class="text-3xl mb-2">🌹</div>
-          <h4 class="font-bold">Luxury Signature Perfume</h4>
+        <!-- 1 -->
+        <div class="bg-white p-6 rounded-2xl shadow-md text-center border border-pink-100 hover:shadow-xl transition-shadow group">
+          <img src="https://images.unsplash.com/photo-1541643600914-78b084683601?w=300&h=300&fit=crop&crop=center&q=80" 
+               alt="Perfume" class="w-24 h-24 object-cover rounded-full mx-auto mb-3 border-2 border-pink-200 group-hover:border-pink-500 transition" />
+          <h4 class="font-bold text-gray-800">Luxury Signature Perfume</h4>
           <p class="text-sm text-gray-500">Long-lasting impression</p>
+          <span class="inline-block mt-2 bg-pink-100 text-pink-700 text-xs px-3 py-1 rounded-full">Fragrance</span>
         </div>
-        <div class="bg-white p-5 rounded-xl shadow text-center border border-pink-100">
-          <div class="text-3xl mb-2">💧</div>
-          <h4 class="font-bold">Hydrating Face Cream</h4>
-          <p class="text-sm text-gray-500">Glowing skin</p>
+        <!-- 2 -->
+        <div class="bg-white p-6 rounded-2xl shadow-md text-center border border-pink-100 hover:shadow-xl transition-shadow group">
+          <img src="https://images.unsplash.com/photo-1556228720-195a672e8a03?w=300&h=300&fit=crop&crop=center&q=80" 
+               alt="Face Cream" class="w-24 h-24 object-cover rounded-full mx-auto mb-3 border-2 border-pink-200 group-hover:border-pink-500 transition" />
+          <h4 class="font-bold text-gray-800">Hydrating Face Cream</h4>
+          <p class="text-sm text-gray-500">Glowing, healthy skin</p>
+          <span class="inline-block mt-2 bg-pink-100 text-pink-700 text-xs px-3 py-1 rounded-full">Skincare</span>
         </div>
-        <div class="bg-white p-5 rounded-xl shadow text-center border border-pink-100">
-          <div class="text-3xl mb-2">🥥</div>
-          <h4 class="font-bold">Nourishing Body Cream</h4>
-          <p class="text-sm text-gray-500">Soft all day</p>
+        <!-- 3 -->
+        <div class="bg-white p-6 rounded-2xl shadow-md text-center border border-pink-100 hover:shadow-xl transition-shadow group">
+          <img src="https://images.unsplash.com/photo-1585386959984-a4155224a1ad?w=300&h=300&fit=crop&crop=center&q=80" 
+               alt="Body Cream" class="w-24 h-24 object-cover rounded-full mx-auto mb-3 border-2 border-pink-200 group-hover:border-pink-500 transition" />
+          <h4 class="font-bold text-gray-800">Nourishing Body Cream</h4>
+          <p class="text-sm text-gray-500">Soft & smooth all day</p>
+          <span class="inline-block mt-2 bg-pink-100 text-pink-700 text-xs px-3 py-1 rounded-full">Body Care</span>
         </div>
-        <div class="bg-white p-5 rounded-xl shadow text-center border border-pink-100">
-          <div class="text-3xl mb-2">🌿</div>
-          <h4 class="font-bold">Premium Hair Care</h4>
-          <p class="text-sm text-gray-500">Strength & shine</p>
+        <!-- 4 -->
+        <div class="bg-white p-6 rounded-2xl shadow-md text-center border border-pink-100 hover:shadow-xl transition-shadow group">
+          <img src="https://images.unsplash.com/photo-1590179068383-b9c69a6a4de8?w=300&h=300&fit=crop&crop=center&q=80" 
+               alt="Hair Care" class="w-24 h-24 object-cover rounded-full mx-auto mb-3 border-2 border-pink-200 group-hover:border-pink-500 transition" />
+          <h4 class="font-bold text-gray-800">Premium Hair Care</h4>
+          <p class="text-sm text-gray-500">Strength, shine & health</p>
+          <span class="inline-block mt-2 bg-pink-100 text-pink-700 text-xs px-3 py-1 rounded-full">Hair Care</span>
         </div>
       </div>
     </div>
@@ -199,17 +231,19 @@
   <!-- ==================== PRODUCT GRID (Shop) ==================== -->
   <section id="products-section" class="container mx-auto px-4 py-16">
     <div class="text-center mb-10">
-      <h2 class="text-3xl md:text-4xl font-bold text-gray-800">All Products</h2>
+      <h2 class="text-3xl md:text-4xl font-bold text-gray-800 flex items-center justify-center gap-3">
+        <i class="fas fa-grid-2 text-pink-500"></i> All Products
+      </h2>
     </div>
 
     <!-- Filter Buttons -->
     <div class="flex flex-wrap justify-center gap-3 mb-10">
-      <button class="filter-btn active px-6 py-2 border border-gray-300 rounded-full text-sm font-medium bg-pink-700 text-white border-pink-700" data-filter="all">All</button>
-      <button class="filter-btn px-6 py-2 border border-gray-300 rounded-full text-sm font-medium" data-filter="Perfumes">Perfumes</button>
-      <button class="filter-btn px-6 py-2 border border-gray-300 rounded-full text-sm font-medium" data-filter="Body Sprays">Body Sprays</button>
-      <button class="filter-btn px-6 py-2 border border-gray-300 rounded-full text-sm font-medium" data-filter="Body Creams">Body Creams</button>
-      <button class="filter-btn px-6 py-2 border border-gray-300 rounded-full text-sm font-medium" data-filter="Face Creams">Face Creams</button>
-      <button class="filter-btn px-6 py-2 border border-gray-300 rounded-full text-sm font-medium" data-filter="Hair Creams">Hair Creams</button>
+      <button class="filter-btn active px-6 py-2.5 border border-gray-300 rounded-full text-sm font-medium bg-pink-700 text-white border-pink-700" data-filter="all">All</button>
+      <button class="filter-btn px-6 py-2.5 border border-gray-300 rounded-full text-sm font-medium" data-filter="Perfumes">Perfumes</button>
+      <button class="filter-btn px-6 py-2.5 border border-gray-300 rounded-full text-sm font-medium" data-filter="Body Sprays">Body Sprays</button>
+      <button class="filter-btn px-6 py-2.5 border border-gray-300 rounded-full text-sm font-medium" data-filter="Body Creams">Body Creams</button>
+      <button class="filter-btn px-6 py-2.5 border border-gray-300 rounded-full text-sm font-medium" data-filter="Face Creams">Face Creams</button>
+      <button class="filter-btn px-6 py-2.5 border border-gray-300 rounded-full text-sm font-medium" data-filter="Hair Creams">Hair Creams</button>
     </div>
 
     <!-- Product Grid -->
@@ -218,127 +252,180 @@
     </div>
   </section>
 
-  <!-- ==================== WHY CHOOSE US ==================== -->
-  <section class="bg-white py-16 border-t border-gray-100">
+  <!-- ==================== WHY CHOOSE US (FontAwesome Icons) ==================== -->
+  <section class="bg-white py-16 border-t border-gray-100 shadow-inner">
     <div class="container mx-auto px-4">
       <div class="text-center mb-12">
-        <p class="text-pink-600 font-semibold uppercase tracking-wider text-sm">The Cresent Promise</p>
+        <p class="text-pink-600 font-semibold uppercase tracking-wider text-sm flex items-center justify-center gap-2">
+          <i class="fas fa-heart"></i> The Cresent Promise
+        </p>
         <h2 class="text-3xl md:text-4xl font-bold text-gray-800">Why Choose Us</h2>
       </div>
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 text-center">
-        <div>
-          <div class="text-4xl mb-3">✅</div>
-          <h4 class="font-bold text-gray-800">Premium Quality</h4>
+        <div class="flex flex-col items-center">
+          <div class="w-16 h-16 bg-pink-100 rounded-full flex items-center justify-center text-pink-600 text-3xl mb-4 shadow-sm">
+            <i class="fas fa-certificate"></i>
+          </div>
+          <h4 class="font-bold text-gray-800 text-lg">Premium Quality</h4>
           <p class="text-sm text-gray-500">Carefully selected from trusted brands.</p>
         </div>
-        <div>
-          <div class="text-4xl mb-3">💰</div>
-          <h4 class="font-bold text-gray-800">Affordable Luxury</h4>
+        <div class="flex flex-col items-center">
+          <div class="w-16 h-16 bg-pink-100 rounded-full flex items-center justify-center text-pink-600 text-3xl mb-4 shadow-sm">
+            <i class="fas fa-wallet"></i>
+          </div>
+          <h4 class="font-bold text-gray-800 text-lg">Affordable Luxury</h4>
           <p class="text-sm text-gray-500">Premium products at competitive prices.</p>
         </div>
-        <div>
-          <div class="text-4xl mb-3">🚚</div>
-          <h4 class="font-bold text-gray-800">Fast Delivery</h4>
+        <div class="flex flex-col items-center">
+          <div class="w-16 h-16 bg-pink-100 rounded-full flex items-center justify-center text-pink-600 text-3xl mb-4 shadow-sm">
+            <i class="fas fa-truck-fast"></i>
+          </div>
+          <h4 class="font-bold text-gray-800 text-lg">Fast Delivery</h4>
           <p class="text-sm text-gray-500">Quick & safe nationwide shipping.</p>
         </div>
-        <div>
-          <div class="text-4xl mb-3">🔒</div>
-          <h4 class="font-bold text-gray-800">Secure Shopping</h4>
+        <div class="flex flex-col items-center">
+          <div class="w-16 h-16 bg-pink-100 rounded-full flex items-center justify-center text-pink-600 text-3xl mb-4 shadow-sm">
+            <i class="fas fa-lock"></i>
+          </div>
+          <h4 class="font-bold text-gray-800 text-lg">Secure Shopping</h4>
           <p class="text-sm text-gray-500">Safe payments & dedicated support.</p>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- ==================== TESTIMONIALS ==================== -->
+  <!-- ==================== TESTIMONIALS (Real Avatars) ==================== -->
   <section class="bg-gray-50 py-16">
     <div class="container mx-auto px-4">
       <div class="text-center mb-10">
-        <p class="text-pink-600 font-semibold uppercase tracking-wider text-sm">Loved by Thousands</p>
-        <h2 class="text-3xl md:text-4xl font-bold text-gray-800">Customer Reviews</h2>
+        <p class="text-pink-600 font-semibold uppercase tracking-wider text-sm flex items-center justify-center gap-2">
+          <i class="fas fa-star"></i> Testimonials
+        </p>
+        <h2 class="text-3xl md:text-4xl font-bold text-gray-800">Loved by Thousands</h2>
       </div>
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-          <p class="text-gray-600 italic">"I absolutely love the perfume I purchased. The fragrance lasts all day!"</p>
-          <p class="font-bold text-gray-800 mt-3">— Sophia A.</p>
+        <!-- 1 -->
+        <div class="testimonial-card bg-white p-6 rounded-xl shadow-md border border-gray-100">
+          <div class="flex items-center gap-3 mb-3">
+            <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="Sophia" class="w-12 h-12 rounded-full object-cover border-2 border-pink-200" />
+            <div>
+              <p class="font-bold text-gray-800 text-sm">Sophia A.</p>
+              <div class="text-yellow-400 text-xs"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
+            </div>
+          </div>
+          <p class="text-gray-600 italic text-sm">"I absolutely love the perfume I purchased. The fragrance lasts all day!"</p>
         </div>
-        <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-          <p class="text-gray-600 italic">"The face cream transformed my skin. Smoother and more hydrated."</p>
-          <p class="font-bold text-gray-800 mt-3">— Esther M.</p>
+        <!-- 2 -->
+        <div class="testimonial-card bg-white p-6 rounded-xl shadow-md border border-gray-100">
+          <div class="flex items-center gap-3 mb-3">
+            <img src="https://randomuser.me/api/portraits/women/68.jpg" alt="Esther" class="w-12 h-12 rounded-full object-cover border-2 border-pink-200" />
+            <div>
+              <p class="font-bold text-gray-800 text-sm">Esther M.</p>
+              <div class="text-yellow-400 text-xs"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
+            </div>
+          </div>
+          <p class="text-gray-600 italic text-sm">"The face cream transformed my skin. Smoother and more hydrated than ever."</p>
         </div>
-        <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-          <p class="text-gray-600 italic">"Fast delivery and excellent customer service. Highly recommend!"</p>
-          <p class="font-bold text-gray-800 mt-3">— Jennifer O.</p>
+        <!-- 3 -->
+        <div class="testimonial-card bg-white p-6 rounded-xl shadow-md border border-gray-100">
+          <div class="flex items-center gap-3 mb-3">
+            <img src="https://randomuser.me/api/portraits/women/63.jpg" alt="Jennifer" class="w-12 h-12 rounded-full object-cover border-2 border-pink-200" />
+            <div>
+              <p class="font-bold text-gray-800 text-sm">Jennifer O.</p>
+              <div class="text-yellow-400 text-xs"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
+            </div>
+          </div>
+          <p class="text-gray-600 italic text-sm">"Fast delivery and excellent customer service. Highly recommend!"</p>
         </div>
-        <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-          <p class="text-gray-600 italic">"The body cream leaves my skin incredibly soft. I'll be ordering again."</p>
-          <p class="font-bold text-gray-800 mt-3">— Grace T.</p>
+        <!-- 4 -->
+        <div class="testimonial-card bg-white p-6 rounded-xl shadow-md border border-gray-100">
+          <div class="flex items-center gap-3 mb-3">
+            <img src="https://randomuser.me/api/portraits/women/90.jpg" alt="Grace" class="w-12 h-12 rounded-full object-cover border-2 border-pink-200" />
+            <div>
+              <p class="font-bold text-gray-800 text-sm">Grace T.</p>
+              <div class="text-yellow-400 text-xs"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
+            </div>
+          </div>
+          <p class="text-gray-600 italic text-sm">"The body cream leaves my skin incredibly soft. I'll definitely be ordering again."</p>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- ==================== CONTACT SECTION (Can't find what you need?) ==================== -->
+  <!-- ==================== CONTACT SECTION (Glassmorphism) ==================== -->
   <section id="contact-section" class="container mx-auto px-4 py-16">
-    <div class="max-w-3xl mx-auto bg-white rounded-2xl shadow-xl p-6 md:p-10 border border-gray-100">
+    <div class="max-w-3xl mx-auto bg-white/70 backdrop-blur-sm rounded-2xl shadow-2xl p-6 md:p-10 border border-white/50">
       <div class="text-center mb-8">
-        <p class="text-pink-600 font-semibold uppercase tracking-wider text-sm">Get in Touch</p>
+        <p class="text-pink-600 font-semibold uppercase tracking-wider text-sm flex items-center justify-center gap-2">
+          <i class="fas fa-headset"></i> Get in Touch
+        </p>
         <h2 class="text-3xl font-bold text-gray-800">Can't find what you need?</h2>
         <p class="text-gray-500 mt-2">Contact us and we'll help you find the perfect product.</p>
       </div>
 
       <form id="contact-form" class="space-y-4">
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <input type="text" id="contact-name" placeholder="Your Full Name" required 
-                 class="w-full border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-pink-500 focus:border-pink-500 outline-none transition" />
-          <input type="email" id="contact-email" placeholder="Your Email Address" required 
-                 class="w-full border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-pink-500 focus:border-pink-500 outline-none transition" />
+          <div class="relative">
+            <i class="fas fa-user absolute left-3 top-3.5 text-gray-400"></i>
+            <input type="text" id="contact-name" placeholder="Your Full Name" required 
+                   class="w-full border border-gray-200 rounded-lg pl-10 p-3 focus:ring-2 focus:ring-pink-500 focus:border-pink-500 outline-none transition shadow-sm" />
+          </div>
+          <div class="relative">
+            <i class="fas fa-envelope absolute left-3 top-3.5 text-gray-400"></i>
+            <input type="email" id="contact-email" placeholder="Your Email Address" required 
+                   class="w-full border border-gray-200 rounded-lg pl-10 p-3 focus:ring-2 focus:ring-pink-500 focus:border-pink-500 outline-none transition shadow-sm" />
+          </div>
         </div>
-        <textarea id="contact-message" rows="4" placeholder="Tell us what you're looking for..." required 
-                  class="w-full border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-pink-500 focus:border-pink-500 outline-none transition"></textarea>
+        <div class="relative">
+          <i class="fas fa-pencil-alt absolute left-3 top-3.5 text-gray-400"></i>
+          <textarea id="contact-message" rows="4" placeholder="Tell us what you're looking for..." required 
+                    class="w-full border border-gray-200 rounded-lg pl-10 p-3 focus:ring-2 focus:ring-pink-500 focus:border-pink-500 outline-none transition shadow-sm"></textarea>
+        </div>
         <button type="submit" 
-                class="w-full bg-pink-600 hover:bg-pink-700 text-white font-semibold py-3 rounded-lg transition duration-200 shadow-md hover:shadow-pink-500/30">
-          Send Message
+                class="w-full bg-pink-600 hover:bg-pink-700 text-white font-semibold py-3.5 rounded-lg transition duration-200 shadow-md hover:shadow-pink-500/30 flex items-center justify-center gap-2">
+          <i class="fas fa-paper-plane"></i> Send Message
         </button>
       </form>
-      <div id="contact-success" class="hidden mt-4 text-center text-green-600 font-semibold p-3 bg-green-50 rounded-lg">
-        ✅ Your message was sent! We'll get back to you shortly.
+      <div id="contact-success" class="hidden mt-4 text-center text-green-600 font-semibold p-3 bg-green-50 rounded-lg border border-green-200">
+        <i class="fas fa-check-circle mr-2"></i> Your message was sent! We'll get back to you shortly.
       </div>
     </div>
   </section>
 
   <!-- ==================== FOOTER ==================== -->
-  <footer class="bg-gray-900 text-gray-300 mt-8 py-12 px-4">
+  <footer class="bg-gray-900 text-gray-300 mt-8 py-12 px-4 border-t border-gray-800">
     <div class="container mx-auto grid grid-cols-1 md:grid-cols-4 gap-8">
       <div>
-        <h3 class="text-white text-2xl font-bold">Cresent Beauty Hub</h3>
+        <h3 class="text-white text-2xl font-bold flex items-center gap-2">
+          <i class="fas fa-spa text-pink-500"></i> Cresent Beauty Hub
+        </h3>
         <p class="mt-2 text-sm leading-relaxed">Your trusted destination for premium perfumes, skincare, body care, and hair care.</p>
       </div>
       <div>
         <h4 class="text-white font-semibold">Quick Links</h4>
         <ul class="mt-2 text-sm space-y-1.5">
-          <li><a href="index.html" class="hover:text-pink-400 transition">Home</a></li>
-          <li><a href="#products-section" class="hover:text-pink-400 transition">Shop</a></li>
-          <li><a href="admin.html" class="hover:text-pink-400 transition">Admin</a></li>
+          <li><a href="index.html" class="hover:text-pink-400 transition"><i class="fas fa-chevron-right text-[10px] mr-1"></i> Home</a></li>
+          <li><a href="#products-section" class="hover:text-pink-400 transition"><i class="fas fa-chevron-right text-[10px] mr-1"></i> Shop</a></li>
+          <li><a href="admin.html" class="hover:text-pink-400 transition"><i class="fas fa-chevron-right text-[10px] mr-1"></i> Admin</a></li>
         </ul>
       </div>
       <div>
         <h4 class="text-white font-semibold">Support</h4>
         <ul class="mt-2 text-sm space-y-1.5">
-          <li><a href="#" class="hover:text-pink-400 transition">Shipping Policy</a></li>
-          <li><a href="#" class="hover:text-pink-400 transition">Return Policy</a></li>
-          <li><a href="#" class="hover:text-pink-400 transition">Privacy Policy</a></li>
+          <li><a href="#" class="hover:text-pink-400 transition"><i class="fas fa-chevron-right text-[10px] mr-1"></i> Shipping Policy</a></li>
+          <li><a href="#" class="hover:text-pink-400 transition"><i class="fas fa-chevron-right text-[10px] mr-1"></i> Return Policy</a></li>
+          <li><a href="#" class="hover:text-pink-400 transition"><i class="fas fa-chevron-right text-[10px] mr-1"></i> Privacy Policy</a></li>
         </ul>
       </div>
       <div>
-        <h4 class="text-white font-semibold">Contact</h4>
-        <p class="text-sm mt-2">Email: mercyola971@gmail.com</p>
-        <p class="text-sm">Phone: +234 7038721342</p>
-        <p class="text-sm">Ogbomoso, Nigeria</p>
+        <h4 class="text-white font-semibold"><i class="fas fa-address-card mr-2"></i> Contact</h4>
+        <p class="text-sm mt-2"><i class="fas fa-envelope mr-2 text-pink-400"></i> mercyola971@gmail.com</p>
+        <p class="text-sm"><i class="fas fa-phone mr-2 text-pink-400"></i> +234 7038721342</p>
+        <p class="text-sm"><i class="fas fa-map-marker-alt mr-2 text-pink-400"></i> Ogbomoso, Nigeria</p>
       </div>
     </div>
     <div class="container mx-auto text-center text-sm border-t border-gray-800 mt-10 pt-6">
-      © 2026 Cresent Beauty Hub. All Rights Reserved.
+      <i class="far fa-copyright mr-1"></i> 2026 Cresent Beauty Hub. All Rights Reserved.
     </div>
   </footer>
 
@@ -355,7 +442,7 @@
     const firebaseConfig = {
       apiKey: "AIzaSyB2jxywTYbizISk9_mJcreBx5eS5u0C4es",
       authDomain: "crescent-2662a.firebaseapp.com",
-      databaseURL: "https://crescent-2662a-default-rtdb.firebaseio.com", // <-- VERIFY THIS URL in your Firebase Console
+      databaseURL: "https://crescent-2662a-default-rtdb.firebaseio.com", // <-- VERIFY THIS URL
       projectId: "crescent-2662a",
       storageBucket: "crescent-2662a.firebasestorage.app",
       messagingSenderId: "947228503695",
@@ -383,7 +470,7 @@
     updateBadge();
 
     // ===========================================================
-    // 4. ADD TO CART (exposed globally)
+    // 4. ADD TO CART
     // ===========================================================
     window.addToCart = function(productId) {
       const product = allProducts.find(p => p.id === productId);
@@ -406,20 +493,11 @@
       
       localStorage.setItem('cart', JSON.stringify(cart));
       updateBadge();
-      
-      // Simple feedback
-      const btn = event && event.target ? event.target : document.querySelector(`[onclick*="${productId}"]`);
-      if (btn) {
-        const originalText = btn.innerText;
-        btn.innerText = '✅ Added!';
-        setTimeout(() => { btn.innerText = originalText; }, 1500);
-      } else {
-        alert(`${product.name} added to cart!`);
-      }
+      alert(`✅ ${product.name} added to cart!`);
     };
 
     // ===========================================================
-    // 5. LOAD PRODUCTS (Real-time from Firebase)
+    // 5. LOAD PRODUCTS (Real-time)
     // ===========================================================
     function loadProducts() {
       const productsRef = db.ref('products');
@@ -445,12 +523,12 @@
         }
 
         renderProducts(currentFilter);
-        observeProductCards(); // Re-run animation observer after render
+        observeProductCards();
       });
     }
 
     // ===========================================================
-    // 6. RENDER PRODUCTS (with filter)
+    // 6. RENDER PRODUCTS
     // ===========================================================
     function renderProducts(filter) {
       const grid = document.getElementById('product-grid');
@@ -470,41 +548,41 @@
       }
 
       grid.innerHTML = filtered.map(p => {
-        const imgSrc = p.thumbnail || (p.images ? p.images[0] : 'https://via.placeholder.com/300x300/FFD1DC/FF69B4?text=Beauty');
+        const imgSrc = p.thumbnail || (p.images ? p.images[0] : 'https://images.unsplash.com/photo-1596462502278-6c7b6b6b0f7c?w=300&h=300&fit=crop&q=80');
         return `
           <div class="product-card bg-white rounded-xl shadow-md overflow-hidden border border-gray-100">
-            <img src="${imgSrc}" alt="${p.name}" class="w-full h-48 object-cover" loading="lazy" />
+            <img src="${imgSrc}" alt="${p.name}" class="w-full h-56 object-cover" loading="lazy" />
             <div class="p-4">
               <h3 class="font-semibold text-gray-800 truncate">${p.name}</h3>
-              <p class="text-pink-600 font-bold text-lg mt-1">₦${p.price.toLocaleString()}</p>
+              <div class="flex items-center justify-between mt-1">
+                <p class="text-pink-600 font-bold text-lg">₦${p.price.toLocaleString()}</p>
+                <span class="text-xs bg-gray-100 px-2 py-1 rounded-full text-gray-600">${p.category || 'General'}</span>
+              </div>
               <button onclick="addToCart('${p.id}')" 
                       class="mt-3 w-full bg-pink-600 hover:bg-pink-700 text-white text-sm font-medium py-2.5 rounded-lg transition duration-200 shadow-sm hover:shadow">
-                Add to Cart
+                <i class="fas fa-cart-plus mr-1"></i> Add to Cart
               </button>
             </div>
           </div>
         `;
       }).join('');
 
-      // Observe new cards
       observeProductCards();
     }
 
     // ===========================================================
-    // 7. SCROLL ANIMATION (Intersection Observer)
+    // 7. SCROLL ANIMATION
     // ===========================================================
     function observeProductCards() {
       const cards = document.querySelectorAll('.product-card');
-      
       if (cards.length === 0) return;
 
       const observer = new IntersectionObserver((entries) => {
         entries.forEach((entry, index) => {
           if (entry.isIntersecting) {
-            // Add a slight delay for a staggered effect
             setTimeout(() => {
               entry.target.classList.add('visible');
-            }, index * 80);
+            }, index * 100);
             observer.unobserve(entry.target);
           }
         });
@@ -531,7 +609,7 @@
     });
 
     // ===========================================================
-    // 9. CONTACT FORM - SAVE TO FIREBASE
+    // 9. CONTACT FORM
     // ===========================================================
     document.getElementById('contact-form').addEventListener('submit', async (e) => {
       e.preventDefault();
@@ -554,18 +632,14 @@
           timestamp: firebase.database.ServerValue.TIMESTAMP
         });
 
-        // Show success
         document.getElementById('contact-success').classList.remove('hidden');
         document.getElementById('contact-form').reset();
-        
-        // Auto-hide success after 5 seconds
         setTimeout(() => {
           document.getElementById('contact-success').classList.add('hidden');
         }, 6000);
         
       } catch (error) {
-        alert('Error sending message. Please try again: ' + error.message);
-        console.error(error);
+        alert('Error sending message: ' + error.message);
       }
     });
 
