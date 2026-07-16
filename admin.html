@@ -7,10 +7,11 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
   
-  <!-- ImageKit JavaScript SDK -->
-  <script src="https://cdn.jsdelivr.net/npm/imagekit-javascript-sdk@1.0.1/dist/imagekit.min.js"></script>
+  <!-- ImageKit JavaScript SDK - correct CDN -->
+  <script src="https://unpkg.com/imagekit-javascript-sdk@1.0.1/dist/imagekit.min.js"></script>
   
   <style>
+    /* ... (same as before) ... */
     .fade-up { opacity:0; transform:translateY(20px); animation:fadeUp 0.5s ease forwards; }
     .fade-up-d1 { animation-delay:0.05s; }
     .fade-up-d2 { animation-delay:0.1s; }
@@ -295,11 +296,21 @@
     // ✅ YOUR CORRECT IMAGEKIT PUBLIC KEY
     const IK_PUBLIC_KEY = "public_x1rcEzRQ8hvmPXRezLS36mk9UE8=";
 
-    // Initialize ImageKit SDK
-    const imagekit = new ImageKit({
-      publicKey: IK_PUBLIC_KEY,
-      urlEndpoint: "https://ik.imagekit.io/2pq3d2rd"
-    });
+    // Initialize ImageKit SDK safely
+    let imagekit = null;
+    try {
+      if (typeof ImageKit !== 'undefined') {
+        imagekit = new ImageKit({
+          publicKey: IK_PUBLIC_KEY,
+          urlEndpoint: "https://ik.imagekit.io/2pq3d2rd"
+        });
+        console.log("ImageKit SDK initialized successfully.");
+      } else {
+        console.warn("ImageKit SDK not loaded. Uploads will fail.");
+      }
+    } catch (err) {
+      console.error("Failed to initialize ImageKit:", err);
+    }
 
     // ===========================================================
     // TOAST
@@ -394,9 +405,12 @@
     });
 
     // ===========================================================
-    // IMAGEKIT UPLOAD USING SDK (RECOMMENDED)
+    // IMAGEKIT UPLOAD USING SDK (with fallback)
     // ===========================================================
     async function uploadToImageKit(file, folder) {
+      if (!imagekit) {
+        throw new Error("ImageKit SDK not initialized. Please check your internet connection and try again.");
+      }
       return new Promise((resolve, reject) => {
         imagekit.upload({
           file: file,
