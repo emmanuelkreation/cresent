@@ -288,7 +288,7 @@
     const auth = firebase.auth();
 
     // ✅ CORRECT IMAGEKIT PUBLIC KEY (from your screenshot)
-    const IK_PUBLIC_KEY = "public_x1rcFzR0f8hwPXRzL53Gnk9U";
+    const IK_PUBLIC_KEY = "public_x1rcEzRQ8hvmPXRezLS36mk9UE8=";
 
     // ===========================================================
     // TOAST
@@ -394,7 +394,7 @@
       const response = await fetch("https://upload.imagekit.io/api/v1/files/upload", {
         method: "POST",
         headers: {
-          "Authorization": `Basic ${btoa(IK_PUBLIC_KEY + ":")}`
+          "Authorization": `Basic ${btoa(public_x1rcEzRQ8hvmPXRezLS36mk9UE8= + ":")}`
         },
         body: formData
       });
