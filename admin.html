@@ -288,8 +288,8 @@
     const db = firebase.database();
     const auth = firebase.auth();
 
-    // ✅ YOUR CORRECT IMAGEKIT PUBLIC KEY
-    const IK_PUBLIC_KEY = "public_x1rcEzRQ8hvmPXRezLS36mk9UE8=";
+    // ✅ YOUR NEW RESTRICTED IMAGEKIT PUBLIC KEY
+    const IK_PUBLIC_KEY = "public_AeP3G1ddCT9ybaY7oc0jW5hk5ag=";
 
     // ===========================================================
     // TOAST
@@ -384,7 +384,7 @@
     });
 
     // ===========================================================
-    // IMAGEKIT UPLOAD – Direct REST API (No SDK)
+    // IMAGEKIT UPLOAD – Direct REST API
     // ===========================================================
     async function uploadToImageKit(file, folder) {
       const formData = new FormData();
