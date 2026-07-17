@@ -7,6 +7,7 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
   <style>
+    /* ... (same styles as before) ... */
     .fade-up { opacity:0; transform:translateY(20px); animation:fadeUp 0.5s ease forwards; }
     .fade-up-d1 { animation-delay:0.05s; }
     .fade-up-d2 { animation-delay:0.1s; }
@@ -269,6 +270,7 @@
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-storage-compat.js"></script>
 
   <script>
     // ===========================================================
@@ -279,7 +281,7 @@
       authDomain: "crescent-2662a.firebaseapp.com",
       databaseURL: "https://crescent-2662a-default-rtdb.firebaseio.com",
       projectId: "crescent-2662a",
-      storageBucket: "crescent-2662a.firebasestorage.app",
+      storageBucket: "crescent-2662a.firebasestorage.app",  // <-- Your storage bucket
       messagingSenderId: "947228503695",
       appId: "1:947228503695:web:f74d1c4da04508268ccafa",
       measurementId: "G-8BR6NDVKQC"
@@ -287,9 +289,7 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
     const auth = firebase.auth();
-
-    // ✅ YOUR CORRECT STANDARD IMAGEKIT PUBLIC KEY
-    const IK_PUBLIC_KEY = "public_x1rcEzRQ8hvmPXRezLS36mk9UE8=";
+    const storage = firebase.storage();
 
     // ===========================================================
     // TOAST
@@ -384,27 +384,19 @@
     });
 
     // ===========================================================
-    // IMAGEKIT UPLOAD – Direct REST API
+    // UPLOAD TO FIREBASE STORAGE (NEW)
     // ===========================================================
-    async function uploadToImageKit(file, folder) {
-      const formData = new FormData();
-      formData.append("file", file);
-      formData.append("fileName", file.name);
-      formData.append("folder", folder);
-
-      const response = await fetch("https://upload.imagekit.io/api/v1/files/upload", {
-        method: "POST",
-        headers: {
-          "Authorization": `Basic ${btoa(IK_PUBLIC_KEY + ":")}`
-        },
-        body: formData
-      });
-
-      const data = await response.json();
-      if (!response.ok) {
-        throw new Error(data.message || 'Upload failed');
-      }
-      return data.url;
+    async function uploadToFirebaseStorage(file, folder) {
+      // Generate a unique filename
+      const timestamp = Date.now();
+      const fileName = `${folder}/${timestamp}_${file.name}`;
+      const storageRef = storage.ref(fileName);
+      
+      // Upload the file
+      const snapshot = await storageRef.put(file);
+      // Get the download URL
+      const downloadURL = await snapshot.ref.getDownloadURL();
+      return downloadURL;
     }
 
     // ===========================================================
@@ -432,7 +424,7 @@
       try {
         const imageUrls = [];
         for (let file of files) {
-          const url = await uploadToImageKit(file, "/products");
+          const url = await uploadToFirebaseStorage(file, "products");
           imageUrls.push(url);
         }
 
@@ -445,7 +437,7 @@
           stock: stock,
           description: desc,
           images: imageUrls,
-          thumbnail: imageUrls[0] + "?tr=w-300,h-300,fo-auto",
+          thumbnail: imageUrls[0], // Firebase Storage already gives a direct URL
           createdAt: firebase.database.ServerValue.TIMESTAMP
         });
 
