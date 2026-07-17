@@ -15,41 +15,16 @@
   <script src="https://js.paystack.co/v1/inline.js"></script>
 
   <style>
-    .fade-up {
-      opacity: 0;
-      transform: translateY(20px);
-      animation: fadeUp 0.6s ease forwards;
-    }
-    .fade-up-d1 { animation-delay: 0.05s; }
-    .fade-up-d2 { animation-delay: 0.1s; }
-    .fade-up-d3 { animation-delay: 0.15s; }
-    .fade-up-d4 { animation-delay: 0.2s; }
-
-    @keyframes fadeUp {
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    .glass-card {
-      background: rgba(255, 255, 255, 0.7);
-      backdrop-filter: blur(12px);
-      border: 1px solid rgba(255, 255, 255, 0.5);
-    }
-
-    .input-focus:focus {
-      outline: none;
-      ring: 2px solid #be185d;
-      border-color: #be185d;
-      box-shadow: 0 0 0 4px rgba(190, 24, 93, 0.1);
-    }
-
-    .whatsapp-pulse {
-      animation: pulse 2s infinite;
-    }
-    @keyframes pulse {
-      0% { box-shadow: 0 0 0 0 rgba(37, 211, 102, 0.4); }
-      70% { box-shadow: 0 0 0 15px rgba(37, 211, 102, 0); }
-      100% { box-shadow: 0 0 0 0 rgba(37, 211, 102, 0); }
-    }
+    .fade-up { opacity:0; transform:translateY(20px); animation:fadeUp 0.6s ease forwards; }
+    .fade-up-d1 { animation-delay:0.05s; }
+    .fade-up-d2 { animation-delay:0.1s; }
+    .fade-up-d3 { animation-delay:0.15s; }
+    .fade-up-d4 { animation-delay:0.2s; }
+    @keyframes fadeUp { to { opacity:1; transform:translateY(0); } }
+    .glass-card { background:rgba(255,255,255,0.7); backdrop-filter:blur(12px); border:1px solid rgba(255,255,255,0.5); }
+    .input-focus:focus { outline:none; ring:2px solid #be185d; border-color:#be185d; box-shadow:0 0 0 4px rgba(190,24,93,0.1); }
+    .whatsapp-pulse { animation:pulse 2s infinite; }
+    @keyframes pulse { 0% { box-shadow:0 0 0 0 rgba(37,211,102,0.4); } 70% { box-shadow:0 0 0 15px rgba(37,211,102,0); } 100% { box-shadow:0 0 0 0 rgba(37,211,102,0); } }
   </style>
 </head>
 <body class="bg-gray-50 font-sans antialiased">
@@ -88,7 +63,7 @@
       <div class="lg:col-span-2 space-y-6">
         <div class="glass-card rounded-2xl shadow-xl p-6 md:p-8 fade-up fade-up-d1">
           <h3 class="text-xl font-bold text-gray-800 mb-4"><i class="fas fa-user-circle text-pink-500 mr-2"></i> Your Details</h3>
-          <form id="checkout-form" class="space-y-4">
+          <form id="checkout-form" class="space-y-4" onsubmit="return false;">
             <div class="relative">
               <i class="fas fa-user absolute left-3 top-3.5 text-gray-400"></i>
               <input type="text" id="fullName" placeholder="Full Name" required
@@ -157,7 +132,7 @@
     </div>
   </section>
 
-  <!-- Footer (same as before) -->
+  <!-- Footer -->
   <footer class="bg-gray-900 text-gray-300 mt-16 py-12 px-4 border-t border-gray-800">
     <div class="container mx-auto grid grid-cols-1 md:grid-cols-4 gap-8">
       <div>
@@ -218,10 +193,10 @@
     // ===========================================================
     // 2. PAYSTACK PUBLIC KEY (REPLACE WITH YOUR OWN)
     // ===========================================================
-    const PAYSTACK_PUBLIC_KEY = "pk_live_a7515ef50624d01dccef7efae8697a4a70d02bc8"; // <-- Replace with your live key
+    const PAYSTACK_PUBLIC_KEY = "pk_live_a7515ef50624d01dccef7efae8697a4a70d02bc8"; // <-- CHANGE THIS
 
     // ===========================================================
-    // 3. WHATSAPP NUMBER (for admin notification - optional)
+    // 3. WHATSAPP NUMBER (optional notification)
     // ===========================================================
     const WHATSAPP_NUMBER = "2347038721342";
 
@@ -272,99 +247,111 @@
     loadOrderSummary();
 
     // ===========================================================
-    // 6. PAYSTACK PAYMENT HANDLER
+    // 6. PAYSTACK PAYMENT HANDLER (with error checking)
     // ===========================================================
-    document.getElementById('pay-now-btn').addEventListener('click', function(e) {
-      const name = document.getElementById('fullName').value.trim();
-      const email = document.getElementById('email').value.trim();
-      const phone = document.getElementById('phone').value.trim();
-      const address = document.getElementById('address').value.trim();
-
-      if (!name || !email || !phone || !address) {
-        alert('Please fill in all your details.');
+    // Wait for DOM to be ready
+    document.addEventListener('DOMContentLoaded', function() {
+      const payBtn = document.getElementById('pay-now-btn');
+      if (!payBtn) {
+        console.error('Pay button not found!');
         return;
       }
 
-      const cart = getCart();
-      if (cart.length === 0) {
-        alert('Your cart is empty.');
-        return;
-      }
+      payBtn.addEventListener('click', function(e) {
+        console.log('Pay button clicked'); // Debug log
 
-      // Calculate total in kobo (Paystack uses smallest currency unit)
-      const total = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
-      const amountInKobo = total * 100; // 1 NGN = 100 kobo
+        // Validate form
+        const name = document.getElementById('fullName').value.trim();
+        const email = document.getElementById('email').value.trim();
+        const phone = document.getElementById('phone').value.trim();
+        const address = document.getElementById('address').value.trim();
 
-      // Generate a unique reference
-      const ref = `CR-${Date.now().toString().slice(-6)}-${Math.random().toString(36).substring(2, 7)}`;
-
-      // Create order object (will be saved after payment)
-      const orderData = {
-        orderId: ref,
-        customerName: name,
-        email: email,
-        phone: phone,
-        address: address,
-        items: cart,
-        totalAmount: total,
-        paymentStatus: 'pending', // will be updated to 'paid' after success
-        placedAt: firebase.database.ServerValue.TIMESTAMP
-      };
-
-      // Initialize Paystack
-      const handler = PaystackPop.setup({
-        key: PAYSTACK_PUBLIC_KEY,
-        email: email,
-        amount: amountInKobo,
-        currency: 'NGN',
-        ref: ref,
-        metadata: {
-          custom_fields: [
-            { display_name: "Customer Name", variable_name: "customer_name", value: name },
-            { display_name: "Phone", variable_name: "phone", value: phone },
-            { display_name: "Delivery Address", variable_name: "address", value: address }
-          ]
-        },
-        callback: async function(response) {
-          // Payment successful
-          const reference = response.reference;
-          // Save order with 'paid' status
-          try {
-            const newOrderRef = db.ref('orders').push();
-            await newOrderRef.set({
-              ...orderData,
-              paymentStatus: 'paid',
-              paymentReference: reference,
-              paymentDate: firebase.database.ServerValue.TIMESTAMP
-            });
-
-            // Clear cart
-            localStorage.removeItem('cart');
-            updateBadge();
-
-            // Show success
-            document.querySelector('.lg\\:col-span-2 .glass-card').style.display = 'none';
-            document.getElementById('success-box').classList.remove('hidden');
-            document.getElementById('order-id-display').textContent = `#${ref}`;
-
-            // Optional WhatsApp notification to admin
-            const waMessage = `New order #${ref} paid via Paystack. Total: ₦${total.toLocaleString()}. Customer: ${name}.`;
-            const waLink = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(waMessage)}`;
-            // Optionally, you can auto-open WhatsApp or just show a button.
-            // We'll leave it for the admin to check the admin panel.
-
-          } catch (error) {
-            alert('Error saving order: ' + error.message);
-            console.error(error);
-          }
-        },
-        onClose: function() {
-          // User closed the modal
-          alert('Payment cancelled. You can try again.');
+        if (!name || !email || !phone || !address) {
+          alert('Please fill in all your details.');
+          return;
         }
-      });
 
-      handler.openIframe();
+        const cart = getCart();
+        if (cart.length === 0) {
+          alert('Your cart is empty.');
+          return;
+        }
+
+        // Calculate total in kobo
+        const total = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
+        const amountInKobo = total * 100;
+
+        // Check if Paystack is loaded
+        if (typeof PaystackPop === 'undefined') {
+          alert('Payment system is loading. Please try again in a moment.');
+          console.error('PaystackPop is not defined. Check if the script loaded.');
+          return;
+        }
+
+        // Generate reference
+        const ref = `CR-${Date.now().toString().slice(-6)}-${Math.random().toString(36).substring(2, 7)}`;
+
+        // Order data
+        const orderData = {
+          orderId: ref,
+          customerName: name,
+          email: email,
+          phone: phone,
+          address: address,
+          items: cart,
+          totalAmount: total,
+          paymentStatus: 'pending',
+          placedAt: firebase.database.ServerValue.TIMESTAMP
+        };
+
+        // Initialize Paystack
+        const handler = PaystackPop.setup({
+          key: PAYSTACK_PUBLIC_KEY,
+          email: email,
+          amount: amountInKobo,
+          currency: 'NGN',
+          ref: ref,
+          metadata: {
+            custom_fields: [
+              { display_name: "Customer Name", variable_name: "customer_name", value: name },
+              { display_name: "Phone", variable_name: "phone", value: phone },
+              { display_name: "Delivery Address", variable_name: "address", value: address }
+            ]
+          },
+          callback: async function(response) {
+            try {
+              const newOrderRef = db.ref('orders').push();
+              await newOrderRef.set({
+                ...orderData,
+                paymentStatus: 'paid',
+                paymentReference: response.reference,
+                paymentDate: firebase.database.ServerValue.TIMESTAMP
+              });
+
+              localStorage.removeItem('cart');
+              updateBadge();
+
+              document.querySelector('.lg\\:col-span-2 .glass-card').style.display = 'none';
+              document.getElementById('success-box').classList.remove('hidden');
+              document.getElementById('order-id-display').textContent = `#${ref}`;
+
+              // Optional: WhatsApp notification
+              const waMessage = `New order #${ref} paid via Paystack. Total: ₦${total.toLocaleString()}. Customer: ${name}.`;
+              const waLink = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(waMessage)}`;
+              // You could open this in a new tab if desired.
+
+            } catch (error) {
+              alert('Error saving order: ' + error.message);
+              console.error(error);
+            }
+          },
+          onClose: function() {
+            alert('Payment cancelled. You can try again.');
+          }
+        });
+
+        handler.openIframe();
+      });
     });
   </script>
 </body>
