@@ -46,6 +46,7 @@
     /* Table rows */
     .order-row:hover { background-color: #fdf2f8; }
     .product-row:hover { background-color: #f5f5f5; }
+    .review-row:hover { background-color: #f5f5f5; }
 
     /* Toast notification */
     .toast {
@@ -110,6 +111,9 @@
         <a href="index.html" class="text-gray-500 hover:text-pink-600 text-sm font-medium transition flex items-center gap-1">
           <i class="fas fa-store"></i> Store
         </a>
+        <a href="reviews.html" class="text-gray-500 hover:text-pink-600 text-sm font-medium transition flex items-center gap-1">
+          <i class="fas fa-star"></i> Reviews
+        </a>
         <button id="logout-btn" onclick="logoutAdmin()" class="hidden text-gray-500 hover:text-red-600 text-sm font-medium transition flex items-center gap-1">
           <i class="fas fa-sign-out-alt"></i> Logout
         </button>
@@ -162,9 +166,14 @@
       <button id="tab-orders" class="tab-btn px-6 py-3 text-sm font-medium text-gray-500 hover:text-gray-700 whitespace-nowrap" onclick="showTab('orders')">
         <i class="fas fa-boxes mr-2"></i> Manage Orders
       </button>
+      <button id="tab-reviews" class="tab-btn px-6 py-3 text-sm font-medium text-gray-500 hover:text-gray-700 whitespace-nowrap" onclick="showTab('reviews')">
+        <i class="fas fa-star mr-2"></i> Reviews
+      </button>
     </div>
 
-    <!-- Add Product Tab -->
+    <!-- ============================================================ -->
+    <!-- TAB 1: Add Product -->
+    <!-- ============================================================ -->
     <div id="tab-products-content" class="fade-up fade-up-d1">
       <div class="glass-card rounded-2xl shadow-xl p-6 md:p-8 max-w-3xl mx-auto">
         <h2 class="text-2xl font-bold text-gray-800 mb-4"><i class="fas fa-plus-circle text-pink-500 mr-2"></i> Add New Product</h2>
@@ -202,8 +211,7 @@
             <i class="fas fa-align-left absolute left-3 top-3.5 text-gray-400"></i>
             <textarea id="prodDesc" placeholder="Product Description" rows="3" class="w-full border border-gray-200 rounded-lg pl-10 p-3 input-focus transition shadow-sm"></textarea>
           </div>
-
-          <!-- NEW: Image URLs input -->
+          <!-- Image URLs input -->
           <div>
             <label class="block text-sm font-medium text-gray-700 mb-1">
               <i class="fas fa-link mr-1"></i> Image URLs (comma separated)
@@ -215,10 +223,8 @@
                      class="w-full border border-gray-200 rounded-lg pl-10 p-3 input-focus transition shadow-sm" />
             </div>
             <p class="text-xs text-gray-400 mt-1">Paste image URLs separated by commas. The first image will be used as the thumbnail.</p>
-            <!-- Preview container -->
             <div id="url-preview-container" class="url-preview-grid"></div>
           </div>
-
           <button type="submit" class="w-full bg-pink-600 hover:bg-pink-700 text-white font-semibold py-3.5 rounded-xl transition shadow-md hover:shadow-pink-500/30 flex items-center justify-center gap-2">
             <i class="fas fa-save"></i> Add Product
           </button>
@@ -229,7 +235,9 @@
       </div>
     </div>
 
-    <!-- Product List Tab -->
+    <!-- ============================================================ -->
+    <!-- TAB 2: Product List -->
+    <!-- ============================================================ -->
     <div id="tab-products-list-content" class="hidden fade-up fade-up-d1">
       <div class="glass-card rounded-2xl shadow-xl p-6 md:p-8 overflow-x-auto">
         <div class="flex items-center justify-between mb-4">
@@ -263,7 +271,9 @@
       </div>
     </div>
 
-    <!-- Manage Orders Tab -->
+    <!-- ============================================================ -->
+    <!-- TAB 3: Manage Orders -->
+    <!-- ============================================================ -->
     <div id="tab-orders-content" class="hidden fade-up fade-up-d2">
       <div class="glass-card rounded-2xl shadow-xl p-6 md:p-8 overflow-x-auto">
         <h2 class="text-2xl font-bold text-gray-800 mb-4"><i class="fas fa-boxes text-pink-500 mr-2"></i> Orders</h2>
@@ -292,6 +302,43 @@
         </div>
       </div>
     </div>
+
+    <!-- ============================================================ -->
+    <!-- TAB 4: Manage Reviews -->
+    <!-- ============================================================ -->
+    <div id="tab-reviews-content" class="hidden fade-up fade-up-d2">
+      <div class="glass-card rounded-2xl shadow-xl p-6 md:p-8 overflow-x-auto">
+        <div class="flex items-center justify-between mb-4">
+          <h2 class="text-2xl font-bold text-gray-800"><i class="fas fa-star text-pink-500 mr-2"></i> Manage Reviews</h2>
+          <span id="pending-review-count" class="text-sm text-gray-500"></span>
+        </div>
+        <div id="reviews-loading" class="text-center py-8 text-gray-500">
+          <i class="fas fa-spinner fa-spin mr-2"></i> Loading reviews...
+        </div>
+        <div id="reviews-table-wrapper" class="hidden">
+          <div class="table-wrapper">
+            <table class="w-full text-sm">
+              <thead class="bg-gray-50 border-b border-gray-200">
+                <tr>
+                  <th class="text-left p-3 font-semibold text-gray-600">Customer</th>
+                  <th class="text-left p-3 font-semibold text-gray-600">Product</th>
+                  <th class="text-left p-3 font-semibold text-gray-600">Rating</th>
+                  <th class="text-left p-3 font-semibold text-gray-600">Comment</th>
+                  <th class="text-left p-3 font-semibold text-gray-600">Status</th>
+                  <th class="text-left p-3 font-semibold text-gray-600">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="reviews-table-body"></tbody>
+            </table>
+          </div>
+        </div>
+        <div id="reviews-empty" class="hidden text-center py-8 text-gray-500">
+          <i class="fas fa-inbox text-3xl mb-2 block text-gray-300"></i>
+          <p>No reviews yet.</p>
+        </div>
+      </div>
+    </div>
+
   </section>
 
   <!-- Toast -->
@@ -311,7 +358,7 @@
         <ul class="mt-2 text-sm space-y-1.5">
           <li><a href="index.html" class="hover:text-pink-400 transition"><i class="fas fa-chevron-right text-[10px] mr-1"></i> Home</a></li>
           <li><a href="#products-section" class="hover:text-pink-400 transition"><i class="fas fa-chevron-right text-[10px] mr-1"></i> Shop</a></li>
-          <li><a href="admin.html" class="hover:text-pink-400 transition"><i class="fas fa-chevron-right text-[10px] mr-1"></i> Admin</a></li>
+          <li><a href="reviews.html" class="hover:text-pink-400 transition"><i class="fas fa-chevron-right text-[10px] mr-1"></i> Reviews</a></li>
         </ul>
       </div>
       <div>
@@ -319,7 +366,6 @@
         <ul class="mt-2 text-sm space-y-1.5">
           <li><a href="#" class="hover:text-pink-400 transition"><i class="fas fa-chevron-right text-[10px] mr-1"></i> Shipping Policy</a></li>
           <li><a href="#" class="hover:text-pink-400 transition"><i class="fas fa-chevron-right text-[10px] mr-1"></i> Return Policy</a></li>
-          <li><a href="#" class="hover:text-pink-400 transition"><i class="fas fa-chevron-right text-[10px] mr-1"></i> Privacy Policy</a></li>
         </ul>
       </div>
       <div>
@@ -378,6 +424,7 @@
         document.getElementById('admin-email-display').textContent = user.email;
         loadProducts();
         loadOrders();
+        loadReviews();  // <-- Load reviews
         showTab('products');
       } else {
         document.getElementById('login-section').style.display = 'flex';
@@ -403,10 +450,10 @@
     };
 
     // ===========================================================
-    // TABS
+    // TABS (Updated with Reviews)
     // ===========================================================
     window.showTab = function(tab) {
-      ['tab-products-content', 'tab-products-list-content', 'tab-orders-content'].forEach(id => {
+      ['tab-products-content', 'tab-products-list-content', 'tab-orders-content', 'tab-reviews-content'].forEach(id => {
         document.getElementById(id).classList.add('hidden');
       });
       document.querySelectorAll('.tab-btn').forEach(btn => {
@@ -422,11 +469,14 @@
       } else if (tab === 'orders') {
         document.getElementById('tab-orders-content').classList.remove('hidden');
         document.getElementById('tab-orders').classList.add('active', 'text-pink-600', 'border-pink-600');
+      } else if (tab === 'reviews') {
+        document.getElementById('tab-reviews-content').classList.remove('hidden');
+        document.getElementById('tab-reviews').classList.add('active', 'text-pink-600', 'border-pink-600');
       }
     };
 
     // ===========================================================
-    // URL PREVIEW (show thumbnails as user types)
+    // URL PREVIEW
     // ===========================================================
     document.getElementById('prodImageUrls').addEventListener('input', function() {
       const input = this.value;
@@ -434,13 +484,12 @@
       const container = document.getElementById('url-preview-container');
       container.innerHTML = '';
       if (urls.length === 0) return;
-      // Show first 3 as preview
       const previewUrls = urls.slice(0, 3);
       previewUrls.forEach(url => {
         const img = document.createElement('img');
         img.src = url;
         img.alt = 'preview';
-        img.onerror = function() { this.style.display = 'none'; }; // hide broken images
+        img.onerror = function() { this.style.display = 'none'; };
         container.appendChild(img);
       });
       if (urls.length > 3) {
@@ -473,7 +522,6 @@
         return;
       }
 
-      // Split URLs and clean
       const imageUrls = imageUrlsInput.split(',').map(url => url.trim()).filter(url => url);
       if (imageUrls.length === 0) {
         alert('Please enter valid image URLs.');
@@ -494,7 +542,7 @@
           stock: stock,
           description: desc,
           images: imageUrls,
-          thumbnail: imageUrls[0], // use first image as thumbnail
+          thumbnail: imageUrls[0],
           createdAt: firebase.database.ServerValue.TIMESTAMP
         });
 
@@ -628,6 +676,108 @@
         .then(() => showToast('✅ Status updated.', 'success'))
         .catch(err => showToast('❌ Error: ' + err.message, 'error'));
     };
+
+    // ===========================================================
+    // REVIEWS MANAGEMENT
+    // ===========================================================
+    function loadReviews() {
+      const reviewsRef = db.ref('reviews').orderByChild('createdAt');
+      reviewsRef.on('value', (snapshot) => {
+        const data = snapshot.val();
+        const tbody = document.getElementById('reviews-table-body');
+        const loading = document.getElementById('reviews-loading');
+        const wrapper = document.getElementById('reviews-table-wrapper');
+        const empty = document.getElementById('reviews-empty');
+        const countSpan = document.getElementById('pending-review-count');
+
+        loading.classList.add('hidden');
+        wrapper.classList.remove('hidden');
+
+        if (!data) {
+          empty.classList.remove('hidden');
+          tbody.innerHTML = '';
+          countSpan.textContent = '';
+          return;
+        }
+        empty.classList.add('hidden');
+
+        const entries = Object.entries(data);
+        const pendingCount = entries.filter(([_, r]) => r.status === 'pending').length;
+        countSpan.textContent = `${pendingCount} pending`;
+
+        let html = '';
+        for (let [id, review] of entries) {
+          const starsHtml = Array(5).fill(0).map((_, i) => 
+            `<i class="fas fa-star text-${i < review.rating ? 'yellow-400' : 'gray-300'} text-xs"></i>`
+          ).join('');
+
+          const statusColors = {
+            pending: 'bg-yellow-100 text-yellow-700',
+            approved: 'bg-green-100 text-green-700',
+            rejected: 'bg-red-100 text-red-700'
+          };
+
+          const statusDisplay = review.status ? review.status.toUpperCase() : 'PENDING';
+
+          html += `
+            <tr class="review-row border-b border-gray-100">
+              <td class="p-3 font-medium">${review.customerName || 'Anonymous'}</td>
+              <td class="p-3 text-sm">${review.productName || 'Unknown'}</td>
+              <td class="p-3">${starsHtml}</td>
+              <td class="p-3 max-w-xs">
+                <div class="truncate max-w-[150px]" title="${review.comment || ''}">
+                  "${review.comment || 'No comment'}"
+                </div>
+              </td>
+              <td class="p-3">
+                <span class="px-2 py-0.5 rounded-full text-xs ${statusColors[review.status] || 'bg-gray-100 text-gray-700'}">
+                  ${statusDisplay}
+                </span>
+              </td>
+              <td class="p-3">
+                ${review.status === 'pending' ? `
+                  <button onclick="approveReview('${id}')" class="text-green-600 hover:text-green-800 transition mr-2" title="Approve">
+                    <i class="fas fa-check-circle text-lg"></i>
+                  </button>
+                  <button onclick="rejectReview('${id}')" class="text-red-500 hover:text-red-700 transition" title="Reject">
+                    <i class="fas fa-times-circle text-lg"></i>
+                  </button>
+                ` : review.status === 'approved' ? '✅' : '❌'}
+              </td>
+            </tr>
+          `;
+        }
+        tbody.innerHTML = html;
+      });
+    }
+
+    window.approveReview = function(reviewId) {
+      if (confirm('Approve this review? It will appear on the live page.')) {
+        db.ref(`reviews/${reviewId}/status`).set('approved')
+          .then(() => {
+            db.ref(`reviews/${reviewId}/approvedAt`).set(firebase.database.ServerValue.TIMESTAMP);
+            showToast('✅ Review approved!', 'success');
+          })
+          .catch(err => showToast('❌ Error: ' + err.message, 'error'));
+      }
+    };
+
+    window.rejectReview = function(reviewId) {
+      if (confirm('Reject this review? It will not appear on the live page.')) {
+        db.ref(`reviews/${reviewId}/status`).set('rejected')
+          .then(() => showToast('❌ Review rejected.', 'success'))
+          .catch(err => showToast('❌ Error: ' + err.message, 'error'));
+      }
+    };
+
+    // ===========================================================
+    // CART BADGE (for reference)
+    // ===========================================================
+    function updateBadge() {
+      const cart = JSON.parse(localStorage.getItem('cart')) || [];
+      const count = cart.reduce((sum, item) => sum + item.qty, 0);
+      // Not used on admin page but kept for consistency
+    }
   </script>
 </body>
 </html>
