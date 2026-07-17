@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Reviews - Crescent Beauty Hub</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <style>
+    .fade-up { opacity:0; transform:translateY(20px); animation:fadeUp 0.5s ease forwards; }
+    .fade-up-d1 { animation-delay:0.05s; }
+    .fade-up-d2 { animation-delay:0.1s; }
+    @keyframes fadeUp { to { opacity:1; transform:translateY(0); } }
+    .glass-card { background:rgba(255,255,255,0.7); backdrop-filter:blur(12px); border:1px solid rgba(255,255,255,0.5); }
+    .input-focus:focus { outline:none; ring:2px solid #be185d; border-color:#be185d; box-shadow:0 0 0 4px rgba(190,24,93,0.1); }
+    .review-card { transition: transform 0.3s ease, box-shadow 0.3s ease; }
+    .review-card:hover { transform: translateY(-4px); box-shadow: 0 10px 30px -10px rgba(0,0,0,0.1); }
+    .star { color: #d1d5db; transition: color 0.2s; }
+    .star.active { color: #f59e0b; }
+    .star-hover { color: #f59e0b; }
+    .toast { position:fixed; bottom:2rem; right:2rem; z-index:9999; padding:1rem 2rem; border-radius:0.75rem; background:#1f2937; color:white; box-shadow:0 10px 25px rgba(0,0,0,0.2); transform:translateY(100px); opacity:0; transition:all 0.4s ease; max-width:90%; }
+    .toast.show { transform:translateY(0); opacity:1; }
+    .toast.success { background:#10b981; }
+    .toast.error { background:#ef4444; }
+  </style>
+</head>
+<body class="bg-gray-50 font-sans antialiased">
+
+  <!-- Top Bar -->
+  <div class="bg-pink-600 text-white text-center text-sm py-2.5 px-4 tracking-wide">
+    <i class="fas fa-gift mr-2"></i> Free delivery on selected orders · Premium beauty essentials · Secure checkout
+  </div>
+
+  <!-- Navbar -->
+  <nav class="bg-white/90 backdrop-blur-md shadow-sm sticky top-0 z-50 border-b border-gray-100/80">
+    <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+      <a href="index.html" class="text-2xl font-extrabold text-pink-700 tracking-tight flex items-center gap-2">
+        <i class="fas fa-spa text-pink-500 text-2xl"></i> Cresent Beauty Hub
+      </a>
+      <div class="flex items-center space-x-5">
+        <a href="index.html" class="text-gray-500 hover:text-pink-600 text-sm font-medium transition flex items-center gap-1">
+          <i class="fas fa-store"></i> Shop
+        </a>
+        <a href="cart.html" class="relative group">
+          <i class="fas fa-shopping-bag text-xl text-gray-700 group-hover:text-pink-600 transition"></i>
+          <span id="cart-badge" class="absolute -top-2 -right-2 bg-pink-600 text-white text-[10px] font-bold rounded-full px-2 py-0.5 min-w-[20px] text-center shadow-lg">0</span>
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Reviews Section -->
+  <section class="container mx-auto px-4 py-10 max-w-4xl">
+    <div class="text-center mb-10">
+      <p class="text-pink-600 font-semibold uppercase tracking-wider text-sm flex items-center justify-center gap-2">
+        <i class="fas fa-star"></i> Customer Reviews
+      </p>
+      <h1 class="text-3xl md:text-4xl font-bold text-gray-800">What Our Customers Say</h1>
+      <p class="text-gray-500 mt-2">Share your experience and help others make the right choice.</p>
+    </div>
+
+    <!-- Submit Review Form -->
+    <div class="glass-card rounded-2xl shadow-xl p-6 md:p-8 mb-10 fade-up">
+      <h2 class="text-2xl font-bold text-gray-800 mb-4"><i class="fas fa-pen text-pink-500 mr-2"></i> Write a Review</h2>
+      <form id="reviewForm" class="space-y-4">
+        <!-- Product Selection -->
+        <div class="relative">
+          <i class="fas fa-box absolute left-3 top-3.5 text-gray-400"></i>
+          <select id="productSelect" required class="w-full border border-gray-200 rounded-lg pl-10 p-3 input-focus transition shadow-sm appearance-none">
+            <option value="">Select Product</option>
+          </select>
+          <i class="fas fa-chevron-down absolute right-3 top-3.5 text-gray-400"></i>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div class="relative">
+            <i class="fas fa-user absolute left-3 top-3.5 text-gray-400"></i>
+            <input type="text" id="customerName" placeholder="Your Name" required class="w-full border border-gray-200 rounded-lg pl-10 p-3 input-focus transition shadow-sm" />
+          </div>
+          <div class="relative">
+            <i class="fas fa-envelope absolute left-3 top-3.5 text-gray-400"></i>
+            <input type="email" id="customerEmail" placeholder="Your Email (optional)" class="w-full border border-gray-200 rounded-lg pl-10 p-3 input-focus transition shadow-sm" />
+          </div>
+        </div>
+
+        <!-- Star Rating -->
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Rating</label>
+          <div id="starRating" class="flex gap-1 text-2xl">
+            <i class="fas fa-star star" data-value="1"></i>
+            <i class="fas fa-star star" data-value="2"></i>
+            <i class="fas fa-star star" data-value="3"></i>
+            <i class="fas fa-star star" data-value="4"></i>
+            <i class="fas fa-star star" data-value="5"></i>
+          </div>
+          <input type="hidden" id="ratingValue" value="0" required />
+          <p id="ratingError" class="text-red-500 text-xs hidden">Please select a rating.</p>
+        </div>
+
+        <!-- Comment -->
+        <div class="relative">
+          <i class="fas fa-comment absolute left-3 top-3.5 text-gray-400"></i>
+          <textarea id="reviewComment" placeholder="Write your review..." rows="4" required class="w-full border border-gray-200 rounded-lg pl-10 p-3 input-focus transition shadow-sm"></textarea>
+        </div>
+
+        <button type="submit" class="w-full bg-pink-600 hover:bg-pink-700 text-white font-semibold py-3.5 rounded-xl transition shadow-md hover:shadow-pink-500/30 flex items-center justify-center gap-2">
+          <i class="fas fa-paper-plane"></i> Submit Review
+        </button>
+      </form>
+      <div id="reviewSuccess" class="hidden mt-4 text-center text-green-600 font-semibold p-3 bg-green-50 rounded-lg border border-green-200">
+        <i class="fas fa-check-circle mr-2"></i> Thank you for your review! It will appear after admin approval.
+      </div>
+    </div>
+
+    <!-- Reviews List -->
+    <div id="reviewsList">
+      <div class="flex items-center justify-between mb-4">
+        <h2 class="text-xl font-bold text-gray-800"><i class="fas fa-comments text-pink-500 mr-2"></i> Approved Reviews</h2>
+        <span id="reviewCount" class="text-sm text-gray-500"></span>
+      </div>
+      <div id="reviewsContainer" class="space-y-4">
+        <!-- Reviews will be loaded dynamically -->
+      </div>
+      <div id="noReviews" class="hidden text-center py-8 text-gray-500">
+        <i class="fas fa-comment-slash text-3xl mb-2 block text-gray-300"></i>
+        <p>No reviews yet. Be the first to share your experience!</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Toast -->
+  <div id="toast" class="toast"></div>
+
+  <!-- Footer -->
+  <footer class="bg-gray-900 text-gray-300 mt-12 py-12 px-4 border-t border-gray-800">
+    <div class="container mx-auto grid grid-cols-1 md:grid-cols-4 gap-8">
+      <div>
+        <h3 class="text-white text-2xl font-bold flex items-center gap-2">
+          <i class="fas fa-spa text-pink-500"></i> Cresent Beauty Hub
+        </h3>
+        <p class="mt-2 text-sm leading-relaxed">Your trusted destination for premium perfumes, skincare, body care, and hair care.</p>
+      </div>
+      <div>
+        <h4 class="text-white font-semibold">Quick Links</h4>
+        <ul class="mt-2 text-sm space-y-1.5">
+          <li><a href="index.html" class="hover:text-pink-400 transition"><i class="fas fa-chevron-right text-[10px] mr-1"></i> Home</a></li>
+          <li><a href="#products-section" class="hover:text-pink-400 transition"><i class="fas fa-chevron-right text-[10px] mr-1"></i> Shop</a></li>
+          <li><a href="reviews.html" class="hover:text-pink-400 transition"><i class="fas fa-chevron-right text-[10px] mr-1"></i> Reviews</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 class="text-white font-semibold">Support</h4>
+        <ul class="mt-2 text-sm space-y-1.5">
+          <li><a href="#" class="hover:text-pink-400 transition"><i class="fas fa-chevron-right text-[10px] mr-1"></i> Shipping Policy</a></li>
+          <li><a href="#" class="hover:text-pink-400 transition"><i class="fas fa-chevron-right text-[10px] mr-1"></i> Return Policy</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 class="text-white font-semibold"><i class="fas fa-address-card mr-2"></i> Contact</h4>
+        <p class="text-sm mt-2"><i class="fas fa-envelope mr-2 text-pink-400"></i> mercyola971@gmail.com</p>
+        <p class="text-sm"><i class="fas fa-phone mr-2 text-pink-400"></i> +234 7038721342</p>
+        <p class="text-sm"><i class="fas fa-map-marker-alt mr-2 text-pink-400"></i> Ogbomoso, Nigeria</p>
+      </div>
+    </div>
+    <div class="container mx-auto text-center text-sm border-t border-gray-800 mt-10 pt-6">
+      <i class="far fa-copyright mr-1"></i> 2026 Cresent Beauty Hub. All Rights Reserved.
+    </div>
+  </footer>
+
+  <!-- Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+  <script>
+    // ===========================================================
+    // FIREBASE CONFIG
+    // ===========================================================
+    const firebaseConfig = {
+      apiKey: "AIzaSyB2jxywTYbizISk9_mJcreBx5eS5u0C4es",
+      authDomain: "crescent-2662a.firebaseapp.com",
+      databaseURL: "https://crescent-2662a-default-rtdb.firebaseio.com",
+      projectId: "crescent-2662a",
+      storageBucket: "crescent-2662a.firebasestorage.app",
+      messagingSenderId: "947228503695",
+      appId: "1:947228503695:web:f74d1c4da04508268ccafa",
+      measurementId: "G-8BR6NDVKQC"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+
+    // ===========================================================
+    // GLOBALS
+    // ===========================================================
+    let selectedRating = 0;
+    let allProducts = [];
+
+    // ===========================================================
+    // TOAST
+    // ===========================================================
+    function showToast(message, type = 'success') {
+      const toast = document.getElementById('toast');
+      toast.textContent = message;
+      toast.className = 'toast ' + type + ' show';
+      setTimeout(() => toast.classList.remove('show'), 4000);
+    }
+
+    // ===========================================================
+    // LOAD PRODUCTS FOR SELECT DROPDOWN
+    // ===========================================================
+    function loadProductsForSelect() {
+      const productsRef = db.ref('products');
+      productsRef.on('value', (snapshot) => {
+        const data = snapshot.val();
+        const select = document.getElementById('productSelect');
+        select.innerHTML = '<option value="">Select Product</option>';
+        
+        if (!data) return;
+        
+        allProducts = [];
+        for (let id in data) {
+          const p = data[id];
+          p.id = id;
+          allProducts.push(p);
+          const option = document.createElement('option');
+          option.value = id;
+          option.textContent = p.name;
+          select.appendChild(option);
+        }
+      });
+    }
+
+    // ===========================================================
+    // STAR RATING
+    // ===========================================================
+    document.querySelectorAll('#starRating .star').forEach(star => {
+      star.addEventListener('mouseenter', function() {
+        const value = parseInt(this.dataset.value);
+        document.querySelectorAll('#starRating .star').forEach(s => {
+          if (parseInt(s.dataset.value) <= value) {
+            s.classList.add('star-hover');
+          } else {
+            s.classList.remove('star-hover');
+          }
+        });
+      });
+
+      star.addEventListener('mouseleave', function() {
+        document.querySelectorAll('#starRating .star').forEach(s => {
+          s.classList.remove('star-hover');
+          if (parseInt(s.dataset.value) <= selectedRating) {
+            s.classList.add('active');
+          } else {
+            s.classList.remove('active');
+          }
+        });
+      });
+
+      star.addEventListener('click', function() {
+        selectedRating = parseInt(this.dataset.value);
+        document.getElementById('ratingValue').value = selectedRating;
+        document.querySelectorAll('#starRating .star').forEach(s => {
+          if (parseInt(s.dataset.value) <= selectedRating) {
+            s.classList.add('active');
+          } else {
+            s.classList.remove('active');
+          }
+        });
+        document.getElementById('ratingError').classList.add('hidden');
+      });
+    });
+
+    // ===========================================================
+    // SUBMIT REVIEW
+    // ===========================================================
+    document.getElementById('reviewForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const productId = document.getElementById('productSelect').value;
+      const customerName = document.getElementById('customerName').value.trim();
+      const customerEmail = document.getElementById('customerEmail').value.trim();
+      const comment = document.getElementById('reviewComment').value.trim();
+      const rating = selectedRating;
+
+      if (!productId) {
+        alert('Please select a product.');
+        return;
+      }
+      if (!customerName) {
+        alert('Please enter your name.');
+        return;
+      }
+      if (rating === 0) {
+        document.getElementById('ratingError').classList.remove('hidden');
+        return;
+      }
+      if (!comment) {
+        alert('Please write your review.');
+        return;
+      }
+
+      const product = allProducts.find(p => p.id === productId);
+
+      const btn = e.target.querySelector('button[type="submit"]');
+      btn.disabled = true;
+      btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Submitting...';
+
+      try {
+        const newRef = db.ref('reviews').push();
+        await newRef.set({
+          productId: productId,
+          productName: product ? product.name : 'Unknown Product',
+          customerName: customerName,
+          customerEmail: customerEmail || '',
+          rating: rating,
+          comment: comment,
+          status: 'pending',
+          createdAt: firebase.database.ServerValue.TIMESTAMP
+        });
+
+        document.getElementById('reviewSuccess').classList.remove('hidden');
+        document.getElementById('reviewForm').reset();
+        document.querySelectorAll('#starRating .star').forEach(s => s.classList.remove('active'));
+        selectedRating = 0;
+        document.getElementById('ratingValue').value = 0;
+        showToast('🎉 Review submitted! Waiting for admin approval.', 'success');
+        setTimeout(() => {
+          document.getElementById('reviewSuccess').classList.add('hidden');
+        }, 5000);
+      } catch (err) {
+        showToast('❌ Error: ' + err.message, 'error');
+        console.error(err);
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-paper-plane"></i> Submit Review';
+      }
+    });
+
+    // ===========================================================
+    // LOAD APPROVED REVIEWS
+    // ===========================================================
+    function loadApprovedReviews() {
+      const reviewsRef = db.ref('reviews').orderByChild('status').equalTo('approved');
+      reviewsRef.on('value', (snapshot) => {
+        const data = snapshot.val();
+        const container = document.getElementById('reviewsContainer');
+        const noReviews = document.getElementById('noReviews');
+        const countSpan = document.getElementById('reviewCount');
+
+        if (!data) {
+          noReviews.classList.remove('hidden');
+          container.innerHTML = '';
+          countSpan.textContent = '';
+          return;
+        }
+        noReviews.classList.add('hidden');
+
+        const entries = Object.entries(data);
+        // Sort by createdAt (newest first)
+        entries.sort((a, b) => (b[1].createdAt || 0) - (a[1].createdAt || 0));
+        countSpan.textContent = `(${entries.length} reviews)`;
+
+        let html = '';
+        for (let [id, review] of entries) {
+          const starsHtml = Array(5).fill(0).map((_, i) => 
+            `<i class="fas fa-star text-${i < review.rating ? 'yellow-400' : 'gray-300'} text-sm"></i>`
+          ).join('');
+
+          const date = review.createdAt ? new Date(review.createdAt).toLocaleDateString('en-US', { 
+            year: 'numeric', 
+            month: 'long', 
+            day: 'numeric' 
+          }) : '';
+
+          html += `
+            <div class="review-card glass-card rounded-xl shadow-md p-6 border border-gray-100">
+              <div class="flex items-start gap-4">
+                <div class="w-12 h-12 rounded-full bg-pink-100 flex items-center justify-center text-pink-600 font-bold text-lg flex-shrink-0">
+                  ${review.customerName.charAt(0).toUpperCase()}
+                </div>
+                <div class="flex-1">
+                  <div class="flex flex-wrap items-center justify-between gap-2">
+                    <div>
+                      <h4 class="font-bold text-gray-800">${review.customerName}</h4>
+                      <div class="flex items-center gap-1">
+                        ${starsHtml}
+                        <span class="text-xs text-gray-400 ml-1">${date}</span>
+                      </div>
+                    </div>
+                    <span class="text-xs bg-pink-100 text-pink-600 px-2 py-1 rounded-full">${review.productName}</span>
+                  </div>
+                  <p class="text-gray-600 mt-2 italic">"${review.comment}"</p>
+                </div>
+              </div>
+            </div>
+          `;
+        }
+        container.innerHTML = html;
+      });
+    }
+
+    // ===========================================================
+    // CART BADGE
+    // ===========================================================
+    function updateBadge() {
+      const cart = JSON.parse(localStorage.getItem('cart')) || [];
+      const count = cart.reduce((sum, item) => sum + item.qty, 0);
+      const badge = document.getElementById('cart-badge');
+      if (badge) badge.textContent = count;
+    }
+    updateBadge();
+
+    // ===========================================================
+    // INIT
+    // ===========================================================
+    loadProductsForSelect();
+    loadApprovedReviews();
+  </script>
+</body>
+</html>
