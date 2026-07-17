@@ -247,9 +247,8 @@
     loadOrderSummary();
 
     // ===========================================================
-    // 6. PAYSTACK PAYMENT HANDLER (with error checking)
+    // 6. PAYSTACK PAYMENT HANDLER (Fixed)
     // ===========================================================
-    // Wait for DOM to be ready
     document.addEventListener('DOMContentLoaded', function() {
       const payBtn = document.getElementById('pay-now-btn');
       if (!payBtn) {
@@ -258,7 +257,7 @@
       }
 
       payBtn.addEventListener('click', function(e) {
-        console.log('Pay button clicked'); // Debug log
+        console.log('Pay button clicked');
 
         // Validate form
         const name = document.getElementById('fullName').value.trim();
@@ -277,21 +276,18 @@
           return;
         }
 
-        // Calculate total in kobo
         const total = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
         const amountInKobo = total * 100;
 
-        // Check if Paystack is loaded
         if (typeof PaystackPop === 'undefined') {
           alert('Payment system is loading. Please try again in a moment.');
-          console.error('PaystackPop is not defined. Check if the script loaded.');
+          console.error('PaystackPop is not defined.');
           return;
         }
 
-        // Generate reference
         const ref = `CR-${Date.now().toString().slice(-6)}-${Math.random().toString(36).substring(2, 7)}`;
 
-        // Order data
+        // Order data (will be saved on success)
         const orderData = {
           orderId: ref,
           customerName: name,
@@ -318,32 +314,36 @@
               { display_name: "Delivery Address", variable_name: "address", value: address }
             ]
           },
-          callback: async function(response) {
-            try {
-              const newOrderRef = db.ref('orders').push();
-              await newOrderRef.set({
-                ...orderData,
-                paymentStatus: 'paid',
-                paymentReference: response.reference,
-                paymentDate: firebase.database.ServerValue.TIMESTAMP
-              });
-
+          // ✅ FIXED: Use a regular (non-async) callback
+          callback: function(response) {
+            // Save order to Firebase using .then() and .catch()
+            const newOrderRef = db.ref('orders').push();
+            newOrderRef.set({
+              ...orderData,
+              paymentStatus: 'paid',
+              paymentReference: response.reference,
+              paymentDate: firebase.database.ServerValue.TIMESTAMP
+            })
+            .then(function() {
+              // Clear cart
               localStorage.removeItem('cart');
               updateBadge();
 
+              // Show success UI
               document.querySelector('.lg\\:col-span-2 .glass-card').style.display = 'none';
               document.getElementById('success-box').classList.remove('hidden');
               document.getElementById('order-id-display').textContent = `#${ref}`;
 
-              // Optional: WhatsApp notification
+              // Optional: WhatsApp notification to admin
               const waMessage = `New order #${ref} paid via Paystack. Total: ₦${total.toLocaleString()}. Customer: ${name}.`;
               const waLink = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(waMessage)}`;
-              // You could open this in a new tab if desired.
-
-            } catch (error) {
+              // You can open the link in a new tab if desired:
+              // window.open(waLink, '_blank');
+            })
+            .catch(function(error) {
               alert('Error saving order: ' + error.message);
               console.error(error);
-            }
+            });
           },
           onClose: function() {
             alert('Payment cancelled. You can try again.');
