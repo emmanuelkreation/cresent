@@ -7,31 +7,90 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
   <style>
-    /* ... (same styles as before) ... */
+    /* ---------- Animations ---------- */
     .fade-up { opacity:0; transform:translateY(20px); animation:fadeUp 0.5s ease forwards; }
     .fade-up-d1 { animation-delay:0.05s; }
     .fade-up-d2 { animation-delay:0.1s; }
     @keyframes fadeUp { to { opacity:1; transform:translateY(0); } }
-    .glass-card { background:rgba(255,255,255,0.7); backdrop-filter:blur(12px); border:1px solid rgba(255,255,255,0.5); }
-    .input-focus:focus { outline:none; ring:2px solid #be185d; border-color:#be185d; box-shadow:0 0 0 4px rgba(190,24,93,0.1); }
-    .tab-btn { transition:all 0.2s; cursor:pointer; }
-    .tab-btn.active { color:#be185d; border-bottom:3px solid #be185d; font-weight:600; }
-    .tab-btn:not(.active):hover { color:#6b7280; border-bottom:3px solid #d1d5db; }
-    .order-row:hover { background-color:#fdf2f8; }
-    .product-row:hover { background-color:#f5f5f5; }
-    .file-upload-wrapper { position:relative; overflow:hidden; }
-    .file-upload-wrapper input[type="file"] { position:absolute; left:0; top:0; opacity:0; width:100%; height:100%; cursor:pointer; }
-    .file-upload-label { display:flex; align-items:center; justify-content:center; gap:0.5rem; padding:0.75rem 1rem; border:2px dashed #d1d5db; border-radius:0.75rem; background:#f9fafb; transition:all 0.2s; cursor:pointer; color:#6b7280; }
-    .file-upload-label:hover { border-color:#be185d; background:#fce7f3; }
-    .image-preview-grid { display:flex; flex-wrap:wrap; gap:0.5rem; margin-top:0.5rem; }
-    .image-preview-grid img { width:60px; height:60px; object-fit:cover; border-radius:0.5rem; border:2px solid #e5e7eb; transition:border-color 0.2s; }
-    .image-preview-grid img:hover { border-color:#be185d; }
-    .toast { position:fixed; bottom:2rem; right:2rem; z-index:9999; padding:1rem 2rem; border-radius:0.75rem; background:#1f2937; color:white; box-shadow:0 10px 25px rgba(0,0,0,0.2); transform:translateY(100px); opacity:0; transition:all 0.4s ease; max-width:90%; }
-    .toast.show { transform:translateY(0); opacity:1; }
-    .toast.success { background:#10b981; }
-    .toast.error { background:#ef4444; }
+
+    /* Glassmorphism */
+    .glass-card {
+      background: rgba(255,255,255,0.7);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255,255,255,0.5);
+    }
+
+    /* Form inputs */
+    .input-focus:focus {
+      outline: none;
+      ring: 2px solid #be185d;
+      border-color: #be185d;
+      box-shadow: 0 0 0 4px rgba(190,24,93,0.1);
+    }
+
+    /* Tabs */
+    .tab-btn {
+      transition: all 0.2s;
+      cursor: pointer;
+    }
+    .tab-btn.active {
+      color: #be185d;
+      border-bottom: 3px solid #be185d;
+      font-weight: 600;
+    }
+    .tab-btn:not(.active):hover {
+      color: #6b7280;
+      border-bottom: 3px solid #d1d5db;
+    }
+
+    /* Table rows */
+    .order-row:hover { background-color: #fdf2f8; }
+    .product-row:hover { background-color: #f5f5f5; }
+
+    /* Toast notification */
+    .toast {
+      position: fixed;
+      bottom: 2rem;
+      right: 2rem;
+      z-index: 9999;
+      padding: 1rem 2rem;
+      border-radius: 0.75rem;
+      background: #1f2937;
+      color: white;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+      transform: translateY(100px);
+      opacity: 0;
+      transition: all 0.4s ease;
+      max-width: 90%;
+    }
+    .toast.show {
+      transform: translateY(0);
+      opacity: 1;
+    }
+    .toast.success { background: #10b981; }
+    .toast.error { background: #ef4444; }
+
     table { min-width:600px; }
     @media (max-width:640px) { .table-wrapper { overflow-x:auto; } }
+
+    /* URL preview grid */
+    .url-preview-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-top: 0.5rem;
+    }
+    .url-preview-grid img {
+      width: 60px;
+      height: 60px;
+      object-fit: cover;
+      border-radius: 0.5rem;
+      border: 2px solid #e5e7eb;
+      transition: border-color 0.2s;
+    }
+    .url-preview-grid img:hover {
+      border-color: #be185d;
+    }
   </style>
 </head>
 <body class="bg-gray-50 font-sans antialiased">
@@ -110,14 +169,17 @@
       <div class="glass-card rounded-2xl shadow-xl p-6 md:p-8 max-w-3xl mx-auto">
         <h2 class="text-2xl font-bold text-gray-800 mb-4"><i class="fas fa-plus-circle text-pink-500 mr-2"></i> Add New Product</h2>
         <form id="addProductForm" class="space-y-4">
+          <!-- Product Name -->
           <div class="relative">
             <i class="fas fa-tag absolute left-3 top-3.5 text-gray-400"></i>
             <input type="text" id="prodName" placeholder="Product Name" required class="w-full border border-gray-200 rounded-lg pl-10 p-3 input-focus transition shadow-sm" />
           </div>
+          <!-- Price -->
           <div class="relative">
             <i class="fas fa-naira-sign absolute left-3 top-3.5 text-gray-400"></i>
             <input type="number" id="prodPrice" placeholder="Price (₦)" required class="w-full border border-gray-200 rounded-lg pl-10 p-3 input-focus transition shadow-sm" />
           </div>
+          <!-- Category -->
           <div class="relative">
             <i class="fas fa-list absolute left-3 top-3.5 text-gray-400"></i>
             <select id="prodCategory" required class="w-full border border-gray-200 rounded-lg pl-10 p-3 input-focus transition shadow-sm appearance-none">
@@ -130,27 +192,33 @@
             </select>
             <i class="fas fa-chevron-down absolute right-3 top-3.5 text-gray-400"></i>
           </div>
+          <!-- Stock -->
           <div class="relative">
             <i class="fas fa-cubes absolute left-3 top-3.5 text-gray-400"></i>
             <input type="number" id="prodStock" placeholder="Stock Quantity" required class="w-full border border-gray-200 rounded-lg pl-10 p-3 input-focus transition shadow-sm" />
           </div>
+          <!-- Description -->
           <div class="relative">
             <i class="fas fa-align-left absolute left-3 top-3.5 text-gray-400"></i>
             <textarea id="prodDesc" placeholder="Product Description" rows="3" class="w-full border border-gray-200 rounded-lg pl-10 p-3 input-focus transition shadow-sm"></textarea>
           </div>
-          <!-- Image Upload -->
+
+          <!-- NEW: Image URLs input -->
           <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1"><i class="fas fa-images mr-1"></i> Product Images (select multiple)</label>
-            <div class="file-upload-wrapper">
-              <input type="file" id="prodImages" accept="image/*" multiple required />
-              <div class="file-upload-label">
-                <i class="fas fa-cloud-upload-alt"></i>
-                <span id="image-file-name">Choose images...</span>
-              </div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">
+              <i class="fas fa-link mr-1"></i> Image URLs (comma separated)
+            </label>
+            <div class="relative">
+              <i class="fas fa-image absolute left-3 top-3.5 text-gray-400"></i>
+              <input type="text" id="prodImageUrls" 
+                     placeholder="https://example.com/image1.jpg, https://example.com/image2.jpg" 
+                     class="w-full border border-gray-200 rounded-lg pl-10 p-3 input-focus transition shadow-sm" />
             </div>
-            <div id="image-preview-container" class="image-preview-grid"></div>
-            <p class="text-xs text-gray-400 mt-1">Hold Ctrl/Cmd to select multiple images.</p>
+            <p class="text-xs text-gray-400 mt-1">Paste image URLs separated by commas. The first image will be used as the thumbnail.</p>
+            <!-- Preview container -->
+            <div id="url-preview-container" class="url-preview-grid"></div>
           </div>
+
           <button type="submit" class="w-full bg-pink-600 hover:bg-pink-700 text-white font-semibold py-3.5 rounded-xl transition shadow-md hover:shadow-pink-500/30 flex items-center justify-center gap-2">
             <i class="fas fa-save"></i> Add Product
           </button>
@@ -266,11 +334,10 @@
     </div>
   </footer>
 
-  <!-- Firebase & Auth -->
+  <!-- Firebase SDKs -->
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-storage-compat.js"></script>
 
   <script>
     // ===========================================================
@@ -281,7 +348,7 @@
       authDomain: "crescent-2662a.firebaseapp.com",
       databaseURL: "https://crescent-2662a-default-rtdb.firebaseio.com",
       projectId: "crescent-2662a",
-      storageBucket: "crescent-2662a.firebasestorage.app",  // <-- Your storage bucket
+      storageBucket: "crescent-2662a.firebasestorage.app",
       messagingSenderId: "947228503695",
       appId: "1:947228503695:web:f74d1c4da04508268ccafa",
       measurementId: "G-8BR6NDVKQC"
@@ -289,7 +356,6 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
     const auth = firebase.auth();
-    const storage = firebase.storage();
 
     // ===========================================================
     // TOAST
@@ -360,47 +426,33 @@
     };
 
     // ===========================================================
-    // IMAGE PREVIEW
+    // URL PREVIEW (show thumbnails as user types)
     // ===========================================================
-    document.getElementById('prodImages').addEventListener('change', function(e) {
-      const files = e.target.files;
-      const container = document.getElementById('image-preview-container');
+    document.getElementById('prodImageUrls').addEventListener('input', function() {
+      const input = this.value;
+      const urls = input.split(',').map(u => u.trim()).filter(u => u);
+      const container = document.getElementById('url-preview-container');
       container.innerHTML = '';
-      if (files.length > 0) {
-        const names = Array.from(files).map(f => f.name).join(', ');
-        document.getElementById('image-file-name').textContent = names.length > 30 ? names.substring(0, 30) + '...' : names;
-        for (let file of files) {
-          const reader = new FileReader();
-          reader.onload = function(ev) {
-            const img = document.createElement('img');
-            img.src = ev.target.result;
-            container.appendChild(img);
-          };
-          reader.readAsDataURL(file);
-        }
-      } else {
-        document.getElementById('image-file-name').textContent = 'Choose images...';
+      if (urls.length === 0) return;
+      // Show first 3 as preview
+      const previewUrls = urls.slice(0, 3);
+      previewUrls.forEach(url => {
+        const img = document.createElement('img');
+        img.src = url;
+        img.alt = 'preview';
+        img.onerror = function() { this.style.display = 'none'; }; // hide broken images
+        container.appendChild(img);
+      });
+      if (urls.length > 3) {
+        const more = document.createElement('span');
+        more.textContent = `+${urls.length - 3} more`;
+        more.className = 'text-xs text-gray-500 self-center';
+        container.appendChild(more);
       }
     });
 
     // ===========================================================
-    // UPLOAD TO FIREBASE STORAGE (NEW)
-    // ===========================================================
-    async function uploadToFirebaseStorage(file, folder) {
-      // Generate a unique filename
-      const timestamp = Date.now();
-      const fileName = `${folder}/${timestamp}_${file.name}`;
-      const storageRef = storage.ref(fileName);
-      
-      // Upload the file
-      const snapshot = await storageRef.put(file);
-      // Get the download URL
-      const downloadURL = await snapshot.ref.getDownloadURL();
-      return downloadURL;
-    }
-
-    // ===========================================================
-    // ADD PRODUCT
+    // ADD PRODUCT (Using Image URLs)
     // ===========================================================
     document.getElementById('addProductForm').addEventListener('submit', async (e) => {
       e.preventDefault();
@@ -410,24 +462,29 @@
       const category = document.getElementById('prodCategory').value;
       const stock = parseInt(document.getElementById('prodStock').value);
       const desc = document.getElementById('prodDesc').value.trim();
-      const files = document.getElementById('prodImages').files;
+      const imageUrlsInput = document.getElementById('prodImageUrls').value.trim();
 
-      if (files.length === 0) {
-        alert('Please select at least one image.');
+      if (!name || !price || !category || isNaN(stock)) {
+        alert('Please fill in all required fields.');
+        return;
+      }
+      if (!imageUrlsInput) {
+        alert('Please enter at least one image URL.');
+        return;
+      }
+
+      // Split URLs and clean
+      const imageUrls = imageUrlsInput.split(',').map(url => url.trim()).filter(url => url);
+      if (imageUrls.length === 0) {
+        alert('Please enter valid image URLs.');
         return;
       }
 
       const btn = e.target.querySelector('button[type="submit"]');
       btn.disabled = true;
-      btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Uploading...';
+      btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Saving...';
 
       try {
-        const imageUrls = [];
-        for (let file of files) {
-          const url = await uploadToFirebaseStorage(file, "products");
-          imageUrls.push(url);
-        }
-
         const newRef = db.ref('products').push();
         await newRef.set({
           id: newRef.key,
@@ -437,14 +494,13 @@
           stock: stock,
           description: desc,
           images: imageUrls,
-          thumbnail: imageUrls[0], // Firebase Storage already gives a direct URL
+          thumbnail: imageUrls[0], // use first image as thumbnail
           createdAt: firebase.database.ServerValue.TIMESTAMP
         });
 
         document.getElementById('product-success').classList.remove('hidden');
         document.getElementById('addProductForm').reset();
-        document.getElementById('image-file-name').textContent = 'Choose images...';
-        document.getElementById('image-preview-container').innerHTML = '';
+        document.getElementById('url-preview-container').innerHTML = '';
         showToast('🎉 Product added successfully!', 'success');
         setTimeout(() => {
           document.getElementById('product-success').classList.add('hidden');
