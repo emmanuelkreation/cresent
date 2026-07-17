@@ -4,15 +4,17 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Checkout - Crescent Beauty Hub</title>
-  
+
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
-  
+
   <!-- FontAwesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
 
+  <!-- Paystack Script -->
+  <script src="https://js.paystack.co/v1/inline.js"></script>
+
   <style>
-    /* -------- Animations -------- */
     .fade-up {
       opacity: 0;
       transform: translateY(20px);
@@ -27,19 +29,12 @@
       to { opacity: 1; transform: translateY(0); }
     }
 
-    /* Glassmorphism */
     .glass-card {
       background: rgba(255, 255, 255, 0.7);
       backdrop-filter: blur(12px);
       border: 1px solid rgba(255, 255, 255, 0.5);
     }
-    .glass-card-dark {
-      background: rgba(31, 41, 55, 0.8);
-      backdrop-filter: blur(10px);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-    }
 
-    /* Form input focus */
     .input-focus:focus {
       outline: none;
       ring: 2px solid #be185d;
@@ -47,46 +42,6 @@
       box-shadow: 0 0 0 4px rgba(190, 24, 93, 0.1);
     }
 
-    /* File upload styling */
-    .file-upload-wrapper {
-      position: relative;
-      overflow: hidden;
-    }
-    .file-upload-wrapper input[type="file"] {
-      position: absolute;
-      left: 0;
-      top: 0;
-      opacity: 0;
-      width: 100%;
-      height: 100%;
-      cursor: pointer;
-    }
-    .file-upload-label {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 0.5rem;
-      padding: 0.75rem 1rem;
-      border: 2px dashed #d1d5db;
-      border-radius: 0.75rem;
-      background: #f9fafb;
-      transition: all 0.2s;
-      cursor: pointer;
-      color: #6b7280;
-    }
-    .file-upload-label:hover {
-      border-color: #be185d;
-      background: #fce7f3;
-    }
-    .file-upload-label i {
-      font-size: 1.25rem;
-    }
-    #file-name {
-      font-weight: 500;
-      color: #1f2937;
-    }
-
-    /* WhatsApp button pulse */
     .whatsapp-pulse {
       animation: pulse 2s infinite;
     }
@@ -99,12 +54,12 @@
 </head>
 <body class="bg-gray-50 font-sans antialiased">
 
-  <!-- ==================== TOP ANNOUNCEMENT ==================== -->
+  <!-- Top Bar -->
   <div class="bg-pink-600 text-white text-center text-sm py-2.5 px-4 tracking-wide">
     <i class="fas fa-gift mr-2"></i> Free delivery on selected orders · Premium beauty essentials · Secure checkout
   </div>
 
-  <!-- ==================== NAVBAR ==================== -->
+  <!-- Navbar -->
   <nav class="bg-white/90 backdrop-blur-md shadow-sm sticky top-0 z-50 border-b border-gray-100/80">
     <div class="container mx-auto px-4 py-3 flex justify-between items-center">
       <a href="index.html" class="text-2xl font-extrabold text-pink-700 tracking-tight flex items-center gap-2">
@@ -122,17 +77,15 @@
     </div>
   </nav>
 
-  <!-- ==================== CHECKOUT SECTION ==================== -->
+  <!-- Checkout Section -->
   <section class="container mx-auto px-4 py-10 max-w-5xl">
     <h1 class="text-3xl md:text-4xl font-bold text-gray-800 flex items-center gap-3 mb-8 fade-up">
       <i class="fas fa-credit-card text-pink-500"></i> Checkout
     </h1>
 
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-      <!-- LEFT: Form & Payment -->
+      <!-- Left: Customer Form -->
       <div class="lg:col-span-2 space-y-6">
-
-        <!-- 1. Customer Info Form -->
         <div class="glass-card rounded-2xl shadow-xl p-6 md:p-8 fade-up fade-up-d1">
           <h3 class="text-xl font-bold text-gray-800 mb-4"><i class="fas fa-user-circle text-pink-500 mr-2"></i> Your Details</h3>
           <form id="checkout-form" class="space-y-4">
@@ -157,44 +110,17 @@
                         class="w-full border border-gray-200 rounded-lg pl-10 p-3 input-focus transition shadow-sm" rows="3"></textarea>
             </div>
 
-            <!-- 2. Bank Details (from Firebase) -->
-            <div class="mt-6 p-4 bg-yellow-50/80 border border-yellow-200 rounded-xl">
-              <h4 class="font-bold text-gray-700 flex items-center gap-2">
-                <i class="fas fa-university text-yellow-600"></i> Bank Transfer Details
-              </h4>
-              <p class="text-sm text-gray-600 mt-1">Transfer the <strong>exact total amount</strong> below to this account:</p>
-              <div class="mt-3 p-4 bg-white/80 rounded-lg border border-gray-200 shadow-inner">
-                <div class="flex justify-between py-1"><span class="text-gray-600">Bank:</span><span id="bank-name" class="font-semibold">Loading...</span></div>
-                <div class="flex justify-between py-1"><span class="text-gray-600">Account Name:</span><span id="account-name" class="font-semibold">Loading...</span></div>
-                <div class="flex justify-between py-1"><span class="text-gray-600">Account Number:</span><span id="account-number" class="font-mono font-bold text-lg text-pink-600">Loading...</span></div>
-              </div>
-            </div>
-
-            <!-- 3. Receipt Upload -->
-            <div class="mt-4">
-              <label class="block text-sm font-medium text-gray-700 mb-1">
-                <i class="fas fa-upload mr-1"></i> Upload Payment Receipt (Screenshot/PDF)
-              </label>
-              <div class="file-upload-wrapper">
-                <input type="file" id="receipt" accept="image/*,.pdf" required />
-                <div class="file-upload-label">
-                  <i class="fas fa-cloud-upload-alt"></i>
-                  <span id="file-name">Choose a file...</span>
-                </div>
-              </div>
-              <p class="text-xs text-gray-400 mt-1">Accepted: JPG, PNG, PDF</p>
-            </div>
-
-            <!-- Submit Button -->
-            <button type="submit" id="place-order-btn"
+            <!-- Paystack Payment Button -->
+            <button type="button" id="pay-now-btn"
                     class="w-full bg-pink-600 hover:bg-pink-700 text-white font-semibold py-3.5 rounded-xl transition duration-200 shadow-md hover:shadow-pink-500/30 flex items-center justify-center gap-2">
-              <i class="fas fa-check-circle"></i> Place Order
+              <i class="fas fa-lock"></i> Pay with Card or Bank
             </button>
+            <p class="text-xs text-gray-400 text-center mt-1">Secured by Paystack. We accept all Nigerian cards and bank transfers.</p>
           </form>
         </div>
       </div>
 
-      <!-- RIGHT: Order Summary -->
+      <!-- Right: Order Summary -->
       <div class="lg:col-span-1">
         <div class="glass-card rounded-2xl shadow-xl p-6 sticky top-24 fade-up fade-up-d3">
           <h3 class="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">
@@ -210,33 +136,28 @@
             </div>
           </div>
           <p class="text-xs text-gray-400 mt-3 text-center">
-            <i class="fas fa-lock mr-1"></i> Your payment is secure and encrypted.
+            <i class="fas fa-lock mr-1"></i> Your payment is secure.
           </p>
         </div>
       </div>
     </div>
 
-    <!-- ==================== SUCCESS SECTION (hidden initially) ==================== -->
+    <!-- Success Section -->
     <div id="success-box" class="hidden mt-8">
       <div class="glass-card rounded-2xl shadow-2xl p-8 md:p-12 text-center fade-up">
         <div class="text-6xl text-green-500 mb-4"><i class="fas fa-check-circle"></i></div>
-        <h2 class="text-3xl font-bold text-gray-800">Order Placed Successfully! 🎉</h2>
+        <h2 class="text-3xl font-bold text-gray-800">Payment Successful! 🎉</h2>
         <p class="text-gray-600 mt-2">Your Order ID: <strong id="order-id-display" class="text-pink-600 text-xl">#CR-001</strong></p>
-        <p class="text-sm text-gray-500 mt-1">Please send your payment receipt to us on WhatsApp to confirm your order.</p>
-        <a id="whatsapp-btn" href="#" target="_blank"
-           class="whatsapp-pulse mt-6 inline-block bg-green-600 hover:bg-green-700 text-white px-10 py-4 rounded-full shadow-lg transition text-lg font-semibold">
-          <i class="fab fa-whatsapp mr-2"></i> Send Receipt on WhatsApp
-        </a>
-        <p class="text-xs text-gray-400 mt-4">Don't forget to mention your Order ID in the message.</p>
-        <div class="mt-6 flex justify-center gap-4">
-          <a href="index.html" class="text-pink-600 hover:underline font-medium"><i class="fas fa-store mr-1"></i> Continue Shopping</a>
-          <a href="cart.html" class="text-pink-600 hover:underline font-medium"><i class="fas fa-shopping-cart mr-1"></i> View Cart</a>
+        <p class="text-sm text-gray-500 mt-1">We will process your order and send you a confirmation email shortly.</p>
+        <div class="mt-6 flex flex-wrap justify-center gap-4">
+          <a href="index.html" class="bg-pink-600 hover:bg-pink-700 text-white px-8 py-3 rounded-full font-semibold transition shadow-md"><i class="fas fa-store mr-1"></i> Continue Shopping</a>
+          <a href="track-order.html" class="bg-gray-200 hover:bg-gray-300 text-gray-800 px-8 py-3 rounded-full font-semibold transition"><i class="fas fa-search mr-1"></i> Track Order</a>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- ==================== FOOTER ==================== -->
+  <!-- Footer (same as before) -->
   <footer class="bg-gray-900 text-gray-300 mt-16 py-12 px-4 border-t border-gray-800">
     <div class="container mx-auto grid grid-cols-1 md:grid-cols-4 gap-8">
       <div>
@@ -273,11 +194,10 @@
     </div>
   </footer>
 
-  <!-- ========================================================== -->
-  <!-- ==================== JAVASCRIPT =========================== -->
-  <!-- ========================================================== -->
+  <!-- Firebase SDKs -->
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+
   <script>
     // ===========================================================
     // 1. FIREBASE CONFIG
@@ -285,7 +205,7 @@
     const firebaseConfig = {
       apiKey: "AIzaSyB2jxywTYbizISk9_mJcreBx5eS5u0C4es",
       authDomain: "crescent-2662a.firebaseapp.com",
-      databaseURL: "https://crescent-2662a-default-rtdb.firebaseio.com", // <-- VERIFY
+      databaseURL: "https://crescent-2662a-default-rtdb.firebaseio.com",
       projectId: "crescent-2662a",
       storageBucket: "crescent-2662a.firebasestorage.app",
       messagingSenderId: "947228503695",
@@ -296,17 +216,17 @@
     const db = firebase.database();
 
     // ===========================================================
-    // 2. IMAGEKIT CONFIG (replace when you have your key)
+    // 2. PAYSTACK PUBLIC KEY (REPLACE WITH YOUR OWN)
     // ===========================================================
-    const IK_PUBLIC_KEY = "your_imagekit_public_key"; // <-- UPDATE LATER
+    const PAYSTACK_PUBLIC_KEY = "pk_live_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"; // <-- Replace with your live key
 
     // ===========================================================
-    // 3. WHATSAPP NUMBER
+    // 3. WHATSAPP NUMBER (for admin notification - optional)
     // ===========================================================
-    const WHATSAPP_NUMBER = "2347038721342"; // without '+'
+    const WHATSAPP_NUMBER = "2347038721342";
 
     // ===========================================================
-    // 4. GET CART & UPDATE BADGE
+    // 4. CART FUNCTIONS
     // ===========================================================
     function getCart() {
       return JSON.parse(localStorage.getItem('cart')) || [];
@@ -321,19 +241,7 @@
     updateBadge();
 
     // ===========================================================
-    // 5. LOAD BANK DETAILS
-    // ===========================================================
-    db.ref('settings/bankDetails').on('value', (snap) => {
-      const bank = snap.val();
-      if (bank) {
-        document.getElementById('bank-name').textContent = bank.bankName || 'N/A';
-        document.getElementById('account-name').textContent = bank.accountName || 'N/A';
-        document.getElementById('account-number').textContent = bank.accountNumber || 'N/A';
-      }
-    });
-
-    // ===========================================================
-    // 6. LOAD ORDER SUMMARY
+    // 5. LOAD ORDER SUMMARY
     // ===========================================================
     function loadOrderSummary() {
       const cart = getCart();
@@ -364,40 +272,16 @@
     loadOrderSummary();
 
     // ===========================================================
-    // 7. UPLOAD TO IMAGEKIT
+    // 6. PAYSTACK PAYMENT HANDLER
     // ===========================================================
-    async function uploadToImageKit(file, folder) {
-      const formData = new FormData();
-      formData.append("file", file);
-      formData.append("fileName", file.name);
-      formData.append("folder", folder);
-
-      const response = await fetch("https://upload.imagekit.io/api/v1/files/upload", {
-        method: "POST",
-        headers: {
-          "Authorization": `Basic ${btoa(IK_PUBLIC_KEY + ":")}`
-        },
-        body: formData
-      });
-      const data = await response.json();
-      if (!response.ok) throw new Error(data.message || 'Upload failed');
-      return data.url;
-    }
-
-    // ===========================================================
-    // 8. PLACE ORDER
-    // ===========================================================
-    document.getElementById('checkout-form').addEventListener('submit', async (e) => {
-      e.preventDefault();
-
+    document.getElementById('pay-now-btn').addEventListener('click', function(e) {
       const name = document.getElementById('fullName').value.trim();
       const email = document.getElementById('email').value.trim();
       const phone = document.getElementById('phone').value.trim();
       const address = document.getElementById('address').value.trim();
-      const receiptFile = document.getElementById('receipt').files[0];
 
-      if (!receiptFile) {
-        alert('Please upload your payment receipt.');
+      if (!name || !email || !phone || !address) {
+        alert('Please fill in all your details.');
         return;
       }
 
@@ -407,63 +291,80 @@
         return;
       }
 
-      // Disable button to prevent double submission
-      const btn = document.getElementById('place-order-btn');
-      btn.disabled = true;
-      btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Processing...';
+      // Calculate total in kobo (Paystack uses smallest currency unit)
+      const total = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
+      const amountInKobo = total * 100; // 1 NGN = 100 kobo
 
-      try {
-        // Upload receipt
-        const receiptUrl = await uploadToImageKit(receiptFile, "/receipts");
+      // Generate a unique reference
+      const ref = `CR-${Date.now().toString().slice(-6)}-${Math.random().toString(36).substring(2, 7)}`;
 
-        // Calculate total
-        const total = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
+      // Create order object (will be saved after payment)
+      const orderData = {
+        orderId: ref,
+        customerName: name,
+        email: email,
+        phone: phone,
+        address: address,
+        items: cart,
+        totalAmount: total,
+        paymentStatus: 'pending', // will be updated to 'paid' after success
+        placedAt: firebase.database.ServerValue.TIMESTAMP
+      };
 
-        // Push to Firebase
-        const newOrderRef = db.ref('orders').push();
-        const orderId = `CR-${Date.now().toString().slice(-6)}`;
+      // Initialize Paystack
+      const handler = PaystackPop.setup({
+        key: PAYSTACK_PUBLIC_KEY,
+        email: email,
+        amount: amountInKobo,
+        currency: 'NGN',
+        ref: ref,
+        metadata: {
+          custom_fields: [
+            { display_name: "Customer Name", variable_name: "customer_name", value: name },
+            { display_name: "Phone", variable_name: "phone", value: phone },
+            { display_name: "Delivery Address", variable_name: "address", value: address }
+          ]
+        },
+        callback: async function(response) {
+          // Payment successful
+          const reference = response.reference;
+          // Save order with 'paid' status
+          try {
+            const newOrderRef = db.ref('orders').push();
+            await newOrderRef.set({
+              ...orderData,
+              paymentStatus: 'paid',
+              paymentReference: reference,
+              paymentDate: firebase.database.ServerValue.TIMESTAMP
+            });
 
-        await newOrderRef.set({
-          orderId: orderId,
-          customerName: name,
-          email: email,
-          phone: phone,
-          address: address,
-          items: cart,
-          totalAmount: total,
-          paymentStatus: "pending",
-          receiptUrl: receiptUrl,
-          placedAt: firebase.database.ServerValue.TIMESTAMP
-        });
+            // Clear cart
+            localStorage.removeItem('cart');
+            updateBadge();
 
-        // Clear cart
-        localStorage.removeItem('cart');
-        updateBadge();
+            // Show success
+            document.querySelector('.lg\\:col-span-2 .glass-card').style.display = 'none';
+            document.getElementById('success-box').classList.remove('hidden');
+            document.getElementById('order-id-display').textContent = `#${ref}`;
 
-        // Show success
-        document.getElementById('checkout-form').closest('.glass-card').style.display = 'none';
-        document.getElementById('success-box').classList.remove('hidden');
-        document.getElementById('order-id-display').textContent = `#${orderId}`;
+            // Optional WhatsApp notification to admin
+            const waMessage = `New order #${ref} paid via Paystack. Total: ₦${total.toLocaleString()}. Customer: ${name}.`;
+            const waLink = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(waMessage)}`;
+            // Optionally, you can auto-open WhatsApp or just show a button.
+            // We'll leave it for the admin to check the admin panel.
 
-        // Build WhatsApp link
-        const waMessage = `Hello Cresent Beauty Hub, I have paid for Order #${orderId} via Bank Transfer. Please check my receipt on your admin dashboard.`;
-        const waLink = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(waMessage)}`;
-        document.getElementById('whatsapp-btn').href = waLink;
+          } catch (error) {
+            alert('Error saving order: ' + error.message);
+            console.error(error);
+          }
+        },
+        onClose: function() {
+          // User closed the modal
+          alert('Payment cancelled. You can try again.');
+        }
+      });
 
-      } catch (error) {
-        alert('Error placing order: ' + error.message);
-        console.error(error);
-        btn.disabled = false;
-        btn.innerHTML = '<i class="fas fa-check-circle mr-2"></i> Place Order';
-      }
-    });
-
-    // ===========================================================
-    // 9. FILE INPUT LABEL UPDATE
-    // ===========================================================
-    document.getElementById('receipt').addEventListener('change', function(e) {
-      const fileName = e.target.files[0] ? e.target.files[0].name : 'Choose a file...';
-      document.getElementById('file-name').textContent = fileName;
+      handler.openIframe();
     });
   </script>
 </body>
