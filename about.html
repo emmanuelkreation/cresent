@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>About Us - Crescent Beauty Hub</title>
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+
+  <style>
+    /* Animations */
+    .fade-up {
+      opacity: 0;
+      transform: translateY(30px);
+      animation: fadeUp 0.7s ease forwards;
+    }
+    .fade-up-d1 { animation-delay: 0.1s; }
+    .fade-up-d2 { animation-delay: 0.2s; }
+    .fade-up-d3 { animation-delay: 0.3s; }
+    .fade-up-d4 { animation-delay: 0.4s; }
+    .fade-up-d5 { animation-delay: 0.5s; }
+
+    @keyframes fadeUp {
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Glassmorphism */
+    .glass-card {
+      background: rgba(255, 255, 255, 0.7);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.5);
+    }
+
+    .hero-about {
+      background-image: url('https://images.unsplash.com/photo-1616394584738-fc6e612e71b9?w=1600&q=80');
+      background-size: cover;
+      background-position: center 40%;
+    }
+
+    .value-card {
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .value-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 15px 30px -10px rgba(190, 24, 93, 0.15);
+    }
+
+    .founder-img {
+      border: 4px solid #fce7f3;
+      transition: border-color 0.3s ease;
+    }
+    .founder-img:hover {
+      border-color: #be185d;
+    }
+  </style>
+</head>
+<body class="bg-gray-50 font-sans antialiased">
+
+  <!-- ==================== TOP ANNOUNCEMENT ==================== -->
+  <div class="bg-pink-600 text-white text-center text-sm py-2.5 px-4 tracking-wide">
+    <i class="fas fa-gift mr-2"></i> Free delivery on selected orders · Premium beauty essentials · Secure checkout
+  </div>
+
+  <!-- ==================== NAVBAR ==================== -->
+  <nav class="bg-white/90 backdrop-blur-md shadow-sm sticky top-0 z-50 border-b border-gray-100/80">
+    <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+      <a href="index.html" class="text-2xl font-extrabold text-pink-700 tracking-tight flex items-center gap-2">
+        <i class="fas fa-spa text-pink-500 text-2xl"></i> Cresent Beauty Hub
+      </a>
+
+      <!-- Desktop Navigation Links -->
+      <div class="hidden sm:flex items-center space-x-5">
+        <a href="reviews.html" class="text-gray-500 hover:text-pink-600 text-sm font-medium transition">
+          <i class="fas fa-star mr-1"></i> Reviews
+        </a>
+        <a href="track-order.html" class="text-gray-500 hover:text-pink-600 text-sm font-medium transition">
+          <i class="fas fa-search mr-1"></i> Track
+        </a>
+        <a href="about.html" class="text-pink-600 text-sm font-medium transition">
+          <i class="fas fa-info-circle mr-1"></i> About
+        </a>
+        <a href="admin.html" class="text-gray-500 hover:text-pink-600 text-sm font-medium transition">
+          <i class="fas fa-user-cog mr-1"></i> Admin
+        </a>
+        <a href="cart.html" class="relative group">
+          <i class="fas fa-shopping-bag text-2xl text-gray-700 group-hover:text-pink-600 transition"></i>
+          <span id="cart-badge" class="absolute -top-2 -right-2 bg-pink-600 text-white text-[10px] font-bold rounded-full px-2 py-0.5 min-w-[20px] text-center shadow-lg">0</span>
+        </a>
+      </div>
+
+      <!-- Mobile Menu Toggle -->
+      <div class="flex sm:hidden items-center space-x-3">
+        <a href="cart.html" class="relative group">
+          <i class="fas fa-shopping-bag text-xl text-gray-700"></i>
+          <span id="cart-badge-mobile" class="absolute -top-2 -right-2 bg-pink-600 text-white text-[10px] font-bold rounded-full px-2 py-0.5 min-w-[20px] text-center shadow-lg">0</span>
+        </a>
+        <button id="mobile-menu-btn" class="text-gray-700 hover:text-pink-600 focus:outline-none">
+          <i class="fas fa-bars text-2xl"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- Mobile Dropdown Menu -->
+    <div id="mobile-menu" class="hidden sm:hidden bg-white/95 backdrop-blur-md border-b border-gray-100 px-4 py-3 space-y-2">
+      <a href="reviews.html" class="block text-gray-600 hover:text-pink-600 text-sm font-medium transition">
+        <i class="fas fa-star mr-2"></i> Reviews
+      </a>
+      <a href="track-order.html" class="block text-gray-600 hover:text-pink-600 text-sm font-medium transition">
+        <i class="fas fa-search mr-2"></i> Track Order
+      </a>
+      <a href="about.html" class="block text-pink-600 text-sm font-medium transition">
+        <i class="fas fa-info-circle mr-2"></i> About Us
+      </a>
+      <a href="admin.html" class="block text-gray-600 hover:text-pink-600 text-sm font-medium transition">
+        <i class="fas fa-user-cog mr-2"></i> Admin
+      </a>
+    </div>
+  </nav>
+
+  <!-- ==================== HERO / BANNER ==================== -->
+  <section class="hero-about relative min-h-[40vh] flex items-center">
+    <div class="absolute inset-0 bg-gradient-to-r from-black/60 via-black/40 to-transparent"></div>
+    <div class="container mx-auto px-4 relative z-10 text-white">
+      <p class="text-pink-300 font-semibold uppercase tracking-[0.2em] text-sm">About Us</p>
+      <h1 class="text-4xl md:text-6xl font-extrabold leading-tight mt-2">
+        Crescent Beauty Hub
+      </h1>
+      <p class="text-lg md:text-xl text-gray-100 max-w-2xl mt-3">
+        Quality beauty and personal-care products that help you look good, feel confident, and smell amazing.
+      </p>
+    </div>
+  </section>
+
+  <!-- ==================== BRAND INTRO ==================== -->
+  <section class="container mx-auto px-4 py-16">
+    <div class="max-w-4xl mx-auto">
+      <div class="glass-card rounded-2xl shadow-xl p-8 md:p-10 fade-up">
+        <div class="flex items-center gap-3 mb-4">
+          <i class="fas fa-leaf text-pink-500 text-2xl"></i>
+          <h2 class="text-2xl md:text-3xl font-bold text-gray-800">About CrescentBeautyHub</h2>
+        </div>
+        <p class="text-gray-600 leading-relaxed">
+          CrescentBeautyHub is a beauty and personal-care brand dedicated to providing quality products that help you look good, feel confident, and smell amazing. We offer a variety of skincare products, perfumes, perfume oils, body sprays, roll-ons, hair creams, and other beauty essentials.
+        </p>
+        <p class="text-gray-600 leading-relaxed mt-4">
+          We are committed to making beauty shopping simple, convenient, and enjoyable while providing products our customers can trust.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== FOUNDER SECTION ==================== -->
+  <section class="container mx-auto px-4 py-8">
+    <div class="max-w-4xl mx-auto">
+      <div class="glass-card rounded-2xl shadow-xl p-8 md:p-10 fade-up fade-up-d1">
+        <div class="flex flex-col md:flex-row items-center gap-8">
+          <!-- Founder Image (Placeholder - replace with actual photo) -->
+          <div class="flex-shrink-0">
+            <img src="https://images.unsplash.com/photo-1580618672591-eb180b1a973f?w=300&h=300&fit=crop&crop=center&q=80" 
+                 alt="Mercy - Founder of Crescent Beauty Hub" 
+                 class="founder-img w-40 h-40 md:w-56 md:h-56 rounded-full object-cover shadow-lg" />
+          </div>
+          <!-- Founder Info -->
+          <div class="flex-1 text-center md:text-left">
+            <div class="flex items-center justify-center md:justify-start gap-3 mb-2">
+              <i class="fas fa-crown text-yellow-500 text-xl"></i>
+              <h2 class="text-2xl md:text-3xl font-bold text-gray-800">About the Founder</h2>
+            </div>
+            <p class="text-gray-600 leading-relaxed">
+              CrescentBeautyHub was founded by <strong>Mercy</strong>, a passionate entrepreneur with a love for beauty, skincare, and fragrances. Her vision is to create a brand where customers can easily find beauty and personal-care products that suit their everyday needs.
+            </p>
+            <p class="text-gray-600 leading-relaxed mt-3">
+              Through CrescentBeautyHub, Mercy is committed to building a trusted brand that puts customers and quality first.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== MISSION SECTION ==================== -->
+  <section class="container mx-auto px-4 py-8">
+    <div class="max-w-4xl mx-auto">
+      <div class="glass-card rounded-2xl shadow-xl p-8 md:p-10 fade-up fade-up-d2">
+        <div class="flex items-center gap-3 mb-4">
+          <i class="fas fa-bullseye text-pink-500 text-2xl"></i>
+          <h2 class="text-2xl md:text-3xl font-bold text-gray-800">Our Mission</h2>
+        </div>
+        <p class="text-gray-600 leading-relaxed">
+          Our mission is to make quality beauty and personal-care products accessible to everyone while helping our customers feel confident, beautiful, and comfortable in their own skin.
+        </p>
+        <p class="text-gray-600 leading-relaxed mt-3">
+          We aim to provide a smooth shopping experience, excellent customer service, and products that add value to our customers' daily beauty routines.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== VALUES SECTION ==================== -->
+  <section class="container mx-auto px-4 py-8 pb-16">
+    <div class="max-w-4xl mx-auto">
+      <div class="text-center mb-10 fade-up fade-up-d3">
+        <p class="text-pink-600 font-semibold uppercase tracking-wider text-sm flex items-center justify-center gap-2">
+          <i class="fas fa-heart"></i> What We Stand For
+        </p>
+        <h2 class="text-3xl md:text-4xl font-bold text-gray-800">Our Values</h2>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <!-- Value 1: Quality -->
+        <div class="value-card glass-card rounded-xl shadow-md p-6 text-center border border-gray-100 fade-up fade-up-d3">
+          <div class="w-14 h-14 bg-pink-100 rounded-full flex items-center justify-center text-pink-600 text-2xl mx-auto mb-3 shadow-sm">
+            <i class="fas fa-certificate"></i>
+          </div>
+          <h3 class="font-bold text-gray-800 text-lg">Quality</h3>
+          <p class="text-sm text-gray-500">We are committed to offering quality beauty and personal-care products.</p>
+        </div>
+
+        <!-- Value 2: Customer Satisfaction -->
+        <div class="value-card glass-card rounded-xl shadow-md p-6 text-center border border-gray-100 fade-up fade-up-d4">
+          <div class="w-14 h-14 bg-pink-100 rounded-full flex items-center justify-center text-pink-600 text-2xl mx-auto mb-3 shadow-sm">
+            <i class="fas fa-smile"></i>
+          </div>
+          <h3 class="font-bold text-gray-800 text-lg">Customer Satisfaction</h3>
+          <p class="text-sm text-gray-500">Our customers are at the heart of everything we do.</p>
+        </div>
+
+        <!-- Value 3: Trust -->
+        <div class="value-card glass-card rounded-xl shadow-md p-6 text-center border border-gray-100 fade-up fade-up-d5">
+          <div class="w-14 h-14 bg-pink-100 rounded-full flex items-center justify-center text-pink-600 text-2xl mx-auto mb-3 shadow-sm">
+            <i class="fas fa-handshake"></i>
+          </div>
+          <h3 class="font-bold text-gray-800 text-lg">Trust</h3>
+          <p class="text-sm text-gray-500">We believe in honesty, transparency, and building lasting relationships with our customers.</p>
+        </div>
+
+        <!-- Value 4: Confidence -->
+        <div class="value-card glass-card rounded-xl shadow-md p-6 text-center border border-gray-100 md:col-span-1 lg:col-span-1 fade-up fade-up-d5">
+          <div class="w-14 h-14 bg-pink-100 rounded-full flex items-center justify-center text-pink-600 text-2xl mx-auto mb-3 shadow-sm">
+            <i class="fas fa-star"></i>
+          </div>
+          <h3 class="font-bold text-gray-800 text-lg">Confidence</h3>
+          <p class="text-sm text-gray-500">We believe everyone deserves to feel beautiful, confident, and comfortable in their own skin.</p>
+        </div>
+
+        <!-- Value 5: Passion -->
+        <div class="value-card glass-card rounded-xl shadow-md p-6 text-center border border-gray-100 md:col-span-2 lg:col-span-1 fade-up fade-up-d5">
+          <div class="w-14 h-14 bg-pink-100 rounded-full flex items-center justify-center text-pink-600 text-2xl mx-auto mb-3 shadow-sm">
+            <i class="fas fa-fire"></i>
+          </div>
+          <h3 class="font-bold text-gray-800 text-lg">Passion</h3>
+          <p class="text-sm text-gray-500">We are passionate about beauty, self-care, and helping our customers discover products they love.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== FOOTER ==================== -->
+  <footer class="bg-gray-900 text-gray-300 py-12 px-4 border-t border-gray-800">
+    <div class="container mx-auto grid grid-cols-1 md:grid-cols-4 gap-8">
+      <div>
+        <h3 class="text-white text-2xl font-bold flex items-center gap-2">
+          <i class="fas fa-spa text-pink-500"></i> Cresent Beauty Hub
+        </h3>
+        <p class="mt-2 text-sm leading-relaxed">Your trusted destination for premium perfumes, skincare, body care, and hair care.</p>
+      </div>
+      <div>
+        <h4 class="text-white font-semibold">Quick Links</h4>
+        <ul class="mt-2 text-sm space-y-1.5">
+          <li><a href="index.html" class="hover:text-pink-400 transition"><i class="fas fa-chevron-right text-[10px] mr-1"></i> Home</a></li>
+          <li><a href="#products-section" class="hover:text-pink-400 transition"><i class="fas fa-chevron-right text-[10px] mr-1"></i> Shop</a></li>
+          <li><a href="about.html" class="hover:text-pink-400 transition"><i class="fas fa-chevron-right text-[10px] mr-1"></i> About Us</a></li>
+          <li><a href="reviews.html" class="hover:text-pink-400 transition"><i class="fas fa-chevron-right text-[10px] mr-1"></i> Reviews</a></li>
+          <li><a href="track-order.html" class="hover:text-pink-400 transition"><i class="fas fa-chevron-right text-[10px] mr-1"></i> Track Order</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 class="text-white font-semibold">Support</h4>
+        <ul class="mt-2 text-sm space-y-1.5">
+          <li><a href="#" class="hover:text-pink-400 transition"><i class="fas fa-chevron-right text-[10px] mr-1"></i> Shipping Policy</a></li>
+          <li><a href="#" class="hover:text-pink-400 transition"><i class="fas fa-chevron-right text-[10px] mr-1"></i> Return Policy</a></li>
+          <li><a href="#" class="hover:text-pink-400 transition"><i class="fas fa-chevron-right text-[10px] mr-1"></i> Privacy Policy</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 class="text-white font-semibold"><i class="fas fa-address-card mr-2"></i> Contact</h4>
+        <p class="text-sm mt-2"><i class="fas fa-envelope mr-2 text-pink-400"></i> mercyola971@gmail.com</p>
+        <p class="text-sm"><i class="fas fa-phone mr-2 text-pink-400"></i> +234 7038721342</p>
+        <p class="text-sm"><i class="fas fa-map-marker-alt mr-2 text-pink-400"></i> Ogbomoso, Nigeria</p>
+      </div>
+    </div>
+    <div class="container mx-auto text-center text-sm border-t border-gray-800 mt-10 pt-6">
+      <i class="far fa-copyright mr-1"></i> 2026 Cresent Beauty Hub. All Rights Reserved.
+    </div>
+  </footer>
+
+  <!-- ========================================================== -->
+  <!-- ==================== JAVASCRIPT =========================== -->
+  <!-- ========================================================== -->
+  <script>
+    // ===========================================================
+    // CART BADGE UPDATE
+    // ===========================================================
+    function updateBadge() {
+      const cart = JSON.parse(localStorage.getItem('cart')) || [];
+      const count = cart.reduce((sum, item) => sum + item.qty, 0);
+      const badge = document.getElementById('cart-badge');
+      const mobileBadge = document.getElementById('cart-badge-mobile');
+      if (badge) badge.textContent = count;
+      if (mobileBadge) mobileBadge.textContent = count;
+    }
+    updateBadge();
+
+    // ===========================================================
+    // MOBILE MENU TOGGLE
+    // ===========================================================
+    document.getElementById('mobile-menu-btn').addEventListener('click', function() {
+      const menu = document.getElementById('mobile-menu');
+      menu.classList.toggle('hidden');
+    });
+
+    // ===========================================================
+    // FADE-UP OBSERVER (for animations)
+    // ===========================================================
+    document.addEventListener('DOMContentLoaded', function() {
+      const fadeElements = document.querySelectorAll('.fade-up');
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.style.opacity = '1';
+            observer.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.1 });
+
+      fadeElements.forEach(el => observer.observe(el));
+    });
+  </script>
+</body>
+</html>
