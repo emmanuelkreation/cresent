@@ -74,6 +74,23 @@
     .testimonial-card:hover {
       transform: translateY(-4px);
     }
+
+    /* Product Modal styles */
+    .modal-overlay {
+      background: rgba(0, 0, 0, 0.6);
+      backdrop-filter: blur(8px);
+    }
+    .modal-content {
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+    .modal-content::-webkit-scrollbar {
+      width: 6px;
+    }
+    .modal-content::-webkit-scrollbar-thumb {
+      background: #be185d;
+      border-radius: 10px;
+    }
   </style>
 </head>
 <body class="bg-gray-50 font-sans antialiased">
@@ -91,6 +108,13 @@
       </a>
       
       <div class="flex items-center space-x-5">
+        <!-- Added Reviews and Track links -->
+        <a href="reviews.html" class="text-gray-500 hover:text-pink-600 text-sm font-medium hidden sm:inline transition">
+          <i class="fas fa-star mr-1"></i> Reviews
+        </a>
+        <a href="track-order.html" class="text-gray-500 hover:text-pink-600 text-sm font-medium hidden sm:inline transition">
+          <i class="fas fa-search mr-1"></i> Track
+        </a>
         <a href="admin.html" class="text-gray-500 hover:text-pink-600 text-sm font-medium hidden sm:inline transition">
           <i class="fas fa-user-cog mr-1"></i> Admin
         </a>
@@ -392,6 +416,19 @@
     </div>
   </section>
 
+  <!-- ==================== PRODUCT DETAIL MODAL ==================== -->
+  <div id="productModal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 modal-overlay">
+    <div class="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto modal-content p-6 md:p-8 relative">
+      <!-- Close button -->
+      <button onclick="closeProductModal()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 text-3xl transition">&times;</button>
+      
+      <!-- Dynamic content -->
+      <div id="modalProductContent">
+        <!-- Filled by JavaScript -->
+      </div>
+    </div>
+  </div>
+
   <!-- ==================== FOOTER ==================== -->
   <footer class="bg-gray-900 text-gray-300 mt-8 py-12 px-4 border-t border-gray-800">
     <div class="container mx-auto grid grid-cols-1 md:grid-cols-4 gap-8">
@@ -430,19 +467,19 @@
   </footer>
 
   <!-- ========================================================== -->
-  <!-- ==================== JAVASCRIPT (Full Logic) ==================== -->
+  <!-- ==================== JAVASCRIPT =========================== -->
   <!-- ========================================================== -->
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
   
   <script>
     // ===========================================================
-    // 1. FIREBASE CONFIG (Your provided credentials)
+    // 1. FIREBASE CONFIG
     // ===========================================================
     const firebaseConfig = {
       apiKey: "AIzaSyB2jxywTYbizISk9_mJcreBx5eS5u0C4es",
       authDomain: "crescent-2662a.firebaseapp.com",
-      databaseURL: "https://crescent-2662a-default-rtdb.firebaseio.com", // <-- VERIFY THIS URL
+      databaseURL: "https://crescent-2662a-default-rtdb.firebaseio.com",
       projectId: "crescent-2662a",
       storageBucket: "crescent-2662a.firebasestorage.app",
       messagingSenderId: "947228503695",
@@ -493,11 +530,90 @@
       
       localStorage.setItem('cart', JSON.stringify(cart));
       updateBadge();
+      
+      // Show feedback
       alert(`✅ ${product.name} added to cart!`);
     };
 
     // ===========================================================
-    // 5. LOAD PRODUCTS (Real-time)
+    // 5. PRODUCT DETAIL MODAL FUNCTIONS
+    // ===========================================================
+    window.openProductModal = function(productId) {
+      const product = allProducts.find(p => p.id === productId);
+      if (!product) {
+        alert('Product not found');
+        return;
+      }
+
+      const modal = document.getElementById('productModal');
+      modal.classList.remove('hidden');
+      modal.style.display = 'flex';
+
+      // Build images gallery
+      let imagesHtml = '';
+      if (product.images && product.images.length > 0) {
+        imagesHtml = product.images.map(img => `
+          <img src="${img}" alt="${product.name}" class="w-full h-64 object-cover rounded-lg mb-2" />
+        `).join('');
+      } else {
+        imagesHtml = `<img src="https://via.placeholder.com/600x400" alt="${product.name}" class="w-full h-64 object-cover rounded-lg mb-2" />`;
+      }
+
+      // Stock status
+      const stockStatus = product.stock > 0 
+        ? `<span class="text-green-600 font-semibold">In Stock (${product.stock} available)</span>` 
+        : `<span class="text-red-600 font-semibold">Out of Stock</span>`;
+
+      const html = `
+        <div class="space-y-4">
+          <!-- Images -->
+          <div class="space-y-1">
+            ${imagesHtml}
+          </div>
+          
+          <!-- Product Info -->
+          <h2 class="text-2xl font-bold text-gray-800">${product.name}</h2>
+          <div class="flex items-center gap-3">
+            <span class="text-2xl font-bold text-pink-600">₦${product.price.toLocaleString()}</span>
+            <span class="text-sm bg-gray-100 px-3 py-1 rounded-full">${product.category || 'General'}</span>
+          </div>
+          <div>${stockStatus}</div>
+          
+          <!-- Description -->
+          <div>
+            <h4 class="font-semibold text-gray-700">Description</h4>
+            <p class="text-gray-600">${product.description || 'No description available.'}</p>
+          </div>
+          
+          <!-- Add to Cart Button -->
+          <button onclick="event.stopPropagation(); addToCart('${product.id}'); closeProductModal();" 
+                  class="w-full bg-pink-600 hover:bg-pink-700 text-white font-semibold py-3 rounded-lg transition shadow-md hover:shadow-pink-500/30">
+            <i class="fas fa-cart-plus mr-2"></i> Add to Cart
+          </button>
+        </div>
+      `;
+
+      document.getElementById('modalProductContent').innerHTML = html;
+      document.body.style.overflow = 'hidden';
+    };
+
+    window.closeProductModal = function() {
+      const modal = document.getElementById('productModal');
+      modal.classList.add('hidden');
+      modal.style.display = 'none';
+      document.body.style.overflow = 'auto';
+    };
+
+    // Close modal on background click
+    document.addEventListener('click', function(e) {
+      const modal = document.getElementById('productModal');
+      if (e.target === modal) {
+        closeProductModal();
+      }
+    });
+
+    // ===========================================================
+    // 6. LOAD PRODUCTS (Real-time)
     // ===========================================================
     function loadProducts() {
       const productsRef = db.ref('products');
@@ -528,7 +644,7 @@
     }
 
     // ===========================================================
-    // 6. RENDER PRODUCTS
+    // 7. RENDER PRODUCTS
     // ===========================================================
     function renderProducts(filter) {
       const grid = document.getElementById('product-grid');
@@ -550,7 +666,8 @@
       grid.innerHTML = filtered.map(p => {
         const imgSrc = p.thumbnail || (p.images ? p.images[0] : 'https://images.unsplash.com/photo-1596462502278-6c7b6b6b0f7c?w=300&h=300&fit=crop&q=80');
         return `
-          <div class="product-card bg-white rounded-xl shadow-md overflow-hidden border border-gray-100">
+          <div class="product-card bg-white rounded-xl shadow-md overflow-hidden border border-gray-100" 
+               data-product-id="${p.id}" onclick="openProductModal('${p.id}')">
             <img src="${imgSrc}" alt="${p.name}" class="w-full h-56 object-cover" loading="lazy" />
             <div class="p-4">
               <h3 class="font-semibold text-gray-800 truncate">${p.name}</h3>
@@ -558,7 +675,7 @@
                 <p class="text-pink-600 font-bold text-lg">₦${p.price.toLocaleString()}</p>
                 <span class="text-xs bg-gray-100 px-2 py-1 rounded-full text-gray-600">${p.category || 'General'}</span>
               </div>
-              <button onclick="addToCart('${p.id}')" 
+              <button onclick="event.stopPropagation(); addToCart('${p.id}')" 
                       class="mt-3 w-full bg-pink-600 hover:bg-pink-700 text-white text-sm font-medium py-2.5 rounded-lg transition duration-200 shadow-sm hover:shadow">
                 <i class="fas fa-cart-plus mr-1"></i> Add to Cart
               </button>
@@ -571,7 +688,7 @@
     }
 
     // ===========================================================
-    // 7. SCROLL ANIMATION
+    // 8. SCROLL ANIMATION
     // ===========================================================
     function observeProductCards() {
       const cards = document.querySelectorAll('.product-card');
@@ -592,7 +709,7 @@
     }
 
     // ===========================================================
-    // 8. FILTER BUTTONS
+    // 9. FILTER BUTTONS
     // ===========================================================
     document.querySelectorAll('.filter-btn').forEach(btn => {
       btn.addEventListener('click', function() {
@@ -609,7 +726,7 @@
     });
 
     // ===========================================================
-    // 9. CONTACT FORM
+    // 10. CONTACT FORM
     // ===========================================================
     document.getElementById('contact-form').addEventListener('submit', async (e) => {
       e.preventDefault();
@@ -644,7 +761,7 @@
     });
 
     // ===========================================================
-    // 10. INIT
+    // 11. INIT
     // ===========================================================
     loadProducts();
   </script>
