@@ -92,6 +92,24 @@
     .url-preview-grid img:hover {
       border-color: #be185d;
     }
+
+    /* Edit Modal */
+    .modal-overlay {
+      background: rgba(0, 0, 0, 0.6);
+      backdrop-filter: blur(8px);
+      z-index: 999;
+    }
+    .modal-content {
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+    .modal-content::-webkit-scrollbar {
+      width: 6px;
+    }
+    .modal-content::-webkit-scrollbar-thumb {
+      background: #be185d;
+      border-radius: 10px;
+    }
   </style>
 </head>
 <body class="bg-gray-50 font-sans antialiased">
@@ -172,17 +190,14 @@
     </div>
 
     <!-- ============================================================ -->
-    <!-- TAB 1: Add / Edit Product -->
+    <!-- TAB 1: Add Product -->
     <!-- ============================================================ -->
     <div id="tab-products-content" class="fade-up fade-up-d1">
       <div class="glass-card rounded-2xl shadow-xl p-6 md:p-8 max-w-3xl mx-auto">
         <h2 class="text-2xl font-bold text-gray-800 mb-4">
-          <span id="form-title"><i class="fas fa-plus-circle text-pink-500 mr-2"></i> Add New Product</span>
+          <i class="fas fa-plus-circle text-pink-500 mr-2"></i> Add New Product
         </h2>
         <form id="addProductForm" class="space-y-4">
-          <!-- Hidden Product ID for editing -->
-          <input type="hidden" id="editProductId" value="" />
-
           <!-- Product Name -->
           <div class="relative">
             <i class="fas fa-tag absolute left-3 top-3.5 text-gray-400"></i>
@@ -230,19 +245,12 @@
             <p class="text-xs text-gray-400 mt-1">Paste image URLs separated by commas. The first image will be used as the thumbnail.</p>
             <div id="url-preview-container" class="url-preview-grid"></div>
           </div>
-
-          <!-- Action Buttons -->
-          <div class="flex flex-col sm:flex-row gap-3">
-            <button type="submit" id="submitProductBtn" class="flex-1 bg-pink-600 hover:bg-pink-700 text-white font-semibold py-3.5 rounded-xl transition shadow-md hover:shadow-pink-500/30 flex items-center justify-center gap-2">
-              <i class="fas fa-save"></i> Add Product
-            </button>
-            <button type="button" id="cancelEditBtn" onclick="cancelEdit()" class="hidden flex-1 bg-gray-300 hover:bg-gray-400 text-gray-800 font-semibold py-3.5 rounded-xl transition flex items-center justify-center gap-2">
-              <i class="fas fa-times"></i> Cancel
-            </button>
-          </div>
+          <button type="submit" class="w-full bg-pink-600 hover:bg-pink-700 text-white font-semibold py-3.5 rounded-xl transition shadow-md hover:shadow-pink-500/30 flex items-center justify-center gap-2">
+            <i class="fas fa-save"></i> Add Product
+          </button>
         </form>
         <div id="product-success" class="hidden mt-4 text-center text-green-600 font-semibold p-3 bg-green-50 rounded-lg border border-green-200">
-          <i class="fas fa-check-circle mr-2"></i> Product saved successfully!
+          <i class="fas fa-check-circle mr-2"></i> Product added successfully!
         </div>
       </div>
     </div>
@@ -352,6 +360,73 @@
     </div>
 
   </section>
+
+  <!-- ============================================================ -->
+  <!-- EDIT PRODUCT MODAL -->
+  <!-- ============================================================ -->
+  <div id="editModal" class="fixed inset-0 z-[999] hidden items-center justify-center p-4 modal-overlay">
+    <div class="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto modal-content p-6 md:p-8 relative">
+      <button onclick="closeEditModal()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 text-3xl transition">&times;</button>
+      <h2 class="text-2xl font-bold text-gray-800 mb-4">
+        <i class="fas fa-edit text-pink-500 mr-2"></i> Edit Product
+      </h2>
+      <form id="editForm" class="space-y-4">
+        <input type="hidden" id="editProductId" value="" />
+        <div class="relative">
+          <i class="fas fa-tag absolute left-3 top-3.5 text-gray-400"></i>
+          <input type="text" id="editName" placeholder="Product Name" required class="w-full border border-gray-200 rounded-lg pl-10 p-3 input-focus transition shadow-sm" />
+        </div>
+        <div class="relative">
+          <i class="fas fa-naira-sign absolute left-3 top-3.5 text-gray-400"></i>
+          <input type="number" id="editPrice" placeholder="Price (₦)" required class="w-full border border-gray-200 rounded-lg pl-10 p-3 input-focus transition shadow-sm" />
+        </div>
+        <div class="relative">
+          <i class="fas fa-list absolute left-3 top-3.5 text-gray-400"></i>
+          <select id="editCategory" required class="w-full border border-gray-200 rounded-lg pl-10 p-3 input-focus transition shadow-sm appearance-none">
+            <option value="">Select Category</option>
+            <option value="Perfumes">Perfumes</option>
+            <option value="Body Sprays">Body Sprays</option>
+            <option value="Body Creams">Body Creams</option>
+            <option value="Face Creams">Face Creams</option>
+            <option value="Hair Creams">Hair Creams</option>
+          </select>
+          <i class="fas fa-chevron-down absolute right-3 top-3.5 text-gray-400"></i>
+        </div>
+        <div class="relative">
+          <i class="fas fa-cubes absolute left-3 top-3.5 text-gray-400"></i>
+          <input type="number" id="editStock" placeholder="Stock Quantity" required class="w-full border border-gray-200 rounded-lg pl-10 p-3 input-focus transition shadow-sm" />
+        </div>
+        <div class="relative">
+          <i class="fas fa-align-left absolute left-3 top-3.5 text-gray-400"></i>
+          <textarea id="editDesc" placeholder="Product Description" rows="3" class="w-full border border-gray-200 rounded-lg pl-10 p-3 input-focus transition shadow-sm"></textarea>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">
+            <i class="fas fa-link mr-1"></i> Image URLs (comma separated)
+          </label>
+          <div class="relative">
+            <i class="fas fa-image absolute left-3 top-3.5 text-gray-400"></i>
+            <input type="text" id="editImageUrls" 
+                   placeholder="https://example.com/image1.jpg, https://example.com/image2.jpg" 
+                   class="w-full border border-gray-200 rounded-lg pl-10 p-3 input-focus transition shadow-sm" />
+          </div>
+          <p class="text-xs text-gray-400 mt-1">Paste image URLs separated by commas. The first image will be used as the thumbnail.</p>
+          <div id="edit-url-preview-container" class="url-preview-grid"></div>
+        </div>
+        <div class="flex flex-col sm:flex-row gap-3">
+          <button type="submit" id="updateProductBtn" class="flex-1 bg-pink-600 hover:bg-pink-700 text-white font-semibold py-3.5 rounded-xl transition shadow-md hover:shadow-pink-500/30 flex items-center justify-center gap-2">
+            <i class="fas fa-save"></i> Update Product
+          </button>
+          <button type="button" onclick="closeEditModal()" class="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-800 font-semibold py-3.5 rounded-xl transition flex items-center justify-center gap-2">
+            <i class="fas fa-times"></i> Cancel
+          </button>
+        </div>
+      </form>
+      <div id="edit-success" class="hidden mt-4 text-center text-green-600 font-semibold p-3 bg-green-50 rounded-lg border border-green-200">
+        <i class="fas fa-check-circle mr-2"></i> Product updated successfully!
+      </div>
+    </div>
+  </div>
 
   <!-- Toast -->
   <div id="toast" class="toast"></div>
@@ -475,8 +550,6 @@
       if (tab === 'products') {
         document.getElementById('tab-products-content').classList.remove('hidden');
         document.getElementById('tab-products').classList.add('active', 'text-pink-600', 'border-pink-600');
-        // If we are in edit mode and switch tabs, reset form
-        if (document.getElementById('editProductId').value) cancelEdit();
       } else if (tab === 'products-list') {
         document.getElementById('tab-products-list-content').classList.remove('hidden');
         document.getElementById('tab-products-list').classList.add('active', 'text-pink-600', 'border-pink-600');
@@ -490,7 +563,7 @@
     };
 
     // ===========================================================
-    // URL PREVIEW
+    // ADD PRODUCT (existing)
     // ===========================================================
     document.getElementById('prodImageUrls').addEventListener('input', function() {
       const input = this.value;
@@ -514,61 +587,9 @@
       }
     });
 
-    // ===========================================================
-    // EDIT / CANCEL PRODUCT
-    // ===========================================================
-    window.editProduct = function(productId) {
-      // Fetch product data from Firebase
-      db.ref('products/' + productId).once('value')
-        .then(snapshot => {
-          const product = snapshot.val();
-          if (!product) {
-            showToast('Product not found.', 'error');
-            return;
-          }
-          // Fill form
-          document.getElementById('editProductId').value = productId;
-          document.getElementById('prodName').value = product.name || '';
-          document.getElementById('prodPrice').value = product.price || '';
-          document.getElementById('prodCategory').value = product.category || '';
-          document.getElementById('prodStock').value = product.stock || '';
-          document.getElementById('prodDesc').value = product.description || '';
-          document.getElementById('prodImageUrls').value = (product.images || []).join(', ');
-
-          // Update form title and button
-          document.getElementById('form-title').innerHTML = '<i class="fas fa-edit text-pink-500 mr-2"></i> Edit Product';
-          document.getElementById('submitProductBtn').innerHTML = '<i class="fas fa-save"></i> Update Product';
-          document.getElementById('cancelEditBtn').classList.remove('hidden');
-
-          // Trigger preview
-          document.getElementById('prodImageUrls').dispatchEvent(new Event('input'));
-
-          // Scroll to form
-          document.getElementById('tab-products-content').scrollIntoView({ behavior: 'smooth' });
-          // Switch to Add Product tab if not already
-          showTab('products');
-        })
-        .catch(err => showToast('Error loading product: ' + err.message, 'error'));
-    };
-
-    window.cancelEdit = function() {
-      // Reset form
-      document.getElementById('editProductId').value = '';
-      document.getElementById('addProductForm').reset();
-      document.getElementById('url-preview-container').innerHTML = '';
-      document.getElementById('form-title').innerHTML = '<i class="fas fa-plus-circle text-pink-500 mr-2"></i> Add New Product';
-      document.getElementById('submitProductBtn').innerHTML = '<i class="fas fa-save"></i> Add Product';
-      document.getElementById('cancelEditBtn').classList.add('hidden');
-      document.getElementById('product-success').classList.add('hidden');
-    };
-
-    // ===========================================================
-    // ADD / UPDATE PRODUCT
-    // ===========================================================
     document.getElementById('addProductForm').addEventListener('submit', async (e) => {
       e.preventDefault();
 
-      const editId = document.getElementById('editProductId').value;
       const name = document.getElementById('prodName').value.trim();
       const price = parseFloat(document.getElementById('prodPrice').value);
       const category = document.getElementById('prodCategory').value;
@@ -590,12 +611,14 @@
         return;
       }
 
-      const btn = e.target.querySelector('#submitProductBtn');
+      const btn = e.target.querySelector('button[type="submit"]');
       btn.disabled = true;
       btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Saving...';
 
       try {
-        const productData = {
+        const newRef = db.ref('products').push();
+        await newRef.set({
+          id: newRef.key,
           name: name,
           price: price,
           category: category,
@@ -603,33 +626,13 @@
           description: desc,
           images: imageUrls,
           thumbnail: imageUrls[0],
-          updatedAt: firebase.database.ServerValue.TIMESTAMP
-        };
-
-        if (editId) {
-          // Update existing product
-          await db.ref('products/' + editId).update(productData);
-          showToast('✅ Product updated successfully!', 'success');
-        } else {
-          // Create new product
-          const newRef = db.ref('products').push();
-          await newRef.set({
-            ...productData,
-            id: newRef.key,
-            createdAt: firebase.database.ServerValue.TIMESTAMP
-          });
-          showToast('🎉 Product added successfully!', 'success');
-        }
+          createdAt: firebase.database.ServerValue.TIMESTAMP
+        });
 
         document.getElementById('product-success').classList.remove('hidden');
-        // Reset form if adding new product (keep edit mode if updating?)
-        if (!editId) {
-          document.getElementById('addProductForm').reset();
-          document.getElementById('url-preview-container').innerHTML = '';
-        } else {
-          // After update, cancel edit to reset form
-          cancelEdit();
-        }
+        document.getElementById('addProductForm').reset();
+        document.getElementById('url-preview-container').innerHTML = '';
+        showToast('🎉 Product added successfully!', 'success');
         setTimeout(() => {
           document.getElementById('product-success').classList.add('hidden');
         }, 4000);
@@ -638,11 +641,132 @@
         console.error(err);
       } finally {
         btn.disabled = false;
-        if (editId) {
-          btn.innerHTML = '<i class="fas fa-save"></i> Update Product';
-        } else {
-          btn.innerHTML = '<i class="fas fa-save"></i> Add Product';
-        }
+        btn.innerHTML = '<i class="fas fa-save"></i> Add Product';
+      }
+    });
+
+    // ===========================================================
+    // EDIT PRODUCT MODAL
+    // ===========================================================
+    window.openEditModal = function(productId) {
+      db.ref('products/' + productId).once('value')
+        .then(snapshot => {
+          const product = snapshot.val();
+          if (!product) {
+            showToast('Product not found.', 'error');
+            return;
+          }
+          // Fill modal fields
+          document.getElementById('editProductId').value = productId;
+          document.getElementById('editName').value = product.name || '';
+          document.getElementById('editPrice').value = product.price || '';
+          document.getElementById('editCategory').value = product.category || '';
+          document.getElementById('editStock').value = product.stock || '';
+          document.getElementById('editDesc').value = product.description || '';
+          document.getElementById('editImageUrls').value = (product.images || []).join(', ');
+          // Trigger preview
+          document.getElementById('editImageUrls').dispatchEvent(new Event('input'));
+
+          // Show modal
+          document.getElementById('editModal').classList.remove('hidden');
+          document.getElementById('editModal').style.display = 'flex';
+          document.body.style.overflow = 'hidden';
+        })
+        .catch(err => showToast('Error loading product: ' + err.message, 'error'));
+    };
+
+    window.closeEditModal = function() {
+      document.getElementById('editModal').classList.add('hidden');
+      document.getElementById('editModal').style.display = 'none';
+      document.body.style.overflow = 'auto';
+      document.getElementById('edit-success').classList.add('hidden');
+    };
+
+    // Edit form preview
+    document.getElementById('editImageUrls').addEventListener('input', function() {
+      const input = this.value;
+      const urls = input.split(',').map(u => u.trim()).filter(u => u);
+      const container = document.getElementById('edit-url-preview-container');
+      container.innerHTML = '';
+      if (urls.length === 0) return;
+      const previewUrls = urls.slice(0, 3);
+      previewUrls.forEach(url => {
+        const img = document.createElement('img');
+        img.src = url;
+        img.alt = 'preview';
+        img.onerror = function() { this.style.display = 'none'; };
+        container.appendChild(img);
+      });
+      if (urls.length > 3) {
+        const more = document.createElement('span');
+        more.textContent = `+${urls.length - 3} more`;
+        more.className = 'text-xs text-gray-500 self-center';
+        container.appendChild(more);
+      }
+    });
+
+    // Edit form submit
+    document.getElementById('editForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const productId = document.getElementById('editProductId').value;
+      const name = document.getElementById('editName').value.trim();
+      const price = parseFloat(document.getElementById('editPrice').value);
+      const category = document.getElementById('editCategory').value;
+      const stock = parseInt(document.getElementById('editStock').value);
+      const desc = document.getElementById('editDesc').value.trim();
+      const imageUrlsInput = document.getElementById('editImageUrls').value.trim();
+
+      if (!name || !price || !category || isNaN(stock)) {
+        alert('Please fill in all required fields.');
+        return;
+      }
+      if (!imageUrlsInput) {
+        alert('Please enter at least one image URL.');
+        return;
+      }
+      const imageUrls = imageUrlsInput.split(',').map(url => url.trim()).filter(url => url);
+      if (imageUrls.length === 0) {
+        alert('Please enter valid image URLs.');
+        return;
+      }
+
+      const btn = document.getElementById('updateProductBtn');
+      btn.disabled = true;
+      btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Updating...';
+
+      try {
+        await db.ref('products/' + productId).update({
+          name: name,
+          price: price,
+          category: category,
+          stock: stock,
+          description: desc,
+          images: imageUrls,
+          thumbnail: imageUrls[0],
+          updatedAt: firebase.database.ServerValue.TIMESTAMP
+        });
+
+        document.getElementById('edit-success').classList.remove('hidden');
+        showToast('✅ Product updated successfully!', 'success');
+        setTimeout(() => {
+          document.getElementById('edit-success').classList.add('hidden');
+          closeEditModal();
+        }, 2000);
+      } catch (err) {
+        showToast('❌ Error: ' + err.message, 'error');
+        console.error(err);
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-save"></i> Update Product';
+      }
+    });
+
+    // Close modal on background click
+    document.addEventListener('click', function(e) {
+      const modal = document.getElementById('editModal');
+      if (e.target === modal) {
+        closeEditModal();
       }
     });
 
@@ -684,7 +808,7 @@
               <td class="p-3">${p.stock || 0}</td>
               <td class="p-3"><span class="bg-pink-100 text-pink-700 px-2 py-0.5 rounded-full text-xs">${p.category || 'General'}</span></td>
               <td class="p-3 flex items-center gap-2">
-                <button onclick="editProduct('${id}')" class="text-blue-600 hover:text-blue-800 transition" title="Edit">
+                <button onclick="openEditModal('${id}')" class="text-blue-600 hover:text-blue-800 transition" title="Edit">
                   <i class="fas fa-pencil-alt"></i>
                 </button>
                 <button onclick="deleteProduct('${id}')" class="text-red-500 hover:text-red-700 transition" title="Delete">
