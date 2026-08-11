@@ -1,769 +1,324 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Crescent Beauty Hub</title>
-  
-  <!-- Tailwind CSS -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  
-  <!-- FontAwesome Icons (For realistic icons) -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin dashboard — Dominion Home Hub</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght,ital@9..144,300..700,0..1&family=Inter:wght@300;400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+<style>
+  :root{
+    --ink:#F3F1E9; --ink-soft:#B7BDB4; --paper:#101A15; --paper-raise:#16241E;
+    --line:#2B372F; --brass:#D3B27C; --emerald:#6FA98C; --emerald-tint:#1B2A22;
+    --red:#E7897E; --red-tint:#3A1E1B; --amber:#E3C27A; --amber-tint:#332C1C;
+    --display:'Fraunces',serif; --body:'Inter',sans-serif; --mono:'IBM Plex Mono',monospace;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{font-family:var(--body); background:var(--paper); color:var(--ink);}
+  .container{max-width:1180px; margin:0 auto; padding:0 24px;}
+  a{color:inherit;}
 
-  <style>
-    /* ---- CUSTOM ANIMATIONS & STYLES ---- */
-    .hero-bg {
-      background-image: url('https://images.unsplash.com/photo-1617897903246-719242758050?w=1600&q=80');
-      background-size: cover;
-      background-position: center 30%;
-    }
+  .topbar{border-bottom:1px solid var(--line); padding:1.1rem 0;}
+  .topbar .container{display:flex; justify-content:space-between; align-items:center;}
+  .mark{font-family:var(--mono); font-size:.68rem; letter-spacing:.2em; color:var(--brass); text-transform:uppercase;}
+  .brand{font-family:var(--display); font-style:italic; font-weight:500; font-size:1.2rem;}
+  .logout{background:none; border:1px solid var(--line); color:var(--ink); padding:.5rem 1.1rem; border-radius:100px; cursor:pointer; font-size:.85rem;}
+  .logout:hover{border-color:var(--brass);}
 
-    /* Fade-in animation for product cards */
-    .product-card {
-      opacity: 0;
-      transform: translateY(30px);
-      transition: opacity 0.7s ease, transform 0.7s ease, box-shadow 0.3s ease;
-      cursor: pointer;
-    }
-    .product-card.visible {
-      opacity: 1;
-      transform: translateY(0);
-    }
-    .product-card:hover {
-      transform: translateY(-8px) scale(1.01);
-      box-shadow: 0 25px 40px -12px rgba(190, 24, 93, 0.2);
-    }
+  .stats-row{display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:1rem; margin:2rem 0;}
+  .stat{background:var(--paper-raise); border:1px solid var(--line); border-radius:16px; padding:1.3rem;}
+  .stat .num{font-family:var(--mono); font-size:1.8rem; font-weight:600;}
+  .stat .lab{font-size:.78rem; color:var(--ink-soft); margin-top:.2rem;}
 
-    .filter-btn {
-      transition: all 0.2s ease;
-    }
-    .filter-btn.active {
-      background-color: #be185d;
-      color: white;
-      border-color: #be185d;
-      box-shadow: 0 4px 10px rgba(190, 24, 93, 0.3);
-    }
-    .filter-btn:hover:not(.active) {
-      background-color: #fce7f3;
-    }
+  h2.section{font-family:var(--display); font-weight:500; font-size:1.3rem; margin:2.2rem 0 1rem;}
+  .tabs{display:flex; gap:.5rem; margin-bottom:1.2rem; flex-wrap:wrap;}
+  .tabs button{
+    background:var(--paper-raise); border:1px solid var(--line); color:var(--ink-soft);
+    padding:.5rem 1.1rem; border-radius:100px; cursor:pointer; font-size:.84rem; font-weight:600;
+  }
+  .tabs button.active{background:var(--brass); color:#241C0F; border-color:var(--brass);}
 
-    /* Hero text animation */
-    .hero-text {
-      animation: fadeUp 1s ease forwards;
-    }
-    @keyframes fadeUp {
-      0% { opacity: 0; transform: translateY(30px); }
-      100% { opacity: 1; transform: translateY(0); }
-    }
-    .hero-text-delay { animation-delay: 0.2s; opacity: 0; }
-    .hero-text-delay-2 { animation-delay: 0.5s; opacity: 0; }
-
-    /* Category & Best Seller Image Hover */
-    .category-img {
-      transition: transform 0.4s ease, box-shadow 0.4s ease;
-    }
-    .category-card:hover .category-img {
-      transform: scale(1.05) rotate(-2deg);
-      box-shadow: 0 10px 25px -8px rgba(0,0,0,0.15);
-    }
-
-    .testimonial-card {
-      transition: transform 0.3s ease;
-    }
-    .testimonial-card:hover {
-      transform: translateY(-4px);
-    }
-
-    /* Product Modal styles */
-    .modal-overlay {
-      background: rgba(0, 0, 0, 0.6);
-      backdrop-filter: blur(8px);
-    }
-    .modal-content {
-      max-height: 90vh;
-      overflow-y: auto;
-    }
-    .modal-content::-webkit-scrollbar {
-      width: 6px;
-    }
-    .modal-content::-webkit-scrollbar-thumb {
-      background: #be185d;
-      border-radius: 10px;
-    }
-  </style>
+  table{width:100%; border-collapse:collapse; background:var(--paper-raise); border:1px solid var(--line); border-radius:14px; overflow:hidden;}
+  th, td{text-align:left; padding:.9rem 1rem; font-size:.86rem; border-bottom:1px solid var(--line);}
+  th{font-family:var(--mono); font-size:.7rem; letter-spacing:.06em; text-transform:uppercase; color:var(--ink-soft); font-weight:500;}
+  tr:last-child td{border-bottom:none;}
+  .pill{font-family:var(--mono); font-size:.68rem; padding:.25rem .7rem; border-radius:100px; text-transform:uppercase; letter-spacing:.04em;}
+  .pill.pending{background:var(--amber-tint); color:var(--amber);}
+  .pill.approved{background:var(--emerald-tint); color:var(--emerald);}
+  .pill.rejected, .pill.suspended{background:var(--red-tint); color:var(--red);}
+  .row-actions{display:flex; gap:.5rem;}
+  .row-actions button{
+    border:none; border-radius:8px; padding:.4rem .8rem; font-size:.78rem; font-weight:600; cursor:pointer;
+  }
+  .btn-approve{background:var(--emerald-tint); color:var(--emerald);}
+  .btn-reject{background:var(--red-tint); color:var(--red);}
+  .btn-suspend{background:var(--amber-tint); color:var(--amber);}
+  .empty-row td{text-align:center; color:var(--ink-soft); padding:2rem;}
+  footer{height:3rem;}
+</style>
 </head>
-<body class="bg-gray-50 font-sans antialiased">
+<body>
 
-  <!-- ==================== TOP ANNOUNCEMENT ==================== -->
-  <div id="announcement-bar" class="bg-pink-600 text-white text-center text-sm py-2.5 px-4 tracking-wide">
-    <i class="fas fa-gift mr-2"></i> Free delivery on selected orders · Premium beauty essentials · Secure checkout
+<div class="topbar">
+  <div class="container">
+    <div><span class="mark">Admin</span><div class="brand">Dominion Home Hub</div></div>
+    <button class="logout" id="logoutBtn"><i class="fas fa-arrow-right-from-bracket"></i> Log out</button>
+  </div>
+</div>
+
+<div class="container">
+  <div class="stats-row" id="statsRow">
+    <div class="stat"><div class="num" id="statPending">–</div><div class="lab">Pending sellers</div></div>
+    <div class="stat"><div class="num" id="statSellers">–</div><div class="lab">Approved sellers</div></div>
+    <div class="stat"><div class="num" id="statBuyers">–</div><div class="lab">Buyers</div></div>
+    <div class="stat"><div class="num" id="statProperties">–</div><div class="lab">Live properties</div></div>
+    <div class="stat"><div class="num" id="statViews">–</div><div class="lab">Property views tracked</div></div>
+    <div class="stat"><div class="num" id="statClicks">–</div><div class="lab">"Purchase" clicks tracked</div></div>
   </div>
 
-  <!-- ==================== NAVBAR ==================== -->
-  <nav class="bg-white/90 backdrop-blur-md shadow-sm sticky top-0 z-50 border-b border-gray-100/80">
-    <div class="container mx-auto px-4 py-3 flex justify-between items-center">
-      <a href="index.html" class="text-2xl font-extrabold text-pink-700 tracking-tight flex items-center gap-2">
-        <i class="fas fa-spa text-pink-500 text-2xl"></i> Cresent Beauty Hub
-      </a>
-      
-      <div class="flex items-center space-x-5">
-        <!-- Added Reviews and Track links -->
-        <a href="reviews.html" class="text-gray-500 hover:text-pink-600 text-sm font-medium hidden sm:inline transition">
-          <i class="fas fa-star mr-1"></i> Reviews
-        </a>
-        <a href="track-order.html" class="text-gray-500 hover:text-pink-600 text-sm font-medium hidden sm:inline transition">
-          <i class="fas fa-search mr-1"></i> Track
-        </a>
-        <a href="admin.html" class="text-gray-500 hover:text-pink-600 text-sm font-medium hidden sm:inline transition">
-          <i class="fas fa-user-cog mr-1"></i> Admin
-        </a>
-        <a href="cart.html" class="relative group">
-          <i class="fas fa-shopping-bag text-2xl text-gray-700 group-hover:text-pink-600 transition"></i>
-          <span id="cart-badge" class="absolute -top-2 -right-2 bg-pink-600 text-white text-[10px] font-bold rounded-full px-2 py-0.5 min-w-[20px] text-center shadow-lg">0</span>
-        </a>
-      </div>
-    </div>
-  </nav>
+  <h2 class="section">Seller approval queue</h2>
+  <table>
+    <thead><tr><th>Name</th><th>Email</th><th>Applied</th><th>Actions</th></tr></thead>
+    <tbody id="pendingBody"><tr class="empty-row"><td colspan="4">Loading…</td></tr></tbody>
+  </table>
 
-  <!-- ==================== HERO SECTION (Real Image) ==================== -->
-  <section class="hero-bg relative min-h-[80vh] flex items-center">
-    <div class="absolute inset-0 bg-gradient-to-r from-black/50 via-black/30 to-transparent"></div>
-    
-    <div class="container mx-auto px-4 relative z-10 text-white">
-      <p class="text-pink-200 font-semibold uppercase tracking-[0.3em] hero-text hero-text-delay text-sm">
-        <i class="fas fa-star mr-2"></i> Luxury Beauty Essentials
-      </p>
-      <h1 class="text-5xl md:text-7xl lg:text-8xl font-extrabold leading-[1.1] mt-2 hero-text hero-text-delay">
-        Discover Beauty <br class="hidden sm:block" />That Lasts
-      </h1>
-      <p class="text-lg md:text-xl text-gray-100 max-w-2xl mt-4 hero-text hero-text-delay-2 leading-relaxed">
-        Premium perfumes, body sprays, face creams, body creams and hair care — 
-        carefully selected to help you look radiant, feel confident, and smell amazing every day.
-      </p>
-      <div class="mt-8 flex flex-wrap gap-4 hero-text hero-text-delay-2">
-        <button onclick="document.getElementById('products-section').scrollIntoView({behavior:'smooth'})" 
-                class="bg-pink-600 hover:bg-pink-700 text-white px-10 py-4 rounded-full font-semibold shadow-lg hover:shadow-pink-500/40 transition-all duration-300 flex items-center gap-2">
-          <i class="fas fa-store"></i> Shop Now
-        </button>
-        <a href="#contact-section" class="bg-white/10 backdrop-blur-sm hover:bg-white/20 text-white px-10 py-4 rounded-full font-semibold border border-white/30 transition-all duration-300 flex items-center gap-2">
-          <i class="fas fa-envelope"></i> Contact Us
-        </a>
-      </div>
-    </div>
-  </section>
-
-  <!-- ==================== FEATURED CATEGORIES (Real Images) ==================== -->
-  <section class="container mx-auto px-4 py-16">
-    <div class="text-center mb-12">
-      <p class="text-pink-600 font-semibold uppercase tracking-wider text-sm flex items-center justify-center gap-2">
-        <i class="fas fa-th-large"></i> Explore
-      </p>
-      <h2 class="text-3xl md:text-4xl font-bold text-gray-800">Shop by Category</h2>
-    </div>
-    
-    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 md:gap-6">
-      <!-- 1. Perfumes -->
-      <div class="category-card bg-white rounded-2xl shadow-lg p-5 text-center border border-gray-100 hover:shadow-xl transition-all">
-        <img src="https://images.unsplash.com/photo-1541643600914-78b084683601?w=200&h=200&fit=crop&crop=center&q=80" 
-             alt="Perfumes" class="category-img w-20 h-20 rounded-full object-cover mx-auto mb-3 border-2 border-pink-100" />
-        <h3 class="font-bold text-gray-800">Perfumes</h3>
-        <p class="text-xs text-gray-500 mt-1">Captivating fragrances</p>
-        <a href="#products-section" class="inline-block mt-3 text-pink-600 text-sm font-medium hover:underline">Shop →</a>
-      </div>
-      <!-- 2. Body Sprays -->
-      <div class="category-card bg-white rounded-2xl shadow-lg p-5 text-center border border-gray-100 hover:shadow-xl transition-all">
-        <img src="https://images.unsplash.com/photo-1585386959984-a4155224a1ad?w=200&h=200&fit=crop&crop=center&q=80" 
-             alt="Body Sprays" class="category-img w-20 h-20 rounded-full object-cover mx-auto mb-3 border-2 border-pink-100" />
-        <h3 class="font-bold text-gray-800">Body Sprays</h3>
-        <p class="text-xs text-gray-500 mt-1">Fresh everyday scents</p>
-        <a href="#products-section" class="inline-block mt-3 text-pink-600 text-sm font-medium hover:underline">Shop →</a>
-      </div>
-      <!-- 3. Body Creams -->
-      <div class="category-card bg-white rounded-2xl shadow-lg p-5 text-center border border-gray-100 hover:shadow-xl transition-all">
-        <img src="https://i.pinimg.com/1200x/4b/c5/b5/4bc5b55f3b7252652d44020cce8e2eb0.jpg?w=200&h=200&fit=crop&crop=center&q=80" 
-             alt="Body Creams" class="category-img w-20 h-20 rounded-full object-cover mx-auto mb-3 border-2 border-pink-100" />
-        <h3 class="font-bold text-gray-800">Body Creams</h3>
-        <p class="text-xs text-gray-500 mt-1">Deeply nourishing</p>
-        <a href="#products-section" class="inline-block mt-3 text-pink-600 text-sm font-medium hover:underline">Shop →</a>
-      </div>
-      <!-- 4. Face Creams -->
-      <div class="category-card bg-white rounded-2xl shadow-lg p-5 text-center border border-gray-100 hover:shadow-xl transition-all">
-        <img src="https://images.unsplash.com/photo-1556228720-195a672e8a03?w=200&h=200&fit=crop&crop=center&q=80" 
-             alt="Face Creams" class="category-img w-20 h-20 rounded-full object-cover mx-auto mb-3 border-2 border-pink-100" />
-        <h3 class="font-bold text-gray-800">Face Creams</h3>
-        <p class="text-xs text-gray-500 mt-1">Hydrate & brighten</p>
-        <a href="#products-section" class="inline-block mt-3 text-pink-600 text-sm font-medium hover:underline">Shop →</a>
-      </div>
-      <!-- 5. Hair Creams -->
-      <div class="category-card bg-white rounded-2xl shadow-lg p-5 text-center border border-gray-100 hover:shadow-xl transition-all col-span-2 md:col-span-1">
-        <img src="https://i.pinimg.com/1200x/fc/b6/57/fcb6570ab3c723accc5087927f645bd3.jpg?w=200&h=200&fit=crop&crop=center&q=80" 
-             alt="Hair Creams" class="category-img w-20 h-20 rounded-full object-cover mx-auto mb-3 border-2 border-pink-100" />
-        <h3 class="font-bold text-gray-800">Hair Creams</h3>
-        <p class="text-xs text-gray-500 mt-1">Nourish & protect</p>
-        <a href="#products-section" class="inline-block mt-3 text-pink-600 text-sm font-medium hover:underline">Shop →</a>
-      </div>
-    </div>
-  </section>
-
-  <!-- ==================== BEST SELLERS (Real Product Images) ==================== -->
-  <section class="bg-gradient-to-b from-pink-50/50 to-white py-16">
-    <div class="container mx-auto px-4">
-      <div class="text-center mb-10">
-        <p class="text-pink-600 font-semibold uppercase tracking-wider text-sm flex items-center justify-center gap-2">
-          <i class="fas fa-crown"></i> Customer Favorites
-        </p>
-        <h2 class="text-3xl md:text-4xl font-bold text-gray-800">Best Sellers</h2>
-      </div>
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-        <!-- 1 -->
-        <div class="bg-white p-6 rounded-2xl shadow-md text-center border border-pink-100 hover:shadow-xl transition-shadow group">
-          <img src="https://images.unsplash.com/photo-1541643600914-78b084683601?w=300&h=300&fit=crop&crop=center&q=80" 
-               alt="Perfume" class="w-24 h-24 object-cover rounded-full mx-auto mb-3 border-2 border-pink-200 group-hover:border-pink-500 transition" />
-          <h4 class="font-bold text-gray-800">Luxury Signature Perfume</h4>
-          <p class="text-sm text-gray-500">Long-lasting impression</p>
-          <span class="inline-block mt-2 bg-pink-100 text-pink-700 text-xs px-3 py-1 rounded-full">Fragrance</span>
-        </div>
-        <!-- 2 -->
-        <div class="bg-white p-6 rounded-2xl shadow-md text-center border border-pink-100 hover:shadow-xl transition-shadow group">
-          <img src="https://images.unsplash.com/photo-1556228720-195a672e8a03?w=300&h=300&fit=crop&crop=center&q=80" 
-               alt="Face Cream" class="w-24 h-24 object-cover rounded-full mx-auto mb-3 border-2 border-pink-200 group-hover:border-pink-500 transition" />
-          <h4 class="font-bold text-gray-800">Hydrating Face Cream</h4>
-          <p class="text-sm text-gray-500">Glowing, healthy skin</p>
-          <span class="inline-block mt-2 bg-pink-100 text-pink-700 text-xs px-3 py-1 rounded-full">Skincare</span>
-        </div>
-        <!-- 3 -->
-        <div class="bg-white p-6 rounded-2xl shadow-md text-center border border-pink-100 hover:shadow-xl transition-shadow group">
-          <img src="https://images.unsplash.com/photo-1585386959984-a4155224a1ad?w=300&h=300&fit=crop&crop=center&q=80" 
-               alt="Body Cream" class="w-24 h-24 object-cover rounded-full mx-auto mb-3 border-2 border-pink-200 group-hover:border-pink-500 transition" />
-          <h4 class="font-bold text-gray-800">Nourishing Body Cream</h4>
-          <p class="text-sm text-gray-500">Soft & smooth all day</p>
-          <span class="inline-block mt-2 bg-pink-100 text-pink-700 text-xs px-3 py-1 rounded-full">Body Care</span>
-        </div>
-        <!-- 4 -->
-        <div class="bg-white p-6 rounded-2xl shadow-md text-center border border-pink-100 hover:shadow-xl transition-shadow group">
-          <img src="https://i.pinimg.com/1200x/fc/b6/57/fcb6570ab3c723accc5087927f645bd3.jpg?w=300&h=300&fit=crop&crop=center&q=80" 
-               alt="Hair Care" class="w-24 h-24 object-cover rounded-full mx-auto mb-3 border-2 border-pink-200 group-hover:border-pink-500 transition" />
-          <h4 class="font-bold text-gray-800">Premium Hair Care</h4>
-          <p class="text-sm text-gray-500">Strength, shine & health</p>
-          <span class="inline-block mt-2 bg-pink-100 text-pink-700 text-xs px-3 py-1 rounded-full">Hair Care</span>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ==================== PRODUCT GRID (Shop) ==================== -->
-  <section id="products-section" class="container mx-auto px-4 py-16">
-    <div class="text-center mb-10">
-      <h2 class="text-3xl md:text-4xl font-bold text-gray-800 flex items-center justify-center gap-3">
-        <i class="fas fa-grid-2 text-pink-500"></i> All Products
-      </h2>
-    </div>
-
-    <!-- Filter Buttons -->
-    <div class="flex flex-wrap justify-center gap-3 mb-10">
-      <button class="filter-btn active px-6 py-2.5 border border-gray-300 rounded-full text-sm font-medium bg-pink-700 text-white border-pink-700" data-filter="all">All</button>
-      <button class="filter-btn px-6 py-2.5 border border-gray-300 rounded-full text-sm font-medium" data-filter="Perfumes">Perfumes</button>
-      <button class="filter-btn px-6 py-2.5 border border-gray-300 rounded-full text-sm font-medium" data-filter="Body Sprays">Body Sprays</button>
-      <button class="filter-btn px-6 py-2.5 border border-gray-300 rounded-full text-sm font-medium" data-filter="Body Creams">Body Creams</button>
-      <button class="filter-btn px-6 py-2.5 border border-gray-300 rounded-full text-sm font-medium" data-filter="Face Creams">Face Creams</button>
-      <button class="filter-btn px-6 py-2.5 border border-gray-300 rounded-full text-sm font-medium" data-filter="Hair Creams">Hair Creams</button>
-    </div>
-
-    <!-- Product Grid -->
-    <div id="product-grid" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
-      <!-- Products loaded dynamically -->
-    </div>
-  </section>
-
-  <!-- ==================== WHY CHOOSE US (FontAwesome Icons) ==================== -->
-  <section class="bg-white py-16 border-t border-gray-100 shadow-inner">
-    <div class="container mx-auto px-4">
-      <div class="text-center mb-12">
-        <p class="text-pink-600 font-semibold uppercase tracking-wider text-sm flex items-center justify-center gap-2">
-          <i class="fas fa-heart"></i> The Cresent Promise
-        </p>
-        <h2 class="text-3xl md:text-4xl font-bold text-gray-800">Why Choose Us</h2>
-      </div>
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 text-center">
-        <div class="flex flex-col items-center">
-          <div class="w-16 h-16 bg-pink-100 rounded-full flex items-center justify-center text-pink-600 text-3xl mb-4 shadow-sm">
-            <i class="fas fa-certificate"></i>
-          </div>
-          <h4 class="font-bold text-gray-800 text-lg">Premium Quality</h4>
-          <p class="text-sm text-gray-500">Carefully selected from trusted brands.</p>
-        </div>
-        <div class="flex flex-col items-center">
-          <div class="w-16 h-16 bg-pink-100 rounded-full flex items-center justify-center text-pink-600 text-3xl mb-4 shadow-sm">
-            <i class="fas fa-wallet"></i>
-          </div>
-          <h4 class="font-bold text-gray-800 text-lg">Affordable Luxury</h4>
-          <p class="text-sm text-gray-500">Premium products at competitive prices.</p>
-        </div>
-        <div class="flex flex-col items-center">
-          <div class="w-16 h-16 bg-pink-100 rounded-full flex items-center justify-center text-pink-600 text-3xl mb-4 shadow-sm">
-            <i class="fas fa-truck-fast"></i>
-          </div>
-          <h4 class="font-bold text-gray-800 text-lg">Fast Delivery</h4>
-          <p class="text-sm text-gray-500">Quick & safe nationwide shipping.</p>
-        </div>
-        <div class="flex flex-col items-center">
-          <div class="w-16 h-16 bg-pink-100 rounded-full flex items-center justify-center text-pink-600 text-3xl mb-4 shadow-sm">
-            <i class="fas fa-lock"></i>
-          </div>
-          <h4 class="font-bold text-gray-800 text-lg">Secure Shopping</h4>
-          <p class="text-sm text-gray-500">Safe payments & dedicated support.</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ==================== TESTIMONIALS (Real Avatars) ==================== -->
-  <section class="bg-gray-50 py-16">
-    <div class="container mx-auto px-4">
-      <div class="text-center mb-10">
-        <p class="text-pink-600 font-semibold uppercase tracking-wider text-sm flex items-center justify-center gap-2">
-          <i class="fas fa-star"></i> Testimonials
-        </p>
-        <h2 class="text-3xl md:text-4xl font-bold text-gray-800">Loved by Thousands</h2>
-      </div>
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <!-- 1 -->
-        <div class="testimonial-card bg-white p-6 rounded-xl shadow-md border border-gray-100">
-          <div class="flex items-center gap-3 mb-3">
-            <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="Sophia" class="w-12 h-12 rounded-full object-cover border-2 border-pink-200" />
-            <div>
-              <p class="font-bold text-gray-800 text-sm">Sophia A.</p>
-              <div class="text-yellow-400 text-xs"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
-            </div>
-          </div>
-          <p class="text-gray-600 italic text-sm">"I absolutely love the perfume I purchased. The fragrance lasts all day!"</p>
-        </div>
-        <!-- 2 -->
-        <div class="testimonial-card bg-white p-6 rounded-xl shadow-md border border-gray-100">
-          <div class="flex items-center gap-3 mb-3">
-            <img src="https://randomuser.me/api/portraits/women/68.jpg" alt="Esther" class="w-12 h-12 rounded-full object-cover border-2 border-pink-200" />
-            <div>
-              <p class="font-bold text-gray-800 text-sm">Esther M.</p>
-              <div class="text-yellow-400 text-xs"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
-            </div>
-          </div>
-          <p class="text-gray-600 italic text-sm">"The face cream transformed my skin. Smoother and more hydrated than ever."</p>
-        </div>
-        <!-- 3 -->
-        <div class="testimonial-card bg-white p-6 rounded-xl shadow-md border border-gray-100">
-          <div class="flex items-center gap-3 mb-3">
-            <img src="https://randomuser.me/api/portraits/women/63.jpg" alt="Jennifer" class="w-12 h-12 rounded-full object-cover border-2 border-pink-200" />
-            <div>
-              <p class="font-bold text-gray-800 text-sm">Jennifer O.</p>
-              <div class="text-yellow-400 text-xs"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
-            </div>
-          </div>
-          <p class="text-gray-600 italic text-sm">"Fast delivery and excellent customer service. Highly recommend!"</p>
-        </div>
-        <!-- 4 -->
-        <div class="testimonial-card bg-white p-6 rounded-xl shadow-md border border-gray-100">
-          <div class="flex items-center gap-3 mb-3">
-            <img src="https://randomuser.me/api/portraits/women/90.jpg" alt="Grace" class="w-12 h-12 rounded-full object-cover border-2 border-pink-200" />
-            <div>
-              <p class="font-bold text-gray-800 text-sm">Grace T.</p>
-              <div class="text-yellow-400 text-xs"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
-            </div>
-          </div>
-          <p class="text-gray-600 italic text-sm">"The body cream leaves my skin incredibly soft. I'll definitely be ordering again."</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ==================== CONTACT SECTION (Glassmorphism) ==================== -->
-  <section id="contact-section" class="container mx-auto px-4 py-16">
-    <div class="max-w-3xl mx-auto bg-white/70 backdrop-blur-sm rounded-2xl shadow-2xl p-6 md:p-10 border border-white/50">
-      <div class="text-center mb-8">
-        <p class="text-pink-600 font-semibold uppercase tracking-wider text-sm flex items-center justify-center gap-2">
-          <i class="fas fa-headset"></i> Get in Touch
-        </p>
-        <h2 class="text-3xl font-bold text-gray-800">Can't find what you need?</h2>
-        <p class="text-gray-500 mt-2">Contact us and we'll help you find the perfect product.</p>
-      </div>
-
-      <form id="contact-form" class="space-y-4">
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div class="relative">
-            <i class="fas fa-user absolute left-3 top-3.5 text-gray-400"></i>
-            <input type="text" id="contact-name" placeholder="Your Full Name" required 
-                   class="w-full border border-gray-200 rounded-lg pl-10 p-3 focus:ring-2 focus:ring-pink-500 focus:border-pink-500 outline-none transition shadow-sm" />
-          </div>
-          <div class="relative">
-            <i class="fas fa-envelope absolute left-3 top-3.5 text-gray-400"></i>
-            <input type="email" id="contact-email" placeholder="Your Email Address" required 
-                   class="w-full border border-gray-200 rounded-lg pl-10 p-3 focus:ring-2 focus:ring-pink-500 focus:border-pink-500 outline-none transition shadow-sm" />
-          </div>
-        </div>
-        <div class="relative">
-          <i class="fas fa-pencil-alt absolute left-3 top-3.5 text-gray-400"></i>
-          <textarea id="contact-message" rows="4" placeholder="Tell us what you're looking for..." required 
-                    class="w-full border border-gray-200 rounded-lg pl-10 p-3 focus:ring-2 focus:ring-pink-500 focus:border-pink-500 outline-none transition shadow-sm"></textarea>
-        </div>
-        <button type="submit" 
-                class="w-full bg-pink-600 hover:bg-pink-700 text-white font-semibold py-3.5 rounded-lg transition duration-200 shadow-md hover:shadow-pink-500/30 flex items-center justify-center gap-2">
-          <i class="fas fa-paper-plane"></i> Send Message
-        </button>
-      </form>
-      <div id="contact-success" class="hidden mt-4 text-center text-green-600 font-semibold p-3 bg-green-50 rounded-lg border border-green-200">
-        <i class="fas fa-check-circle mr-2"></i> Your message was sent! We'll get back to you shortly.
-      </div>
-    </div>
-  </section>
-
-  <!-- ==================== PRODUCT DETAIL MODAL ==================== -->
-  <div id="productModal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 modal-overlay">
-    <div class="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto modal-content p-6 md:p-8 relative">
-      <!-- Close button -->
-      <button onclick="closeProductModal()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 text-3xl transition">&times;</button>
-      
-      <!-- Dynamic content -->
-      <div id="modalProductContent">
-        <!-- Filled by JavaScript -->
-      </div>
-    </div>
+  <h2 class="section">All sellers</h2>
+  <div class="tabs" id="sellerTabs">
+    <button class="active" data-filter="all">All</button>
+    <button data-filter="approved">Approved</button>
+    <button data-filter="pending">Pending</button>
+    <button data-filter="rejected">Rejected</button>
+    <button data-filter="suspended">Suspended</button>
   </div>
+  <table>
+    <thead><tr><th>Name</th><th>Email</th><th>Status</th><th>Actions</th></tr></thead>
+    <tbody id="sellersBody"><tr class="empty-row"><td colspan="4">Loading…</td></tr></tbody>
+  </table>
 
-  <!-- ==================== FOOTER ==================== -->
-  <footer class="bg-gray-900 text-gray-300 mt-8 py-12 px-4 border-t border-gray-800">
-    <div class="container mx-auto grid grid-cols-1 md:grid-cols-4 gap-8">
-      <div>
-        <h3 class="text-white text-2xl font-bold flex items-center gap-2">
-          <i class="fas fa-spa text-pink-500"></i> Cresent Beauty Hub
-        </h3>
-        <p class="mt-2 text-sm leading-relaxed">Your trusted destination for premium perfumes, skincare, body care, and hair care.</p>
-      </div>
-      <div>
-        <h4 class="text-white font-semibold">Quick Links</h4>
-        <ul class="mt-2 text-sm space-y-1.5">
-          <li><a href="index.html" class="hover:text-pink-400 transition"><i class="fas fa-chevron-right text-[10px] mr-1"></i> Home</a></li>
-          <li><a href="#products-section" class="hover:text-pink-400 transition"><i class="fas fa-chevron-right text-[10px] mr-1"></i> Shop</a></li>
-          <li><a href="admin.html" class="hover:text-pink-400 transition"><i class="fas fa-chevron-right text-[10px] mr-1"></i> Admin</a></li>
-        </ul>
-      </div>
-      <div>
-        <h4 class="text-white font-semibold">Support</h4>
-        <ul class="mt-2 text-sm space-y-1.5">
-          <li><a href="#" class="hover:text-pink-400 transition"><i class="fas fa-chevron-right text-[10px] mr-1"></i> Shipping Policy</a></li>
-          <li><a href="#" class="hover:text-pink-400 transition"><i class="fas fa-chevron-right text-[10px] mr-1"></i> Return Policy</a></li>
-          <li><a href="#" class="hover:text-pink-400 transition"><i class="fas fa-chevron-right text-[10px] mr-1"></i> Privacy Policy</a></li>
-        </ul>
-      </div>
-      <div>
-        <h4 class="text-white font-semibold"><i class="fas fa-address-card mr-2"></i> Contact</h4>
-        <p class="text-sm mt-2"><i class="fas fa-envelope mr-2 text-pink-400"></i> mercyola971@gmail.com</p>
-        <p class="text-sm"><i class="fas fa-phone mr-2 text-pink-400"></i> +234 7038721342</p>
-        <p class="text-sm"><i class="fas fa-map-marker-alt mr-2 text-pink-400"></i> Ogbomoso, Nigeria</p>
-      </div>
-    </div>
-    <div class="container mx-auto text-center text-sm border-t border-gray-800 mt-10 pt-6">
-      <i class="far fa-copyright mr-1"></i> 2026 Cresent Beauty Hub. All Rights Reserved.
-    </div>
-  </footer>
+  <h2 class="section">Completed sales</h2>
+  <p style="font-size:.82rem; color:var(--ink-soft); margin-bottom:1rem; max-width:640px;">
+    Until Stripe payments are live, confirm a sale manually once money has actually changed hands outside the platform. This creates the transaction record buyers need to leave a review — it does not move any money itself.
+  </p>
+  <table>
+    <thead><tr><th>Property</th><th>Buyer</th><th>Seller</th><th>Accepted amount</th><th>Action</th></tr></thead>
+    <tbody id="salesBody"><tr class="empty-row"><td colspan="5">Loading…</td></tr></tbody>
+  </table>
 
-  <!-- ========================================================== -->
-  <!-- ==================== JAVASCRIPT =========================== -->
-  <!-- ========================================================== -->
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
-  
-  <script>
-    // ===========================================================
-    // 1. FIREBASE CONFIG
-    // ===========================================================
-    const firebaseConfig = {
-      apiKey: "AIzaSyB2jxywTYbizISk9_mJcreBx5eS5u0C4es",
-      authDomain: "crescent-2662a.firebaseapp.com",
-      databaseURL: "https://crescent-2662a-default-rtdb.firebaseio.com",
-      projectId: "crescent-2662a",
-      storageBucket: "crescent-2662a.firebasestorage.app",
-      messagingSenderId: "947228503695",
-      appId: "1:947228503695:web:f74d1c4da04508268ccafa",
-      measurementId: "G-8BR6NDVKQC"
-    };
+  <h2 class="section">Properties</h2>
+  <table>
+    <thead><tr><th>Address / location</th><th>Price</th><th>Seller</th><th>Status</th></tr></thead>
+    <tbody id="propertiesBody"><tr class="empty-row"><td colspan="4">Loading…</td></tr></tbody>
+  </table>
 
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.database();
+  <footer></footer>
+</div>
 
-    // ===========================================================
-    // 2. GLOBAL VARIABLES
-    // ===========================================================
-    let allProducts = [];
-    let currentFilter = 'all';
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
+  import { getDatabase, ref, get, update, onValue, push, set } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-database.js";
+  import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
 
-    // ===========================================================
-    // 3. CART BADGE UPDATE
-    // ===========================================================
-    function updateBadge() {
-      const cart = JSON.parse(localStorage.getItem('cart')) || [];
-      const count = cart.reduce((sum, item) => sum + item.qty, 0);
-      document.getElementById('cart-badge').textContent = count;
+  const firebaseConfig = {
+    apiKey: "AIzaSyCHGtQjjyEbyGxnYEmny2CsQUBQli66784",
+    authDomain: "dominioncity-30d77.firebaseapp.com",
+    databaseURL: "https://dominioncity-30d77-default-rtdb.firebaseio.com", // VERIFY against Firebase console > Realtime Database
+    projectId: "dominioncity-30d77",
+    storageBucket: "dominioncity-30d77.firebasestorage.app",
+    messagingSenderId: "792059504526",
+    appId: "1:792059504526:web:b159d1d150a727303566df",
+    measurementId: "G-Q64HSNCXGQ"
+  };
+  const app = initializeApp(firebaseConfig);
+  const db = getDatabase(app);
+  const auth = getAuth(app);
+
+  let allUsers = {};
+  let sellerFilter = 'all';
+  let allProperties = {};
+  let allOffers = {};
+  let allTransactions = {};
+  const PLATFORM_FEE_RATE = 0.05; // 5% — adjust to your actual fee
+
+  function formatPrice(price) {
+    return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(price || 0);
+  }
+  function formatDate(iso) {
+    if (!iso) return '—';
+    try { return new Date(iso).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }); }
+    catch { return '—'; }
+  }
+
+  async function setSellerStatus(uid, status) {
+    await update(ref(db, `users/${uid}`), { status });
+  }
+
+  function renderPending() {
+    const pendingBody = document.getElementById('pendingBody');
+    const pending = Object.entries(allUsers).filter(([, u]) => u.role === 'seller' && u.status === 'pending');
+    document.getElementById('statPending').textContent = pending.length;
+    if (!pending.length) {
+      pendingBody.innerHTML = '<tr class="empty-row"><td colspan="4">No sellers waiting on review.</td></tr>';
+      return;
     }
-    updateBadge();
+    pendingBody.innerHTML = pending.map(([uid, u]) => `
+      <tr>
+        <td>${u.displayName || '—'}</td>
+        <td>${u.email || '—'}</td>
+        <td>${formatDate(u.createdAt)}</td>
+        <td class="row-actions">
+          <button class="btn-approve" data-uid="${uid}" data-action="approved">Approve</button>
+          <button class="btn-reject" data-uid="${uid}" data-action="rejected">Reject</button>
+        </td>
+      </tr>
+    `).join('');
+    pendingBody.querySelectorAll('button').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        btn.closest('tr').style.opacity = '.5';
+        await setSellerStatus(btn.dataset.uid, btn.dataset.action);
+      });
+    });
+  }
 
-    // ===========================================================
-    // 4. ADD TO CART
-    // ===========================================================
-    window.addToCart = function(productId) {
-      const product = allProducts.find(p => p.id === productId);
-      if (!product) return;
-      
-      let cart = JSON.parse(localStorage.getItem('cart')) || [];
-      const existing = cart.find(item => item.id === productId);
-      
-      if (existing) {
-        existing.qty += 1;
+  function renderSellers() {
+    const sellersBody = document.getElementById('sellersBody');
+    let sellers = Object.entries(allUsers).filter(([, u]) => u.role === 'seller');
+    document.getElementById('statSellers').textContent = sellers.filter(([, u]) => u.status === 'approved').length;
+    document.getElementById('statBuyers').textContent = Object.values(allUsers).filter(u => u.role === 'buyer').length;
+    if (sellerFilter !== 'all') sellers = sellers.filter(([, u]) => u.status === sellerFilter);
+    if (!sellers.length) {
+      sellersBody.innerHTML = '<tr class="empty-row"><td colspan="4">No sellers in this category.</td></tr>';
+      return;
+    }
+    sellersBody.innerHTML = sellers.map(([uid, u]) => `
+      <tr>
+        <td>${u.displayName || '—'}</td>
+        <td>${u.email || '—'}</td>
+        <td><span class="pill ${u.status}">${u.status}</span></td>
+        <td class="row-actions">
+          ${u.status === 'approved' ? `<button class="btn-suspend" data-uid="${uid}" data-action="suspended">Suspend</button>` : ''}
+          ${u.status === 'suspended' || u.status === 'rejected' ? `<button class="btn-approve" data-uid="${uid}" data-action="approved">Reinstate</button>` : ''}
+        </td>
+      </tr>
+    `).join('');
+    sellersBody.querySelectorAll('button').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        btn.closest('tr').style.opacity = '.5';
+        await setSellerStatus(btn.dataset.uid, btn.dataset.action);
+      });
+    });
+  }
+
+  document.getElementById('sellerTabs').addEventListener('click', (e) => {
+    if (e.target.tagName !== 'BUTTON') return;
+    document.querySelectorAll('#sellerTabs button').forEach(b => b.classList.remove('active'));
+    e.target.classList.add('active');
+    sellerFilter = e.target.dataset.filter;
+    renderSellers();
+  });
+
+  function loadUsers() {
+    onValue(ref(db, 'users'), (snap) => {
+      allUsers = snap.exists() ? snap.val() : {};
+      renderPending();
+      renderSellers();
+    });
+  }
+
+  function loadProperties() {
+    onValue(ref(db, 'properties'), (snap) => {
+      const propertiesBody = document.getElementById('propertiesBody');
+      allProperties = snap.exists() ? snap.val() : {};
+      const properties = Object.values(allProperties);
+      document.getElementById('statProperties').textContent = properties.length;
+      if (!properties.length) {
+        propertiesBody.innerHTML = '<tr class="empty-row"><td colspan="4">No properties posted yet.</td></tr>';
       } else {
-        cart.push({
-          id: product.id,
-          name: product.name,
-          price: product.price,
-          image: product.thumbnail || (product.images ? product.images[0] : ''),
-          qty: 1
-        });
-      }
-      
-      localStorage.setItem('cart', JSON.stringify(cart));
-      updateBadge();
-      
-      // Show feedback
-      alert(`✅ ${product.name} added to cart!`);
-    };
-
-    // ===========================================================
-    // 5. PRODUCT DETAIL MODAL FUNCTIONS
-    // ===========================================================
-    window.openProductModal = function(productId) {
-      const product = allProducts.find(p => p.id === productId);
-      if (!product) {
-        alert('Product not found');
-        return;
-      }
-
-      const modal = document.getElementById('productModal');
-      modal.classList.remove('hidden');
-      modal.style.display = 'flex';
-
-      // Build images gallery
-      let imagesHtml = '';
-      if (product.images && product.images.length > 0) {
-        imagesHtml = product.images.map(img => `
-          <img src="${img}" alt="${product.name}" class="w-full h-64 object-cover rounded-lg mb-2" />
+        propertiesBody.innerHTML = properties.slice(0, 50).map(p => `
+          <tr>
+            <td>${p.location || '—'}</td>
+            <td>${formatPrice(p.price)}</td>
+            <td>${p.sellerName || '—'}</td>
+            <td><span class="pill approved">${p.status || 'active'}</span></td>
+          </tr>
         `).join('');
-      } else {
-        imagesHtml = `<img src="https://via.placeholder.com/600x400" alt="${product.name}" class="w-full h-64 object-cover rounded-lg mb-2" />`;
       }
+      renderSalesQueue();
+    });
+  }
 
-      // Stock status
-      const stockStatus = product.stock > 0 
-        ? `<span class="text-green-600 font-semibold">In Stock (${product.stock} available)</span>` 
-        : `<span class="text-red-600 font-semibold">Out of Stock</span>`;
+  function loadOffersAndTransactions() {
+    onValue(ref(db, 'offers'), (snap) => {
+      allOffers = snap.exists() ? snap.val() : {};
+      renderSalesQueue();
+    });
+    onValue(ref(db, 'transactions'), (snap) => {
+      allTransactions = snap.exists() ? snap.val() : {};
+      renderSalesQueue();
+    });
+  }
 
-      const html = `
-        <div class="space-y-4">
-          <!-- Images -->
-          <div class="space-y-1">
-            ${imagesHtml}
-          </div>
-          
-          <!-- Product Info -->
-          <h2 class="text-2xl font-bold text-gray-800">${product.name}</h2>
-          <div class="flex items-center gap-3">
-            <span class="text-2xl font-bold text-pink-600">₦${product.price.toLocaleString()}</span>
-            <span class="text-sm bg-gray-100 px-3 py-1 rounded-full">${product.category || 'General'}</span>
-          </div>
-          <div>${stockStatus}</div>
-          
-          <!-- Description -->
-          <div>
-            <h4 class="font-semibold text-gray-700">Description</h4>
-            <p class="text-gray-600">${product.description || 'No description available.'}</p>
-          </div>
-          
-          <!-- Add to Cart Button -->
-          <button onclick="event.stopPropagation(); addToCart('${product.id}'); closeProductModal();" 
-                  class="w-full bg-pink-600 hover:bg-pink-700 text-white font-semibold py-3 rounded-lg transition shadow-md hover:shadow-pink-500/30">
-            <i class="fas fa-cart-plus mr-2"></i> Add to Cart
-          </button>
-        </div>
+  function renderSalesQueue() {
+    const salesBody = document.getElementById('salesBody');
+    const confirmedOfferIds = new Set(Object.values(allTransactions).map(t => t.offerId));
+    const pending = Object.entries(allOffers).filter(([id, o]) => o.status === 'accepted' && !confirmedOfferIds.has(id));
+    if (!pending.length) {
+      salesBody.innerHTML = '<tr class="empty-row"><td colspan="5">No accepted offers waiting on confirmation.</td></tr>';
+      return;
+    }
+    salesBody.innerHTML = pending.map(([id, o]) => {
+      const p = allProperties[o.propertyId];
+      return `
+        <tr>
+          <td>${p ? p.location : o.propertyId}</td>
+          <td>${o.buyerName || '—'}</td>
+          <td>${p ? p.sellerName : '—'}</td>
+          <td>${formatPrice(o.amount)}</td>
+          <td class="row-actions"><button class="btn-approve" data-confirm="${id}">Confirm sale</button></td>
+        </tr>
       `;
-
-      document.getElementById('modalProductContent').innerHTML = html;
-      document.body.style.overflow = 'hidden';
-    };
-
-    window.closeProductModal = function() {
-      const modal = document.getElementById('productModal');
-      modal.classList.add('hidden');
-      modal.style.display = 'none';
-      document.body.style.overflow = 'auto';
-    };
-
-    // Close modal on background click
-    document.addEventListener('click', function(e) {
-      const modal = document.getElementById('productModal');
-      if (e.target === modal) {
-        closeProductModal();
-      }
-    });
-
-    // ===========================================================
-    // 6. LOAD PRODUCTS (Real-time)
-    // ===========================================================
-    function loadProducts() {
-      const productsRef = db.ref('products');
-      productsRef.on('value', (snapshot) => {
-        const data = snapshot.val();
-        const grid = document.getElementById('product-grid');
-        allProducts = [];
-
-        if (!data) {
-          grid.innerHTML = `
-            <div class="col-span-full text-center py-12">
-              <p class="text-gray-400 text-lg">No products available yet.</p>
-              <p class="text-sm text-gray-400">Check back soon!</p>
-            </div>
-          `;
-          return;
-        }
-
-        for (let id in data) {
-          const p = data[id];
-          p.id = id;
-          allProducts.push(p);
-        }
-
-        renderProducts(currentFilter);
-        observeProductCards();
-      });
-    }
-
-    // ===========================================================
-    // 7. RENDER PRODUCTS
-    // ===========================================================
-    function renderProducts(filter) {
-      const grid = document.getElementById('product-grid');
-      let filtered = allProducts;
-      
-      if (filter !== 'all') {
-        filtered = allProducts.filter(p => p.category === filter);
-      }
-
-      if (filtered.length === 0) {
-        grid.innerHTML = `
-          <div class="col-span-full text-center py-12">
-            <p class="text-gray-400">No products in this category.</p>
-          </div>
-        `;
-        return;
-      }
-
-      grid.innerHTML = filtered.map(p => {
-        const imgSrc = p.thumbnail || (p.images ? p.images[0] : 'https://images.unsplash.com/photo-1596462502278-6c7b6b6b0f7c?w=300&h=300&fit=crop&q=80');
-        return `
-          <div class="product-card bg-white rounded-xl shadow-md overflow-hidden border border-gray-100" 
-               data-product-id="${p.id}" onclick="openProductModal('${p.id}')">
-            <img src="${imgSrc}" alt="${p.name}" class="w-full h-56 object-cover" loading="lazy" />
-            <div class="p-4">
-              <h3 class="font-semibold text-gray-800 truncate">${p.name}</h3>
-              <div class="flex items-center justify-between mt-1">
-                <p class="text-pink-600 font-bold text-lg">₦${p.price.toLocaleString()}</p>
-                <span class="text-xs bg-gray-100 px-2 py-1 rounded-full text-gray-600">${p.category || 'General'}</span>
-              </div>
-              <button onclick="event.stopPropagation(); addToCart('${p.id}')" 
-                      class="mt-3 w-full bg-pink-600 hover:bg-pink-700 text-white text-sm font-medium py-2.5 rounded-lg transition duration-200 shadow-sm hover:shadow">
-                <i class="fas fa-cart-plus mr-1"></i> Add to Cart
-              </button>
-            </div>
-          </div>
-        `;
-      }).join('');
-
-      observeProductCards();
-    }
-
-    // ===========================================================
-    // 8. SCROLL ANIMATION
-    // ===========================================================
-    function observeProductCards() {
-      const cards = document.querySelectorAll('.product-card');
-      if (cards.length === 0) return;
-
-      const observer = new IntersectionObserver((entries) => {
-        entries.forEach((entry, index) => {
-          if (entry.isIntersecting) {
-            setTimeout(() => {
-              entry.target.classList.add('visible');
-            }, index * 100);
-            observer.unobserve(entry.target);
-          }
+    }).join('');
+    salesBody.querySelectorAll('[data-confirm]').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const offerId = btn.dataset.confirm;
+        const o = allOffers[offerId];
+        btn.disabled = true; btn.textContent = 'Confirming…';
+        const fee = Math.round(o.amount * PLATFORM_FEE_RATE * 100) / 100;
+        const newTxRef = push(ref(db, 'transactions'));
+        await set(newTxRef, {
+          offerId, propertyId: o.propertyId, buyerId: o.buyerId, sellerId: o.sellerId,
+          amount: o.amount, platformFee: fee, sellerPayout: o.amount - fee,
+          status: 'completed', method: 'manual', createdAt: Date.now()
         });
-      }, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
-
-      cards.forEach(card => observer.observe(card));
-    }
-
-    // ===========================================================
-    // 9. FILTER BUTTONS
-    // ===========================================================
-    document.querySelectorAll('.filter-btn').forEach(btn => {
-      btn.addEventListener('click', function() {
-        document.querySelectorAll('.filter-btn').forEach(b => {
-          b.classList.remove('active', 'bg-pink-700', 'text-white', 'border-pink-700');
-          b.classList.add('border-gray-300', 'bg-transparent', 'text-gray-700');
-        });
-        this.classList.add('active', 'bg-pink-700', 'text-white', 'border-pink-700');
-        this.classList.remove('border-gray-300', 'bg-transparent', 'text-gray-700');
-        
-        currentFilter = this.dataset.filter;
-        renderProducts(currentFilter);
       });
     });
+  }
 
-    // ===========================================================
-    // 10. CONTACT FORM
-    // ===========================================================
-    document.getElementById('contact-form').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      
-      const name = document.getElementById('contact-name').value.trim();
-      const email = document.getElementById('contact-email').value.trim();
-      const message = document.getElementById('contact-message').value.trim();
-
-      if (!name || !email || !message) {
-        alert('Please fill in all fields.');
-        return;
-      }
-
-      try {
-        const newContactRef = db.ref('contacts').push();
-        await newContactRef.set({
-          name: name,
-          email: email,
-          message: message,
-          timestamp: firebase.database.ServerValue.TIMESTAMP
-        });
-
-        document.getElementById('contact-success').classList.remove('hidden');
-        document.getElementById('contact-form').reset();
-        setTimeout(() => {
-          document.getElementById('contact-success').classList.add('hidden');
-        }, 6000);
-        
-      } catch (error) {
-        alert('Error sending message: ' + error.message);
-      }
+  function loadAnalytics() {
+    onValue(ref(db, 'analyticsEvents'), (snap) => {
+      const events = snap.exists() ? Object.values(snap.val()) : [];
+      document.getElementById('statViews').textContent = events.filter(e => e.type === 'view').length;
+      document.getElementById('statClicks').textContent = events.filter(e => e.type === 'purchase_click').length;
+    }, () => {
+      document.getElementById('statViews').textContent = '0';
+      document.getElementById('statClicks').textContent = '0';
     });
+  }
 
-    // ===========================================================
-    // 11. INIT
-    // ===========================================================
-    loadProducts();
-  </script>
+  onAuthStateChanged(auth, async (user) => {
+    if (!user) { window.location.href = 'admin-login.html'; return; }
+    const adminSnap = await get(ref(db, `admins/${user.uid}`));
+    if (!adminSnap.exists()) { await signOut(auth); window.location.href = 'admin-login.html'; return; }
+    loadUsers();
+    loadProperties();
+    loadOffersAndTransactions();
+    loadAnalytics();
+  });
+
+  document.getElementById('logoutBtn').addEventListener('click', async () => {
+    await signOut(auth);
+    window.location.href = 'admin-login.html';
+  });
+</script>
 </body>
 </html>
