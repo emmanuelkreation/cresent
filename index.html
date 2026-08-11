@@ -8,7 +8,7 @@
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
   
-  <!-- FontAwesome Icons (For realistic icons) -->
+  <!-- FontAwesome Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
 
   <style>
@@ -19,7 +19,6 @@
       background-position: center 30%;
     }
 
-    /* Fade-in animation for product cards */
     .product-card {
       opacity: 0;
       transform: translateY(30px);
@@ -48,7 +47,6 @@
       background-color: #fce7f3;
     }
 
-    /* Hero text animation */
     .hero-text {
       animation: fadeUp 1s ease forwards;
     }
@@ -59,7 +57,6 @@
     .hero-text-delay { animation-delay: 0.2s; opacity: 0; }
     .hero-text-delay-2 { animation-delay: 0.5s; opacity: 0; }
 
-    /* Category & Best Seller Image Hover */
     .category-img {
       transition: transform 0.4s ease, box-shadow 0.4s ease;
     }
@@ -107,15 +104,18 @@
         <i class="fas fa-spa text-pink-500 text-2xl"></i> Cresent Beauty Hub
       </a>
       
-      <div class="flex items-center space-x-5">
-        <!-- Added Reviews and Track links -->
-        <a href="reviews.html" class="text-gray-500 hover:text-pink-600 text-sm font-medium hidden sm:inline transition">
+      <!-- Desktop Navigation Links (visible on sm and up) -->
+      <div class="hidden sm:flex items-center space-x-5">
+        <a href="reviews.html" class="text-gray-500 hover:text-pink-600 text-sm font-medium transition">
           <i class="fas fa-star mr-1"></i> Reviews
         </a>
-        <a href="track-order.html" class="text-gray-500 hover:text-pink-600 text-sm font-medium hidden sm:inline transition">
+        <a href="track-order.html" class="text-gray-500 hover:text-pink-600 text-sm font-medium transition">
           <i class="fas fa-search mr-1"></i> Track
         </a>
-        <a href="admin.html" class="text-gray-500 hover:text-pink-600 text-sm font-medium hidden sm:inline transition">
+        <a href="about.html" class="text-gray-500 hover:text-pink-600 text-sm font-medium transition">
+          <i class="fas fa-info-circle mr-1"></i> About
+        </a>
+        <a href="admin.html" class="text-gray-500 hover:text-pink-600 text-sm font-medium transition">
           <i class="fas fa-user-cog mr-1"></i> Admin
         </a>
         <a href="cart.html" class="relative group">
@@ -123,10 +123,37 @@
           <span id="cart-badge" class="absolute -top-2 -right-2 bg-pink-600 text-white text-[10px] font-bold rounded-full px-2 py-0.5 min-w-[20px] text-center shadow-lg">0</span>
         </a>
       </div>
+
+      <!-- Mobile Menu Toggle (hamburger) -->
+      <div class="flex sm:hidden items-center space-x-3">
+        <a href="cart.html" class="relative group">
+          <i class="fas fa-shopping-bag text-xl text-gray-700"></i>
+          <span id="cart-badge-mobile" class="absolute -top-2 -right-2 bg-pink-600 text-white text-[10px] font-bold rounded-full px-2 py-0.5 min-w-[20px] text-center shadow-lg">0</span>
+        </a>
+        <button id="mobile-menu-btn" class="text-gray-700 hover:text-pink-600 focus:outline-none">
+          <i class="fas fa-bars text-2xl"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- Mobile Dropdown Menu -->
+    <div id="mobile-menu" class="hidden sm:hidden bg-white/95 backdrop-blur-md border-b border-gray-100 px-4 py-3 space-y-2">
+      <a href="reviews.html" class="block text-gray-600 hover:text-pink-600 text-sm font-medium transition">
+        <i class="fas fa-star mr-2"></i> Reviews
+      </a>
+      <a href="track-order.html" class="block text-gray-600 hover:text-pink-600 text-sm font-medium transition">
+        <i class="fas fa-search mr-2"></i> Track Order
+      </a>
+      <a href="about.html" class="block text-gray-600 hover:text-pink-600 text-sm font-medium transition">
+        <i class="fas fa-info-circle mr-2"></i> About Us
+      </a>
+      <a href="admin.html" class="block text-gray-600 hover:text-pink-600 text-sm font-medium transition">
+        <i class="fas fa-user-cog mr-2"></i> Admin
+      </a>
     </div>
   </nav>
 
-  <!-- ==================== HERO SECTION (Real Image) ==================== -->
+  <!-- ==================== HERO SECTION ==================== -->
   <section class="hero-bg relative min-h-[80vh] flex items-center">
     <div class="absolute inset-0 bg-gradient-to-r from-black/50 via-black/30 to-transparent"></div>
     
@@ -153,7 +180,7 @@
     </div>
   </section>
 
-  <!-- ==================== FEATURED CATEGORIES (Real Images) ==================== -->
+  <!-- ==================== FEATURED CATEGORIES ==================== -->
   <section class="container mx-auto px-4 py-16">
     <div class="text-center mb-12">
       <p class="text-pink-600 font-semibold uppercase tracking-wider text-sm flex items-center justify-center gap-2">
@@ -206,7 +233,7 @@
     </div>
   </section>
 
-  <!-- ==================== BEST SELLERS (Real Product Images) ==================== -->
+  <!-- ==================== BEST SELLERS ==================== -->
   <section class="bg-gradient-to-b from-pink-50/50 to-white py-16">
     <div class="container mx-auto px-4">
       <div class="text-center mb-10">
@@ -216,7 +243,6 @@
         <h2 class="text-3xl md:text-4xl font-bold text-gray-800">Best Sellers</h2>
       </div>
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-        <!-- 1 -->
         <div class="bg-white p-6 rounded-2xl shadow-md text-center border border-pink-100 hover:shadow-xl transition-shadow group">
           <img src="https://images.unsplash.com/photo-1541643600914-78b084683601?w=300&h=300&fit=crop&crop=center&q=80" 
                alt="Perfume" class="w-24 h-24 object-cover rounded-full mx-auto mb-3 border-2 border-pink-200 group-hover:border-pink-500 transition" />
@@ -224,7 +250,6 @@
           <p class="text-sm text-gray-500">Long-lasting impression</p>
           <span class="inline-block mt-2 bg-pink-100 text-pink-700 text-xs px-3 py-1 rounded-full">Fragrance</span>
         </div>
-        <!-- 2 -->
         <div class="bg-white p-6 rounded-2xl shadow-md text-center border border-pink-100 hover:shadow-xl transition-shadow group">
           <img src="https://images.unsplash.com/photo-1556228720-195a672e8a03?w=300&h=300&fit=crop&crop=center&q=80" 
                alt="Face Cream" class="w-24 h-24 object-cover rounded-full mx-auto mb-3 border-2 border-pink-200 group-hover:border-pink-500 transition" />
@@ -232,7 +257,6 @@
           <p class="text-sm text-gray-500">Glowing, healthy skin</p>
           <span class="inline-block mt-2 bg-pink-100 text-pink-700 text-xs px-3 py-1 rounded-full">Skincare</span>
         </div>
-        <!-- 3 -->
         <div class="bg-white p-6 rounded-2xl shadow-md text-center border border-pink-100 hover:shadow-xl transition-shadow group">
           <img src="https://images.unsplash.com/photo-1585386959984-a4155224a1ad?w=300&h=300&fit=crop&crop=center&q=80" 
                alt="Body Cream" class="w-24 h-24 object-cover rounded-full mx-auto mb-3 border-2 border-pink-200 group-hover:border-pink-500 transition" />
@@ -240,7 +264,6 @@
           <p class="text-sm text-gray-500">Soft & smooth all day</p>
           <span class="inline-block mt-2 bg-pink-100 text-pink-700 text-xs px-3 py-1 rounded-full">Body Care</span>
         </div>
-        <!-- 4 -->
         <div class="bg-white p-6 rounded-2xl shadow-md text-center border border-pink-100 hover:shadow-xl transition-shadow group">
           <img src="https://i.pinimg.com/1200x/fc/b6/57/fcb6570ab3c723accc5087927f645bd3.jpg?w=300&h=300&fit=crop&crop=center&q=80" 
                alt="Hair Care" class="w-24 h-24 object-cover rounded-full mx-auto mb-3 border-2 border-pink-200 group-hover:border-pink-500 transition" />
@@ -252,7 +275,7 @@
     </div>
   </section>
 
-  <!-- ==================== PRODUCT GRID (Shop) ==================== -->
+  <!-- ==================== PRODUCT GRID ==================== -->
   <section id="products-section" class="container mx-auto px-4 py-16">
     <div class="text-center mb-10">
       <h2 class="text-3xl md:text-4xl font-bold text-gray-800 flex items-center justify-center gap-3">
@@ -270,13 +293,12 @@
       <button class="filter-btn px-6 py-2.5 border border-gray-300 rounded-full text-sm font-medium" data-filter="Hair Creams">Hair Creams</button>
     </div>
 
-    <!-- Product Grid -->
     <div id="product-grid" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
       <!-- Products loaded dynamically -->
     </div>
   </section>
 
-  <!-- ==================== WHY CHOOSE US (FontAwesome Icons) ==================== -->
+  <!-- ==================== WHY CHOOSE US ==================== -->
   <section class="bg-white py-16 border-t border-gray-100 shadow-inner">
     <div class="container mx-auto px-4">
       <div class="text-center mb-12">
@@ -318,7 +340,7 @@
     </div>
   </section>
 
-  <!-- ==================== TESTIMONIALS (Real Avatars) ==================== -->
+  <!-- ==================== TESTIMONIALS ==================== -->
   <section class="bg-gray-50 py-16">
     <div class="container mx-auto px-4">
       <div class="text-center mb-10">
@@ -328,7 +350,6 @@
         <h2 class="text-3xl md:text-4xl font-bold text-gray-800">Loved by Thousands</h2>
       </div>
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <!-- 1 -->
         <div class="testimonial-card bg-white p-6 rounded-xl shadow-md border border-gray-100">
           <div class="flex items-center gap-3 mb-3">
             <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="Sophia" class="w-12 h-12 rounded-full object-cover border-2 border-pink-200" />
@@ -339,7 +360,6 @@
           </div>
           <p class="text-gray-600 italic text-sm">"I absolutely love the perfume I purchased. The fragrance lasts all day!"</p>
         </div>
-        <!-- 2 -->
         <div class="testimonial-card bg-white p-6 rounded-xl shadow-md border border-gray-100">
           <div class="flex items-center gap-3 mb-3">
             <img src="https://randomuser.me/api/portraits/women/68.jpg" alt="Esther" class="w-12 h-12 rounded-full object-cover border-2 border-pink-200" />
@@ -350,7 +370,6 @@
           </div>
           <p class="text-gray-600 italic text-sm">"The face cream transformed my skin. Smoother and more hydrated than ever."</p>
         </div>
-        <!-- 3 -->
         <div class="testimonial-card bg-white p-6 rounded-xl shadow-md border border-gray-100">
           <div class="flex items-center gap-3 mb-3">
             <img src="https://randomuser.me/api/portraits/women/63.jpg" alt="Jennifer" class="w-12 h-12 rounded-full object-cover border-2 border-pink-200" />
@@ -361,7 +380,6 @@
           </div>
           <p class="text-gray-600 italic text-sm">"Fast delivery and excellent customer service. Highly recommend!"</p>
         </div>
-        <!-- 4 -->
         <div class="testimonial-card bg-white p-6 rounded-xl shadow-md border border-gray-100">
           <div class="flex items-center gap-3 mb-3">
             <img src="https://randomuser.me/api/portraits/women/90.jpg" alt="Grace" class="w-12 h-12 rounded-full object-cover border-2 border-pink-200" />
@@ -376,7 +394,7 @@
     </div>
   </section>
 
-  <!-- ==================== CONTACT SECTION (Glassmorphism) ==================== -->
+  <!-- ==================== CONTACT SECTION ==================== -->
   <section id="contact-section" class="container mx-auto px-4 py-16">
     <div class="max-w-3xl mx-auto bg-white/70 backdrop-blur-sm rounded-2xl shadow-2xl p-6 md:p-10 border border-white/50">
       <div class="text-center mb-8">
@@ -419,12 +437,9 @@
   <!-- ==================== PRODUCT DETAIL MODAL ==================== -->
   <div id="productModal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 modal-overlay">
     <div class="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto modal-content p-6 md:p-8 relative">
-      <!-- Close button -->
       <button onclick="closeProductModal()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 text-3xl transition">&times;</button>
-      
-      <!-- Dynamic content -->
       <div id="modalProductContent">
-        <!-- Filled by JavaScript -->
+        <!-- Dynamic content -->
       </div>
     </div>
   </div>
@@ -443,6 +458,9 @@
         <ul class="mt-2 text-sm space-y-1.5">
           <li><a href="index.html" class="hover:text-pink-400 transition"><i class="fas fa-chevron-right text-[10px] mr-1"></i> Home</a></li>
           <li><a href="#products-section" class="hover:text-pink-400 transition"><i class="fas fa-chevron-right text-[10px] mr-1"></i> Shop</a></li>
+          <li><a href="about.html" class="hover:text-pink-400 transition"><i class="fas fa-chevron-right text-[10px] mr-1"></i> About Us</a></li>
+          <li><a href="reviews.html" class="hover:text-pink-400 transition"><i class="fas fa-chevron-right text-[10px] mr-1"></i> Reviews</a></li>
+          <li><a href="track-order.html" class="hover:text-pink-400 transition"><i class="fas fa-chevron-right text-[10px] mr-1"></i> Track Order</a></li>
           <li><a href="admin.html" class="hover:text-pink-400 transition"><i class="fas fa-chevron-right text-[10px] mr-1"></i> Admin</a></li>
         </ul>
       </div>
@@ -503,6 +521,8 @@
       const cart = JSON.parse(localStorage.getItem('cart')) || [];
       const count = cart.reduce((sum, item) => sum + item.qty, 0);
       document.getElementById('cart-badge').textContent = count;
+      const mobileBadge = document.getElementById('cart-badge-mobile');
+      if (mobileBadge) mobileBadge.textContent = count;
     }
     updateBadge();
 
@@ -530,13 +550,11 @@
       
       localStorage.setItem('cart', JSON.stringify(cart));
       updateBadge();
-      
-      // Show feedback
       alert(`✅ ${product.name} added to cart!`);
     };
 
     // ===========================================================
-    // 5. PRODUCT DETAIL MODAL FUNCTIONS
+    // 5. PRODUCT DETAIL MODAL
     // ===========================================================
     window.openProductModal = function(productId) {
       const product = allProducts.find(p => p.id === productId);
@@ -549,7 +567,6 @@
       modal.classList.remove('hidden');
       modal.style.display = 'flex';
 
-      // Build images gallery
       let imagesHtml = '';
       if (product.images && product.images.length > 0) {
         imagesHtml = product.images.map(img => `
@@ -559,33 +576,25 @@
         imagesHtml = `<img src="https://via.placeholder.com/600x400" alt="${product.name}" class="w-full h-64 object-cover rounded-lg mb-2" />`;
       }
 
-      // Stock status
       const stockStatus = product.stock > 0 
         ? `<span class="text-green-600 font-semibold">In Stock (${product.stock} available)</span>` 
         : `<span class="text-red-600 font-semibold">Out of Stock</span>`;
 
       const html = `
         <div class="space-y-4">
-          <!-- Images -->
           <div class="space-y-1">
             ${imagesHtml}
           </div>
-          
-          <!-- Product Info -->
           <h2 class="text-2xl font-bold text-gray-800">${product.name}</h2>
           <div class="flex items-center gap-3">
             <span class="text-2xl font-bold text-pink-600">₦${product.price.toLocaleString()}</span>
             <span class="text-sm bg-gray-100 px-3 py-1 rounded-full">${product.category || 'General'}</span>
           </div>
           <div>${stockStatus}</div>
-          
-          <!-- Description -->
           <div>
             <h4 class="font-semibold text-gray-700">Description</h4>
             <p class="text-gray-600">${product.description || 'No description available.'}</p>
           </div>
-          
-          <!-- Add to Cart Button -->
           <button onclick="event.stopPropagation(); addToCart('${product.id}'); closeProductModal();" 
                   class="w-full bg-pink-600 hover:bg-pink-700 text-white font-semibold py-3 rounded-lg transition shadow-md hover:shadow-pink-500/30">
             <i class="fas fa-cart-plus mr-2"></i> Add to Cart
@@ -604,7 +613,6 @@
       document.body.style.overflow = 'auto';
     };
 
-    // Close modal on background click
     document.addEventListener('click', function(e) {
       const modal = document.getElementById('productModal');
       if (e.target === modal) {
@@ -613,7 +621,7 @@
     });
 
     // ===========================================================
-    // 6. LOAD PRODUCTS (Real-time)
+    // 6. LOAD PRODUCTS
     // ===========================================================
     function loadProducts() {
       const productsRef = db.ref('products');
@@ -761,7 +769,15 @@
     });
 
     // ===========================================================
-    // 11. INIT
+    // 11. MOBILE MENU TOGGLE
+    // ===========================================================
+    document.getElementById('mobile-menu-btn').addEventListener('click', function() {
+      const menu = document.getElementById('mobile-menu');
+      menu.classList.toggle('hidden');
+    });
+
+    // ===========================================================
+    // 12. INIT
     // ===========================================================
     loadProducts();
   </script>
