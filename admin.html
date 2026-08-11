@@ -172,12 +172,17 @@
     </div>
 
     <!-- ============================================================ -->
-    <!-- TAB 1: Add Product -->
+    <!-- TAB 1: Add / Edit Product -->
     <!-- ============================================================ -->
     <div id="tab-products-content" class="fade-up fade-up-d1">
       <div class="glass-card rounded-2xl shadow-xl p-6 md:p-8 max-w-3xl mx-auto">
-        <h2 class="text-2xl font-bold text-gray-800 mb-4"><i class="fas fa-plus-circle text-pink-500 mr-2"></i> Add New Product</h2>
+        <h2 class="text-2xl font-bold text-gray-800 mb-4">
+          <span id="form-title"><i class="fas fa-plus-circle text-pink-500 mr-2"></i> Add New Product</span>
+        </h2>
         <form id="addProductForm" class="space-y-4">
+          <!-- Hidden Product ID for editing -->
+          <input type="hidden" id="editProductId" value="" />
+
           <!-- Product Name -->
           <div class="relative">
             <i class="fas fa-tag absolute left-3 top-3.5 text-gray-400"></i>
@@ -225,12 +230,19 @@
             <p class="text-xs text-gray-400 mt-1">Paste image URLs separated by commas. The first image will be used as the thumbnail.</p>
             <div id="url-preview-container" class="url-preview-grid"></div>
           </div>
-          <button type="submit" class="w-full bg-pink-600 hover:bg-pink-700 text-white font-semibold py-3.5 rounded-xl transition shadow-md hover:shadow-pink-500/30 flex items-center justify-center gap-2">
-            <i class="fas fa-save"></i> Add Product
-          </button>
+
+          <!-- Action Buttons -->
+          <div class="flex flex-col sm:flex-row gap-3">
+            <button type="submit" id="submitProductBtn" class="flex-1 bg-pink-600 hover:bg-pink-700 text-white font-semibold py-3.5 rounded-xl transition shadow-md hover:shadow-pink-500/30 flex items-center justify-center gap-2">
+              <i class="fas fa-save"></i> Add Product
+            </button>
+            <button type="button" id="cancelEditBtn" onclick="cancelEdit()" class="hidden flex-1 bg-gray-300 hover:bg-gray-400 text-gray-800 font-semibold py-3.5 rounded-xl transition flex items-center justify-center gap-2">
+              <i class="fas fa-times"></i> Cancel
+            </button>
+          </div>
         </form>
         <div id="product-success" class="hidden mt-4 text-center text-green-600 font-semibold p-3 bg-green-50 rounded-lg border border-green-200">
-          <i class="fas fa-check-circle mr-2"></i> Product added successfully!
+          <i class="fas fa-check-circle mr-2"></i> Product saved successfully!
         </div>
       </div>
     </div>
@@ -424,7 +436,7 @@
         document.getElementById('admin-email-display').textContent = user.email;
         loadProducts();
         loadOrders();
-        loadReviews();  // <-- Load reviews
+        loadReviews();
         showTab('products');
       } else {
         document.getElementById('login-section').style.display = 'flex';
@@ -450,7 +462,7 @@
     };
 
     // ===========================================================
-    // TABS (Updated with Reviews)
+    // TABS
     // ===========================================================
     window.showTab = function(tab) {
       ['tab-products-content', 'tab-products-list-content', 'tab-orders-content', 'tab-reviews-content'].forEach(id => {
@@ -463,6 +475,8 @@
       if (tab === 'products') {
         document.getElementById('tab-products-content').classList.remove('hidden');
         document.getElementById('tab-products').classList.add('active', 'text-pink-600', 'border-pink-600');
+        // If we are in edit mode and switch tabs, reset form
+        if (document.getElementById('editProductId').value) cancelEdit();
       } else if (tab === 'products-list') {
         document.getElementById('tab-products-list-content').classList.remove('hidden');
         document.getElementById('tab-products-list').classList.add('active', 'text-pink-600', 'border-pink-600');
@@ -501,11 +515,60 @@
     });
 
     // ===========================================================
-    // ADD PRODUCT (Using Image URLs)
+    // EDIT / CANCEL PRODUCT
+    // ===========================================================
+    window.editProduct = function(productId) {
+      // Fetch product data from Firebase
+      db.ref('products/' + productId).once('value')
+        .then(snapshot => {
+          const product = snapshot.val();
+          if (!product) {
+            showToast('Product not found.', 'error');
+            return;
+          }
+          // Fill form
+          document.getElementById('editProductId').value = productId;
+          document.getElementById('prodName').value = product.name || '';
+          document.getElementById('prodPrice').value = product.price || '';
+          document.getElementById('prodCategory').value = product.category || '';
+          document.getElementById('prodStock').value = product.stock || '';
+          document.getElementById('prodDesc').value = product.description || '';
+          document.getElementById('prodImageUrls').value = (product.images || []).join(', ');
+
+          // Update form title and button
+          document.getElementById('form-title').innerHTML = '<i class="fas fa-edit text-pink-500 mr-2"></i> Edit Product';
+          document.getElementById('submitProductBtn').innerHTML = '<i class="fas fa-save"></i> Update Product';
+          document.getElementById('cancelEditBtn').classList.remove('hidden');
+
+          // Trigger preview
+          document.getElementById('prodImageUrls').dispatchEvent(new Event('input'));
+
+          // Scroll to form
+          document.getElementById('tab-products-content').scrollIntoView({ behavior: 'smooth' });
+          // Switch to Add Product tab if not already
+          showTab('products');
+        })
+        .catch(err => showToast('Error loading product: ' + err.message, 'error'));
+    };
+
+    window.cancelEdit = function() {
+      // Reset form
+      document.getElementById('editProductId').value = '';
+      document.getElementById('addProductForm').reset();
+      document.getElementById('url-preview-container').innerHTML = '';
+      document.getElementById('form-title').innerHTML = '<i class="fas fa-plus-circle text-pink-500 mr-2"></i> Add New Product';
+      document.getElementById('submitProductBtn').innerHTML = '<i class="fas fa-save"></i> Add Product';
+      document.getElementById('cancelEditBtn').classList.add('hidden');
+      document.getElementById('product-success').classList.add('hidden');
+    };
+
+    // ===========================================================
+    // ADD / UPDATE PRODUCT
     // ===========================================================
     document.getElementById('addProductForm').addEventListener('submit', async (e) => {
       e.preventDefault();
 
+      const editId = document.getElementById('editProductId').value;
       const name = document.getElementById('prodName').value.trim();
       const price = parseFloat(document.getElementById('prodPrice').value);
       const category = document.getElementById('prodCategory').value;
@@ -521,21 +584,18 @@
         alert('Please enter at least one image URL.');
         return;
       }
-
       const imageUrls = imageUrlsInput.split(',').map(url => url.trim()).filter(url => url);
       if (imageUrls.length === 0) {
         alert('Please enter valid image URLs.');
         return;
       }
 
-      const btn = e.target.querySelector('button[type="submit"]');
+      const btn = e.target.querySelector('#submitProductBtn');
       btn.disabled = true;
       btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Saving...';
 
       try {
-        const newRef = db.ref('products').push();
-        await newRef.set({
-          id: newRef.key,
+        const productData = {
           name: name,
           price: price,
           category: category,
@@ -543,13 +603,33 @@
           description: desc,
           images: imageUrls,
           thumbnail: imageUrls[0],
-          createdAt: firebase.database.ServerValue.TIMESTAMP
-        });
+          updatedAt: firebase.database.ServerValue.TIMESTAMP
+        };
+
+        if (editId) {
+          // Update existing product
+          await db.ref('products/' + editId).update(productData);
+          showToast('✅ Product updated successfully!', 'success');
+        } else {
+          // Create new product
+          const newRef = db.ref('products').push();
+          await newRef.set({
+            ...productData,
+            id: newRef.key,
+            createdAt: firebase.database.ServerValue.TIMESTAMP
+          });
+          showToast('🎉 Product added successfully!', 'success');
+        }
 
         document.getElementById('product-success').classList.remove('hidden');
-        document.getElementById('addProductForm').reset();
-        document.getElementById('url-preview-container').innerHTML = '';
-        showToast('🎉 Product added successfully!', 'success');
+        // Reset form if adding new product (keep edit mode if updating?)
+        if (!editId) {
+          document.getElementById('addProductForm').reset();
+          document.getElementById('url-preview-container').innerHTML = '';
+        } else {
+          // After update, cancel edit to reset form
+          cancelEdit();
+        }
         setTimeout(() => {
           document.getElementById('product-success').classList.add('hidden');
         }, 4000);
@@ -558,7 +638,11 @@
         console.error(err);
       } finally {
         btn.disabled = false;
-        btn.innerHTML = '<i class="fas fa-save"></i> Add Product';
+        if (editId) {
+          btn.innerHTML = '<i class="fas fa-save"></i> Update Product';
+        } else {
+          btn.innerHTML = '<i class="fas fa-save"></i> Add Product';
+        }
       }
     });
 
@@ -599,8 +683,11 @@
               <td class="p-3 text-pink-600 font-bold">₦${(p.price || 0).toLocaleString()}</td>
               <td class="p-3">${p.stock || 0}</td>
               <td class="p-3"><span class="bg-pink-100 text-pink-700 px-2 py-0.5 rounded-full text-xs">${p.category || 'General'}</span></td>
-              <td class="p-3">
-                <button onclick="deleteProduct('${id}')" class="text-red-500 hover:text-red-700 transition">
+              <td class="p-3 flex items-center gap-2">
+                <button onclick="editProduct('${id}')" class="text-blue-600 hover:text-blue-800 transition" title="Edit">
+                  <i class="fas fa-pencil-alt"></i>
+                </button>
+                <button onclick="deleteProduct('${id}')" class="text-red-500 hover:text-red-700 transition" title="Delete">
                   <i class="fas fa-trash-alt"></i>
                 </button>
               </td>
